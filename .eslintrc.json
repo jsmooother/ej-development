@@ -1,0 +1,15 @@
+{
+  "root": true,
+  "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "build/",
+    "next-env.d.ts"
+  ],
+  "rules": {
+    "react/jsx-props-no-spreading": "off",
+    "react/no-unescaped-entities": "off"
+  }
+}

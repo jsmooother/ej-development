@@ -1,21 +1,34 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/react";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sans = Manrope({
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const serif = Cormorant_Garamond({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
-  title: "EJ Development | Costa del Sol Property Development",
+  metadataBase: new URL("https://www.ejdevelopment.com"),
+  title: {
+    default: "EJ Development — Luxury Marbella Villas",
+    template: "%s | EJ Development",
+  },
   description:
-    "Leading property developers on Costa del Sol. Discover luxury residences and bespoke development projects in Marbella, Málaga, and Sotogrande.",
+    "EJ Development curates refined living experiences along the Costa del Sol. Explore our Marbella flagship villa, completed projects, and editorial insights.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f5f2ea",
 };
 
 export default function RootLayout({
@@ -24,11 +37,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#fafafa] text-[#1a1a1a]`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn("min-h-screen bg-background font-sans text-foreground", sans.variable, serif.variable)}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
