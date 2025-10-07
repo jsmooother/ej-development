@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --background: #fafafa;
+  --foreground: #1a1a1a;
+  --muted: rgba(0, 0, 0, 0.5);
+  --accent: #c4a676;
+  --accent-soft: rgba(196, 166, 118, 0.15);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--foreground);
+}
+
+/* Wordmark animation (inspired by Lagerlings) */
+@keyframes wordmark-reveal {
+  0% { opacity: 0; transform: translateY(16px) scale(1.02); letter-spacing: 0.2em; }
+  60% { opacity: 1; transform: translateY(0) scale(1.0); }
+  100% { opacity: 1; transform: translateY(0) scale(1.0); }
+}
+
+.wordmark-letter {
+  opacity: 0;
+  animation: wordmark-reveal 640ms cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+.wordmark--large {
+  font-size: clamp(24px, 4.6vw, 64px);
+  font-weight: 300;
+}
+
+.wordmark--small {
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 400;
+}
+
+/* Subtle header shrink */
+.header--scrolled { 
+  background: rgba(255,255,255,0.88);
+  transform: translateY(-2px);
+}
