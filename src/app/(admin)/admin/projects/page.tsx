@@ -56,7 +56,7 @@ export default function ProjectsListPage() {
     <div>
       <AdminHeader 
         title="Projects" 
-        description={`Manage your portfolio projects (${allProjects.length} total)`}
+        description={`Manage your portfolio projects (${projects.length} total)`}
         action={{
           label: "New Project",
           href: "/admin/projects/new"
