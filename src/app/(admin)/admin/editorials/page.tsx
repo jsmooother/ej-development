@@ -40,16 +40,35 @@ export default function EditorialsListPage() {
   ]);
 
   const handleTogglePublish = async (postId: string, newStatus: boolean) => {
-    // TODO: Replace with actual API call
     console.log(`Toggling post ${postId} to ${newStatus ? 'published' : 'draft'}`);
     
-    // Update local state
-    setPosts(prev => 
-      prev.map(p => p.id === postId ? { ...p, isPublished: newStatus } : p)
-    );
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Call API to update status using slug
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      
+      const response = await fetch('/api/content/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'editorial',
+          id: post.slug,
+          isPublished: newStatus
+        })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setPosts(prev => 
+          prev.map(p => p.id === postId ? { ...p, isPublished: newStatus } : p)
+        );
+        console.log(`Successfully updated editorial ${postId} status`);
+      } else {
+        console.error('Failed to update editorial status');
+      }
+    } catch (error) {
+      console.error('Error updating editorial status:', error);
+    }
   };
 
   const handleDelete = async (postId: string) => {

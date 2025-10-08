@@ -40,16 +40,35 @@ export default function ProjectsListPage() {
   ]);
 
   const handleTogglePublish = async (projectId: string, newStatus: boolean) => {
-    // TODO: Replace with actual API call
     console.log(`Toggling project ${projectId} to ${newStatus ? 'published' : 'draft'}`);
     
-    // Update local state
-    setProjects(prev => 
-      prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p)
-    );
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Call API to update status using slug
+      const project = projects.find(p => p.id === projectId);
+      if (!project) return;
+      
+      const response = await fetch('/api/content/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'project',
+          id: project.slug,
+          isPublished: newStatus
+        })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setProjects(prev => 
+          prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p)
+        );
+        console.log(`Successfully updated project ${projectId} status`);
+      } else {
+        console.error('Failed to update project status');
+      }
+    } catch (error) {
+      console.error('Error updating project status:', error);
+    }
   };
 
   const handleDelete = async (projectId: string) => {

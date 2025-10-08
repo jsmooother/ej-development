@@ -147,8 +147,8 @@ export const metadata: Metadata = {
     "Luxury property development in Marbella with a focus on modern Mediterranean architecture and curated living experiences.",
 };
 
-export const dynamic = "force-static";
-export const revalidate = 3600; // Revalidate every hour
+export const dynamic = "force-dynamic";
+export const revalidate = 0; // Always fetch fresh data
 
 // Helper function to shuffle array (for randomizing projects)
 function shuffleArray<T>(array: T[]): T[] {
@@ -160,19 +160,50 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-export default function HomePage() {
+export default async function HomePage() {
   // Limit content for consistent homepage size - always in multiples of 3 columns
   const MAX_PROJECTS = 3; // Show 3 random projects
   const MAX_EDITORIALS = 3; // Show 3 latest editorials
   const MAX_INSTAGRAM = 3; // Show 3 Instagram posts
 
-  // For now, use static data - we'll make this dynamic later
-  const selectedProjects = shuffleArray(projects).slice(0, MAX_PROJECTS);
-  
-  // Always show latest editorials (sorted by most recent)
-  const selectedEditorials = editorials.slice(0, MAX_EDITORIALS);
-  
-  // Show latest Instagram posts
+  // Fetch content status from API
+  let contentStatus = { projects: {}, editorials: {} };
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/content/status`, {
+      cache: 'no-store'
+    });
+    if (response.ok) {
+      contentStatus = await response.json();
+    }
+  } catch (error) {
+    console.error('Failed to fetch content status:', error);
+  }
+
+  // Map titles to slugs for filtering
+  const titleToSlug: Record<string, string> = {
+    'Sierra Horizon': 'sierra-horizon',
+    'Loma Azul': 'loma-azul', 
+    'Casa Palma': 'casa-palma',
+    'Marbella Market, Reframed': 'marbella-market-reframed',
+    'Designing with Andalusian Light': 'andalusian-light',
+    'Neighbourhood Guide · Golden Mile': 'golden-mile-guide'
+  };
+
+  // Filter projects to only show published ones
+  const publishedProjects = projects.filter(project => {
+    const slug = titleToSlug[project.title];
+    return slug && contentStatus.projects[slug] !== false;
+  });
+
+  // Filter editorials to only show published ones  
+  const publishedEditorials = editorials.filter(editorial => {
+    const slug = titleToSlug[editorial.title];
+    return slug && contentStatus.editorials[slug] !== false;
+  });
+
+  // Select content based on published status
+  const selectedProjects = shuffleArray(publishedProjects).slice(0, MAX_PROJECTS);
+  const selectedEditorials = publishedEditorials.slice(0, MAX_EDITORIALS);
   const selectedInstagram = instagramCards.slice(0, MAX_INSTAGRAM);
 
   // Create a newspaper-style mixed stream - 9 items with varied heights like Lagerlings
