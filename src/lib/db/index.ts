@@ -35,3 +35,4 @@ export const createDbClient = () => drizzle(createConnection(), { schema });
 export type Database = ReturnType<typeof getDb>;
 export * from "./schema";
 export * from "./types";
+export * from "./schema";
