@@ -166,7 +166,7 @@ export default function HomePage() {
   const MAX_EDITORIALS = 3; // Show 3 latest editorials
   const MAX_INSTAGRAM = 3; // Show 3 Instagram posts
 
-  // Randomize projects (since we only have 6 total, this keeps it fresh)
+  // For now, use static data - we'll make this dynamic later
   const selectedProjects = shuffleArray(projects).slice(0, MAX_PROJECTS);
   
   // Always show latest editorials (sorted by most recent)
