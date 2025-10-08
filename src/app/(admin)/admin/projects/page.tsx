@@ -47,7 +47,7 @@ export default async function ProjectsListPage() {
         title="Projects" 
         description={`Manage your portfolio projects (${allProjects.length} total)`}
         action={{
-          label: "+ New Project",
+          label: "New Project",
           href: "/admin/projects/new"
         }}
       />

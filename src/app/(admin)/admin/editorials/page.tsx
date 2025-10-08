@@ -44,7 +44,7 @@ export default async function EditorialsListPage() {
         title="Editorials" 
         description={`Manage your editorial content (${allPosts.length} total)`}
         action={{
-          label: "+ New Editorial",
+          label: "New Editorial",
           href: "/admin/editorials/new"
         }}
       />
