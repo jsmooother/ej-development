@@ -1,4 +1,7 @@
-import { getDb } from "@/lib/db";
+import { sql } from "drizzle-orm";
+import { getDb, listings, projects, posts, enquiries } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const db = getDb();
@@ -10,10 +13,10 @@ export default async function AdminDashboardPage() {
     { count: postsCount } = { count: 0 },
     { count: enquiriesCount } = { count: 0 },
   ] = await Promise.all([
-    db.select({ count: db.fn.count() }).from(db.schema.listings).execute().then(([r]) => r),
-    db.select({ count: db.fn.count() }).from(db.schema.projects).execute().then(([r]) => r),
-    db.select({ count: db.fn.count() }).from(db.schema.posts).execute().then(([r]) => r),
-    db.select({ count: db.fn.count() }).from(db.schema.enquiries).execute().then(([r]) => r),
+    db.select({ count: sql<number>`count(*)::int` }).from(listings).then(([r]) => r),
+    db.select({ count: sql<number>`count(*)::int` }).from(projects).then(([r]) => r),
+    db.select({ count: sql<number>`count(*)::int` }).from(posts).then(([r]) => r),
+    db.select({ count: sql<number>`count(*)::int` }).from(enquiries).then(([r]) => r),
   ]);
 
   const stats = [

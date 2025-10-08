@@ -4,6 +4,8 @@ import { getDb } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import { listings } from "@/lib/db/schema";
 
+export const dynamic = "force-dynamic";
+
 export default async function ListingsPage() {
   const db = getDb();
   const allListings = await db
