@@ -23,9 +23,13 @@ export const createSupabaseServerClient = () => {
 
 export const createSupabaseServerComponentClient = createSupabaseServerClient;
 
-export const createSupabaseAdminClient = () =>
-  createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+export const createSupabaseAdminClient = () => {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY is not configured. Set it in your .env file to use admin features.");
+  }
+  return createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: {
       persistSession: false,
     },
   });
+};

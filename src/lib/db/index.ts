@@ -7,11 +7,17 @@ const globalForDb = globalThis as unknown as {
   connection?: ReturnType<typeof postgres>;
 };
 
-const createConnection = () =>
-  postgres(env.SUPABASE_DB_URL, {
+const createConnection = () => {
+  if (!env.SUPABASE_DB_URL) {
+    throw new Error("SUPABASE_DB_URL is not configured. Set it in your .env file to use database features.");
+  }
+  return postgres(env.SUPABASE_DB_URL, {
     ssl: "require",
     max: 1,
+    idle_timeout: 20,
+    connect_timeout: 10,
   });
+};
 
 const getOrCreateConnection = () => {
   if (!globalForDb.connection) {

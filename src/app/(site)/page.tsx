@@ -118,6 +118,9 @@ export const metadata: Metadata = {
     "Luxury property development in Marbella with a focus on modern Mediterranean architecture and curated living experiences.",
 };
 
+export const dynamic = "force-static";
+export const revalidate = 3600; // Revalidate every hour
+
 export default function HomePage() {
   return (
     <main id="top" className="space-y-24 pb-24">
