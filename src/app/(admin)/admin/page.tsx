@@ -7,24 +7,41 @@ import { StatCard } from "@/components/admin/stat-card";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const db = getDb();
+  let listingsCount = 0;
+  let projectsCount = 0;
+  let postsCount = 0;
+  let enquiriesCount = 0;
+  let recentProjects: any[] = [];
+  let recentPosts: any[] = [];
 
-  // Fetch summary counts
-  const [
-    { count: listingsCount } = { count: 0 },
-    { count: projectsCount } = { count: 0 },
-    { count: postsCount } = { count: 0 },
-    { count: enquiriesCount } = { count: 0 },
-  ] = await Promise.all([
-    db.select({ count: sql<number>`count(*)::int` }).from(listings).then(([r]) => r),
-    db.select({ count: sql<number>`count(*)::int` }).from(projects).then(([r]) => r),
-    db.select({ count: sql<number>`count(*)::int` }).from(posts).then(([r]) => r),
-    db.select({ count: sql<number>`count(*)::int` }).from(enquiries).then(([r]) => r),
-  ]);
+  try {
+    const db = getDb();
 
-  // Fetch recent items
-  const recentProjects = await db.select().from(projects).orderBy(sql`${projects.createdAt} DESC`).limit(5);
-  const recentPosts = await db.select().from(posts).orderBy(sql`${posts.createdAt} DESC`).limit(5);
+    // Fetch summary counts
+    const [
+      { count: lCount } = { count: 0 },
+      { count: prCount } = { count: 0 },
+      { count: poCount } = { count: 0 },
+      { count: eCount } = { count: 0 },
+    ] = await Promise.all([
+      db.select({ count: sql<number>`count(*)::int` }).from(listings).then(([r]) => r),
+      db.select({ count: sql<number>`count(*)::int` }).from(projects).then(([r]) => r),
+      db.select({ count: sql<number>`count(*)::int` }).from(posts).then(([r]) => r),
+      db.select({ count: sql<number>`count(*)::int` }).from(enquiries).then(([r]) => r),
+    ]);
+
+    listingsCount = lCount;
+    projectsCount = prCount;
+    postsCount = poCount;
+    enquiriesCount = eCount;
+
+    // Fetch recent items
+    recentProjects = await db.select().from(projects).orderBy(sql`${projects.createdAt} DESC`).limit(5);
+    recentPosts = await db.select().from(posts).orderBy(sql`${posts.createdAt} DESC`).limit(5);
+  } catch (error) {
+    console.error("Database error in admin dashboard:", error);
+    // Continue with zero counts if database fails
+  }
 
   return (
     <div>
