@@ -66,19 +66,19 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-border bg-card">
+    <div className="flex h-full w-64 flex-col border-r border-border/30 bg-white/50 backdrop-blur-xl">
       {/* Logo/Brand */}
-      <div className="border-b border-border/50 px-6 py-8">
+      <div className="px-6 py-10">
         <h1 className="font-serif text-2xl font-light tracking-tight text-foreground">
           EJ
         </h1>
-        <p className="mt-0.5 text-xs font-medium tracking-wide text-muted-foreground/60">
+        <p className="mt-0.5 text-[10px] font-semibold tracking-[0.15em] text-muted-foreground/40">
           PROPERTIES
         </p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-0.5 px-4 py-6">
+      <nav className="flex-1 space-y-1 px-3 py-2">
         {navigation.map((item) => {
           const isActive = pathname === item.href;
           
@@ -87,10 +87,10 @@ export function AdminSidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal transition-all duration-200",
                 isActive
-                  ? "bg-foreground text-background shadow-sm"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-foreground/[0.08] text-foreground"
+                  : "text-muted-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground"
               )}
             >
               {item.icon}
@@ -101,14 +101,14 @@ export function AdminSidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-border/50 px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-sm font-medium text-background">
+      <div className="border-t border-border/30 px-4 py-4">
+        <div className="flex items-center gap-3 rounded-lg px-2 py-2 transition hover:bg-foreground/[0.02]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-semibold text-foreground">
             JK
           </div>
-          <div className="flex-1 text-sm">
+          <div className="flex-1 text-xs">
             <p className="font-medium text-foreground">Jesper Kreuger</p>
-            <p className="text-xs text-muted-foreground/60">Administrator</p>
+            <p className="text-[10px] text-muted-foreground/50">Admin</p>
           </div>
         </div>
       </div>

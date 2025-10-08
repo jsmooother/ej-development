@@ -13,12 +13,12 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ title, description, action }: AdminHeaderProps) {
   return (
-    <div className="border-b border-border/30 bg-card/50 px-8 py-8 backdrop-blur-sm">
+    <div className="border-b border-border/20 bg-white/80 px-12 py-10 backdrop-blur-xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-serif text-4xl font-light tracking-tight text-foreground">{title}</h1>
+          <h1 className="font-serif text-5xl font-extralight tracking-tight text-foreground">{title}</h1>
           {description && (
-            <p className="mt-2 text-sm text-muted-foreground/60">{description}</p>
+            <p className="mt-3 text-sm text-muted-foreground/50">{description}</p>
           )}
         </div>
         {action && (
