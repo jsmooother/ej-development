@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { getDb } from "@/lib/db";
+import { getDb, desc } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
+import { listings } from "@/lib/db/schema";
 
 export default async function ListingsPage() {
   const db = getDb();
-  const listings = await db.query.listings.findMany({
-    orderBy: (listings, { desc }) => [desc(listings.createdAt)],
-  });
+  const allListings = await db
+    .select()
+    .from(listings)
+    .orderBy(desc(listings.createdAt));
 
   return (
     <div className="space-y-8">
@@ -38,7 +40,7 @@ export default async function ListingsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {listings.map((listing) => (
+              {allListings.map((listing) => (
                 <tr key={listing.id} className="hover:bg-muted/50">
                   <td className="px-4 py-3">
                     <div>
@@ -80,7 +82,7 @@ export default async function ListingsPage() {
                   </td>
                 </tr>
               ))}
-              {listings.length === 0 && (
+              {allListings.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                     No listings found. Create your first listing to get started.
