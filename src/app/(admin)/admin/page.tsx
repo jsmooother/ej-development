@@ -5,43 +5,28 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { StatCard } from "@/components/admin/stat-card";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 
 export default async function AdminDashboardPage() {
-  let listingsCount = 0;
-  let projectsCount = 0;
-  let postsCount = 0;
-  let enquiriesCount = 0;
-  let recentProjects: any[] = [];
-  let recentPosts: any[] = [];
-
-  try {
-    const db = getDb();
-
-    // Fetch summary counts
-    const [
-      { count: lCount } = { count: 0 },
-      { count: prCount } = { count: 0 },
-      { count: poCount } = { count: 0 },
-      { count: eCount } = { count: 0 },
-    ] = await Promise.all([
-      db.select({ count: sql<number>`count(*)::int` }).from(listings).then(([r]) => r),
-      db.select({ count: sql<number>`count(*)::int` }).from(projects).then(([r]) => r),
-      db.select({ count: sql<number>`count(*)::int` }).from(posts).then(([r]) => r),
-      db.select({ count: sql<number>`count(*)::int` }).from(enquiries).then(([r]) => r),
-    ]);
-
-    listingsCount = lCount;
-    projectsCount = prCount;
-    postsCount = poCount;
-    enquiriesCount = eCount;
-
-    // Fetch recent items
-    recentProjects = await db.select().from(projects).orderBy(sql`${projects.createdAt} DESC`).limit(5);
-    recentPosts = await db.select().from(posts).orderBy(sql`${posts.createdAt} DESC`).limit(5);
-  } catch (error) {
-    console.error("Database error in admin dashboard:", error);
-    // Continue with zero counts if database fails
-  }
+  // TODO: Re-enable database once connection is optimized
+  // For now, using mock data for fast development
+  const listingsCount = 1;
+  const projectsCount = 3;
+  const postsCount = 3;
+  const enquiriesCount = 0;
+  
+  const recentProjects = [
+    { id: '1', title: 'Sierra Horizon', summary: 'La Zagaleta · 2023', isPublished: true },
+    { id: '2', title: 'Loma Azul', summary: 'Benahavís · 2022', isPublished: true },
+    { id: '3', title: 'Casa Palma', summary: 'Marbella Club · 2021', isPublished: true },
+  ];
+  
+  const recentPosts = [
+    { id: '1', title: 'Marbella Market, Reframed', excerpt: 'Design-led developments...', isPublished: true },
+    { id: '2', title: 'Designing with Andalusian Light', excerpt: 'Glazing principles...', isPublished: true },
+    { id: '3', title: 'Neighbourhood Guide', excerpt: 'Golden Mile highlights...', isPublished: true },
+  ];
 
   return (
     <div>

@@ -6,15 +6,40 @@ import { AdminHeader } from "@/components/admin/admin-header";
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsListPage() {
-  let allProjects: any[] = [];
-
-  try {
-    const db = getDb();
-    allProjects = await db.select().from(projects).orderBy(sql`${projects.createdAt} DESC`);
-  } catch (error) {
-    console.error("Database error loading projects:", error);
-    // Continue with empty array if database fails
-  }
+  // TODO: Re-enable database once connection is optimized
+  // For now, using mock data for fast development
+  const allProjects = [
+    {
+      id: '1',
+      slug: 'sierra-horizon',
+      title: 'Sierra Horizon',
+      summary: 'La Zagaleta · 2023',
+      facts: { sqm: 420, bedrooms: 6, bathrooms: 5 },
+      heroImagePath: 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
+      isPublished: true,
+      createdAt: new Date('2023-06-15'),
+    },
+    {
+      id: '2',
+      slug: 'loma-azul',
+      title: 'Loma Azul',
+      summary: 'Benahavís · 2022',
+      facts: { sqm: 380, bedrooms: 5, bathrooms: 4 },
+      heroImagePath: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80',
+      isPublished: true,
+      createdAt: new Date('2022-09-20'),
+    },
+    {
+      id: '3',
+      slug: 'casa-palma',
+      title: 'Casa Palma',
+      summary: 'Marbella Club · 2021',
+      facts: { sqm: 320, bedrooms: 4, bathrooms: 3 },
+      heroImagePath: 'https://images.unsplash.com/photo-1521783988139-8930bd045bfa?auto=format&fit=crop&w=1400&q=80',
+      isPublished: true,
+      createdAt: new Date('2021-05-10'),
+    },
+  ];
 
   return (
     <div>
