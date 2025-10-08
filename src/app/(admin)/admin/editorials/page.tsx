@@ -72,7 +72,7 @@ export default function EditorialsListPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </div>
-              <h3 className="mt-6 font-serif text-2xl font-light tracking-tight text-foreground">No editorials yet</h3>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">No editorials yet</h3>
               <p className="mt-2 text-sm text-muted-foreground/60">
                 Start writing your first editorial article to share insights and stories.
               </p>
@@ -117,7 +117,7 @@ export default function EditorialsListPage() {
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="font-serif text-2xl font-light tracking-tight text-foreground transition-colors group-hover:text-foreground">
+                        <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
                           {post.title}
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground/60">{post.excerpt}</p>

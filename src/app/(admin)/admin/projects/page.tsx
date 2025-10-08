@@ -72,7 +72,7 @@ export default function ProjectsListPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h3 className="mt-6 font-serif text-2xl font-light tracking-tight text-foreground">No projects yet</h3>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">No projects yet</h3>
               <p className="mt-2 text-sm text-muted-foreground/60">
                 Get started by creating your first portfolio project with imagery and case study details.
               </p>
@@ -117,7 +117,7 @@ export default function ProjectsListPage() {
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="font-serif text-2xl font-light tracking-tight text-foreground transition-colors group-hover:text-foreground">
+                        <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
                           {project.title}
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground/60">{project.summary}</p>

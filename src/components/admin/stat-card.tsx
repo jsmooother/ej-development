@@ -14,7 +14,7 @@ export function StatCard({ title, value, icon, trend }: StatCardProps) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground/60">{title}</p>
-          <p className="mt-3 font-serif text-4xl font-light tracking-tight text-foreground">{value}</p>
+          <p className="mt-3 font-sans text-4xl font-normal tracking-tight text-foreground">{value}</p>
           {trend && (
             <div className="mt-3 flex items-center gap-1">
               <svg 
