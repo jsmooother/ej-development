@@ -21,7 +21,7 @@ const getOrCreateConnection = () => {
 };
 
 // For use in Next.js server components
-let db: ReturnType<typeof drizzle> | null = null;
+let db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 export const getDb = () => {
   if (!db) {
     db = drizzle(getOrCreateConnection(), { schema });
@@ -33,6 +33,4 @@ export const getDb = () => {
 export const createDbClient = () => drizzle(createConnection(), { schema });
 
 export type Database = ReturnType<typeof getDb>;
-export * from "./schema";
-export * from "./types";
 export * from "./schema";
