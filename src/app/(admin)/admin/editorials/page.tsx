@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { getDb } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
+import { posts } from "@/drizzle";
+import { desc } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditorialsPage() {
   const db = getDb();
-  const editorials = await db.query.posts.findMany({
-    orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-  });
+
+  const editorials = await db
+    .select()
+    .from(posts)
+    .orderBy(desc(posts.createdAt));
 
   return (
     <div className="space-y-8">
@@ -48,20 +52,30 @@ export default async function EditorialsPage() {
                       <div>
                         <div className="font-medium">{editorial.title}</div>
                         {editorial.excerpt && (
-                          <div className="text-xs text-muted-foreground">{editorial.excerpt}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {editorial.excerpt}
+                          </div>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{category}</td>
                     <td className="px-4 py-3">
-                      <span className={editorial.isPublished ? "text-green-600" : "text-yellow-600"}>
+                      <span
+                        className={
+                          editorial.isPublished ? "text-green-600" : "text-yellow-600"
+                        }
+                      >
                         {editorial.isPublished ? "Published" : "Draft"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{formatDate(editorial.updatedAt)}</td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {formatDate(editorial.updatedAt)}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Edit coming soon</span>
+                        <span className="text-xs text-muted-foreground">
+                          Edit coming soon
+                        </span>
                         <Link
                           href={`/editorial/${editorial.slug}`}
                           className="text-xs text-primary hover:underline"
@@ -77,8 +91,12 @@ export default async function EditorialsPage() {
 
               {editorials.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                    No editorials yet. Use the AI generator to draft your first piece in seconds.
+                  <td
+                    colSpan={5}
+                    className="px-4 py-8 text-center text-muted-foreground"
+                  >
+                    No editorials yet. Use the AI generator to draft your first piece in
+                    seconds.
                   </td>
                 </tr>
               )}
