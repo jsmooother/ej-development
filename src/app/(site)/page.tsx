@@ -175,30 +175,30 @@ export default function HomePage() {
   // Show latest Instagram posts
   const selectedInstagram = instagramCards.slice(0, MAX_INSTAGRAM);
 
-  // Create a newspaper-style mixed stream - 9 items total (3 rows of 3 columns)
+  // Create a newspaper-style mixed stream - 9 items with varied heights like Lagerlings
   const featureStream = [
-    selectedProjects[0], // Row 1: Main feature project (col-span-3)
-    selectedEditorials[0], // Row 2: Latest editorial (col-span-1)
-    selectedProjects[1], // Row 2: Second project (col-span-2)
-    selectedInstagram[0], // Row 3: Instagram (col-span-1)
-    selectedEditorials[1], // Row 3: Second editorial (col-span-1)
-    selectedProjects[2], // Row 3: Third project (col-span-1)
-    selectedEditorials[2], // Row 4: Third editorial (col-span-1)
-    selectedInstagram[1], // Row 4: Instagram (col-span-1)
-    selectedInstagram[2], // Row 4: Instagram (col-span-1)
+    selectedProjects[0], // Main hero project - full width, double height
+    selectedEditorials[0], // Editorial - single column, double height
+    selectedProjects[1], // Project - double width, single height
+    selectedInstagram[0], // Instagram - single, standard
+    selectedEditorials[1], // Editorial - single, standard
+    selectedProjects[2], // Project - single, double height
+    selectedEditorials[2], // Editorial - single, standard
+    selectedInstagram[1], // Instagram - single, standard
+    selectedInstagram[2], // Instagram - single, standard
   ];
 
-  // Layout pattern for clean 3-column grid (9 items, all rows complete)
+  // Layout pattern with varied heights for newspaper aesthetic (like Lagerlings)
   const layoutPattern = [
-    { className: "md:col-span-3", tall: true }, // Row 1: Large feature project (full width)
-    { className: "md:col-span-1" }, // Row 2: Editorial (1 col)
-    { className: "md:col-span-2" }, // Row 2: Project (2 cols)
-    { className: "md:col-span-1" }, // Row 3: Instagram (1 col)
-    { className: "md:col-span-1" }, // Row 3: Editorial (1 col)
-    { className: "md:col-span-1" }, // Row 3: Project (1 col)
-    { className: "md:col-span-1" }, // Row 4: Editorial (1 col)
-    { className: "md:col-span-1" }, // Row 4: Instagram (1 col)
-    { className: "md:col-span-1" }, // Row 4: Instagram (1 col)
+    { className: "md:col-span-3 md:row-span-2", tall: true }, // Hero project: full width, double height
+    { className: "md:col-span-1 md:row-span-2", tall: true }, // Editorial: single col, double height
+    { className: "md:col-span-2" }, // Project: double width, single height
+    { className: "md:col-span-1" }, // Instagram: single, standard
+    { className: "md:col-span-1" }, // Editorial: single, standard
+    { className: "md:col-span-1 md:row-span-2", tall: true }, // Project: single col, double height
+    { className: "md:col-span-1" }, // Editorial: single, standard
+    { className: "md:col-span-1" }, // Instagram: single, standard
+    { className: "md:col-span-1" }, // Instagram: single, standard
   ];
 
   return (
