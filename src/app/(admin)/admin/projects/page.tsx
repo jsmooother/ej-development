@@ -1,11 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import { sql } from "drizzle-orm";
-import { getDb, projects } from "@/lib/db";
+import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { InlineToggle } from "@/components/admin/inline-toggle";
 
-export const dynamic = "force-dynamic";
-
-export default async function ProjectsListPage() {
+export default function ProjectsListPage() {
   // TODO: Re-enable database once connection is optimized
   // For now, using mock data for fast development
   const allProjects = [
@@ -39,7 +39,20 @@ export default async function ProjectsListPage() {
       isPublished: true,
       createdAt: new Date('2021-05-10'),
     },
-  ];
+  ]);
+
+  const handleTogglePublish = async (projectId: string, newStatus: boolean) => {
+    // TODO: Replace with actual API call
+    console.log(`Toggling project ${projectId} to ${newStatus ? 'published' : 'draft'}`);
+    
+    // Update local state
+    setProjects(prev => 
+      prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p)
+    );
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+  };
 
   return (
     <div>
@@ -53,7 +66,7 @@ export default async function ProjectsListPage() {
       />
 
       <div className="p-8">
-        {allProjects.length === 0 ? (
+        {projects.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
             <div className="mx-auto max-w-md">
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
@@ -78,7 +91,7 @@ export default async function ProjectsListPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {allProjects.map((project) => (
+            {projects.map((project) => (
               <Link
                 key={project.id}
                 href={`/admin/projects/${project.id}`}
@@ -111,14 +124,21 @@ export default async function ProjectsListPage() {
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground/60">{project.summary}</p>
                       </div>
-                      <div className="ml-4 flex items-center gap-3">
-                        <span className={`rounded-full px-3 py-1.5 text-[10px] font-medium uppercase tracking-wide ${
-                          project.isPublished 
-                            ? "bg-green-50 text-green-700" 
-                            : "bg-muted text-muted-foreground"
-                        }`}>
-                          {project.isPublished ? "Live" : "Draft"}
-                        </span>
+                      <div className="ml-4 flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <InlineToggle
+                            id={project.id}
+                            initialChecked={project.isPublished}
+                            onToggle={(checked) => handleTogglePublish(project.id, checked)}
+                          />
+                          <span className={`text-[10px] font-medium uppercase tracking-wide ${
+                            project.isPublished 
+                              ? "text-green-700" 
+                              : "text-muted-foreground/60"
+                          }`}>
+                            {project.isPublished ? "Live" : "Draft"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 

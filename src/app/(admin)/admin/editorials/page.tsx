@@ -1,11 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { InlineToggle } from "@/components/admin/inline-toggle";
 
-export const dynamic = "force-dynamic";
-
-export default async function EditorialsListPage() {
-  // TODO: Re-enable database once connection is optimized
-  const allPosts = [
+export default function EditorialsListPage() {
+  const [posts, setPosts] = useState([
     {
       id: '1',
       slug: 'marbella-market-reframed',
@@ -36,13 +37,26 @@ export default async function EditorialsListPage() {
       isPublished: true,
       createdAt: new Date('2025-08-20'),
     },
-  ];
+  ]);
+
+  const handleTogglePublish = async (postId: string, newStatus: boolean) => {
+    // TODO: Replace with actual API call
+    console.log(`Toggling post ${postId} to ${newStatus ? 'published' : 'draft'}`);
+    
+    // Update local state
+    setPosts(prev => 
+      prev.map(p => p.id === postId ? { ...p, isPublished: newStatus } : p)
+    );
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500));
+  };
 
   return (
     <div>
       <AdminHeader 
         title="Editorials" 
-        description={`Manage your editorial content (${allPosts.length} total)`}
+        description={`Manage your editorial content (${posts.length} total)`}
         action={{
           label: "New Editorial",
           href: "/admin/editorials/new"
@@ -50,7 +64,7 @@ export default async function EditorialsListPage() {
       />
 
       <div className="p-8">
-        {allPosts.length === 0 ? (
+        {posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
             <div className="mx-auto max-w-md">
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
@@ -75,7 +89,7 @@ export default async function EditorialsListPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {allPosts.map((post) => (
+            {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/admin/editorials/${post.id}`}
@@ -108,14 +122,21 @@ export default async function EditorialsListPage() {
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground/60">{post.excerpt}</p>
                       </div>
-                      <div className="ml-4 flex items-center gap-3">
-                        <span className={`rounded-full px-3 py-1.5 text-[10px] font-medium uppercase tracking-wide ${
-                          post.isPublished 
-                            ? "bg-green-50 text-green-700" 
-                            : "bg-muted text-muted-foreground"
-                        }`}>
-                          {post.isPublished ? "Live" : "Draft"}
-                        </span>
+                      <div className="ml-4 flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <InlineToggle
+                            id={post.id}
+                            initialChecked={post.isPublished}
+                            onToggle={(checked) => handleTogglePublish(post.id, checked)}
+                          />
+                          <span className={`text-[10px] font-medium uppercase tracking-wide ${
+                            post.isPublished 
+                              ? "text-green-700" 
+                              : "text-muted-foreground/60"
+                          }`}>
+                            {post.isPublished ? "Live" : "Draft"}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
