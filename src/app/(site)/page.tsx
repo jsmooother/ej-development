@@ -131,39 +131,6 @@ const instagramCards: InstagramCard[] = [
   },
 ];
 
-// Create a newspaper-style mixed stream
-const featureStream = [
-  projects[0], // Sierra Horizon - main feature
-  editorials[0], // Market Insight
-  instagramCards[0], // Instagram
-  projects[1], // Loma Azul
-  editorials[1], // Design Journal
-  instagramCards[1], // Instagram
-  projects[2], // Casa Palma
-  editorials[2], // Guide
-  projects[3], // Mirador Alto
-  editorials[3], // Studio
-  instagramCards[2], // Instagram
-  projects[4], // Villa Ladera
-  editorials[4], // Process
-];
-
-const layoutPattern = [
-  { className: "md:col-span-4", tall: true }, // Sierra Horizon - main feature
-  { className: "md:col-span-2" }, // Editorial
-  { className: "md:col-span-2" }, // Instagram
-  { className: "md:col-span-3" }, // Project
-  { className: "md:col-span-3" }, // Editorial
-  { className: "md:col-span-2" }, // Instagram
-  { className: "md:col-span-4", tall: true }, // Casa Palma - large
-  { className: "md:col-span-2" }, // Editorial
-  { className: "md:col-span-3" }, // Project
-  { className: "md:col-span-3" }, // Editorial
-  { className: "md:col-span-2" }, // Instagram
-  { className: "md:col-span-3" }, // Project
-  { className: "md:col-span-3" }, // Editorial
-];
-
 const instagramTiles = [
   "https://images.unsplash.com/photo-1598928636135-d146006ff4be?auto=format&fit=crop&w=600&q=80",
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80",
@@ -183,7 +150,57 @@ export const metadata: Metadata = {
 export const dynamic = "force-static";
 export const revalidate = 3600; // Revalidate every hour
 
+// Helper function to shuffle array (for randomizing projects)
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export default function HomePage() {
+  // Limit content for consistent homepage size - always in multiples of 3 columns
+  const MAX_PROJECTS = 3; // Show 3 random projects
+  const MAX_EDITORIALS = 3; // Show 3 latest editorials
+  const MAX_INSTAGRAM = 3; // Show 3 Instagram posts
+
+  // Randomize projects (since we only have 6 total, this keeps it fresh)
+  const selectedProjects = shuffleArray(projects).slice(0, MAX_PROJECTS);
+  
+  // Always show latest editorials (sorted by most recent)
+  const selectedEditorials = editorials.slice(0, MAX_EDITORIALS);
+  
+  // Show latest Instagram posts
+  const selectedInstagram = instagramCards.slice(0, MAX_INSTAGRAM);
+
+  // Create a newspaper-style mixed stream - 9 items total (3 rows of 3 columns)
+  const featureStream = [
+    selectedProjects[0], // Row 1: Main feature project (col-span-3)
+    selectedEditorials[0], // Row 2: Latest editorial (col-span-1)
+    selectedProjects[1], // Row 2: Second project (col-span-2)
+    selectedInstagram[0], // Row 3: Instagram (col-span-1)
+    selectedEditorials[1], // Row 3: Second editorial (col-span-1)
+    selectedProjects[2], // Row 3: Third project (col-span-1)
+    selectedEditorials[2], // Row 4: Third editorial (col-span-1)
+    selectedInstagram[1], // Row 4: Instagram (col-span-1)
+    selectedInstagram[2], // Row 4: Instagram (col-span-1)
+  ];
+
+  // Layout pattern for clean 3-column grid (9 items, all rows complete)
+  const layoutPattern = [
+    { className: "md:col-span-3", tall: true }, // Row 1: Large feature project (full width)
+    { className: "md:col-span-1" }, // Row 2: Editorial (1 col)
+    { className: "md:col-span-2" }, // Row 2: Project (2 cols)
+    { className: "md:col-span-1" }, // Row 3: Instagram (1 col)
+    { className: "md:col-span-1" }, // Row 3: Editorial (1 col)
+    { className: "md:col-span-1" }, // Row 3: Project (1 col)
+    { className: "md:col-span-1" }, // Row 4: Editorial (1 col)
+    { className: "md:col-span-1" }, // Row 4: Instagram (1 col)
+    { className: "md:col-span-1" }, // Row 4: Instagram (1 col)
+  ];
+
   return (
     <main id="top" className="space-y-24 pb-24">
       {/* Hero Intro */}
@@ -257,7 +274,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="mt-12 grid auto-rows-[minmax(240px,auto)] gap-6 md:grid-cols-6">
+        <div className="mt-12 grid auto-rows-[minmax(240px,auto)] gap-6 md:grid-cols-3">
           {featureStream.map((item, index) => {
             const layout = layoutPattern[index % layoutPattern.length];
 
