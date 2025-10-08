@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
+import { Toggle } from "@/components/admin/toggle";
 
 export default function NewEditorialPage() {
   const router = useRouter();
@@ -150,23 +151,21 @@ export default function NewEditorialPage() {
           {/* Publishing */}
           <div className="space-y-6">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
-              Publishing
+              Visibility & Publishing
             </h2>
 
-            <FormField 
-              label="Status" 
+            <Toggle
               id="isPublished"
-            >
-              <Select id="isPublished" name="isPublished" defaultValue="true">
-                <option value="true">Published (Live on site)</option>
-                <option value="false">Draft (Hidden from site)</option>
-              </Select>
-            </FormField>
+              name="isPublished"
+              label="Publish to Site"
+              description="When enabled, this editorial will be visible on the public site"
+              defaultChecked={true}
+            />
 
             <FormField 
               label="Publish Date" 
               id="publishedAt"
-              description="When this article should go live"
+              description="Schedule when this article should go live (optional)"
             >
               <Input 
                 id="publishedAt" 
@@ -174,6 +173,18 @@ export default function NewEditorialPage() {
                 type="datetime-local"
               />
             </FormField>
+
+            <div className="rounded-lg border border-border/30 bg-muted/10 p-4">
+              <div className="flex items-start gap-3">
+                <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-xs text-muted-foreground/70">
+                  <p className="font-medium text-foreground/80">Publishing tip</p>
+                  <p className="mt-1">Turn off to keep this editorial in draft mode. You can also schedule a future publish date.</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Actions */}

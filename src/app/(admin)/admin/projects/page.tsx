@@ -111,13 +111,15 @@ export default async function ProjectsListPage() {
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground/60">{project.summary}</p>
                       </div>
-                      <span className={`ml-4 rounded-full px-3 py-1.5 text-[10px] font-medium uppercase tracking-wide ${
-                        project.isPublished 
-                          ? "bg-green-50 text-green-700" 
-                          : "bg-amber-50 text-amber-700"
-                      }`}>
-                        {project.isPublished ? "Live" : "Draft"}
-                      </span>
+                      <div className="ml-4 flex items-center gap-3">
+                        <span className={`rounded-full px-3 py-1.5 text-[10px] font-medium uppercase tracking-wide ${
+                          project.isPublished 
+                            ? "bg-green-50 text-green-700" 
+                            : "bg-muted text-muted-foreground"
+                        }`}>
+                          {project.isPublished ? "Live" : "Draft"}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Project Meta */}
