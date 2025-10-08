@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { count } from "drizzle-orm";
+import { sql } from "drizzle-orm";
+import type { AnyPgTable } from "drizzle-orm/pg-core";
 
 import {
   checkDatabaseHealth,
@@ -22,23 +23,18 @@ type ActivityItem = {
 export default async function AdminDashboardPage() {
   const db = getDb();
 
+  const getTableCount = async (table: AnyPgTable) => {
+    const rows = await db
+      .select({ value: sql<number>`count(*)` })
+      .from(table);
+    return Number(rows.at(0)?.value ?? 0);
+  };
+
   const [listingsCount, projectsCount, postsCount, enquiriesCount] = await Promise.all([
-    db
-      .select({ value: count() })
-      .from(listings)
-      .then((rows) => Number(rows.at(0)?.value ?? 0)),
-    db
-      .select({ value: count() })
-      .from(projects)
-      .then((rows) => Number(rows.at(0)?.value ?? 0)),
-    db
-      .select({ value: count() })
-      .from(posts)
-      .then((rows) => Number(rows.at(0)?.value ?? 0)),
-    db
-      .select({ value: count() })
-      .from(enquiries)
-      .then((rows) => Number(rows.at(0)?.value ?? 0)),
+    getTableCount(listings),
+    getTableCount(projects),
+    getTableCount(posts),
+    getTableCount(enquiries),
   ]);
 
   const [recentListings, recentProjects, recentPosts, recentEnquiries, databaseHealth] =
