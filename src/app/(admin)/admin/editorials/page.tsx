@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { InlineToggle } from "@/components/admin/inline-toggle";
 
@@ -38,6 +38,29 @@ export default function EditorialsListPage() {
       createdAt: new Date('2025-08-20'),
     },
   ]);
+
+  // Fetch current status from API on component mount
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch('/api/content/status');
+        if (response.ok) {
+          const status = await response.json();
+          console.log('Fetched status for editorials:', status.editorials);
+          
+          // Update posts with current status from API
+          setPosts(prev => prev.map(post => ({
+            ...post,
+            isPublished: status.editorials[post.slug] !== false
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch editorial status:', error);
+      }
+    };
+
+    fetchStatus();
+  }, []);
 
   const handleTogglePublish = async (postId: string, newStatus: boolean) => {
     console.log(`Toggling post ${postId} to ${newStatus ? 'published' : 'draft'}`);

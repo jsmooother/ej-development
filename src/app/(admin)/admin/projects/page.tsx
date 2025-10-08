@@ -39,6 +39,29 @@ export default function ProjectsListPage() {
     },
   ]);
 
+  // Fetch current status from API on component mount
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const response = await fetch('/api/content/status');
+        if (response.ok) {
+          const status = await response.json();
+          console.log('Fetched status for projects:', status.projects);
+          
+          // Update projects with current status from API
+          setProjects(prev => prev.map(project => ({
+            ...project,
+            isPublished: status.projects[project.slug] !== false
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to fetch project status:', error);
+      }
+    };
+
+    fetchStatus();
+  }, []);
+
   const handleTogglePublish = async (projectId: string, newStatus: boolean) => {
     console.log(`Toggling project ${projectId} to ${newStatus ? 'published' : 'draft'}`);
     

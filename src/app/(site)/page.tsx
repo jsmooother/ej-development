@@ -169,8 +169,9 @@ export default async function HomePage() {
   // Fetch content status from API
   let contentStatus = { projects: {}, editorials: {} };
   try {
-    // Use relative URL to avoid port issues
-    const response = await fetch('/api/content/status', {
+    // Use full URL for server-side rendering
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+    const response = await fetch(`${baseUrl}/api/content/status`, {
       cache: 'no-store'
     });
     if (response.ok) {
