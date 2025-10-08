@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getDb, desc } from "@/lib/db";
+import { desc } from "drizzle-orm";
+import { getDb } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import { listings } from "@/lib/db/schema";
 
