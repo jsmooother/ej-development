@@ -29,9 +29,9 @@ export default function NewProjectPage() {
       />
 
       <div className="mx-auto max-w-2xl p-8">
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Basic Information
             </h2>
@@ -94,7 +94,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* Content */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Content
             </h2>
@@ -114,7 +114,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* Project Facts */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Project Details
             </h2>
@@ -172,9 +172,9 @@ export default function NewProjectPage() {
           </div>
 
           {/* Images */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
-              Images
+              Project Images
             </h2>
 
             <FormField 
@@ -190,17 +190,30 @@ export default function NewProjectPage() {
               />
             </FormField>
 
-            <div className="rounded-lg border border-dashed border-border/50 bg-muted/20 p-8 text-center">
-              <svg className="mx-auto h-12 w-12 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <FormField 
+              label="Additional Images" 
+              id="additionalImages"
+              description="Gallery images, one URL per line"
+            >
+              <Textarea 
+                id="additionalImages" 
+                name="additionalImages" 
+                rows={5}
+                placeholder="https://images.unsplash.com/photo-1...&#10;https://images.unsplash.com/photo-2...&#10;https://images.unsplash.com/photo-3..."
+              />
+            </FormField>
+
+            <div className="rounded-lg border border-dashed border-border/50 bg-muted/20 p-6 text-center">
+              <svg className="mx-auto h-10 w-10 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p className="mt-3 text-sm font-medium text-muted-foreground">Image upload coming soon</p>
-              <p className="mt-1 text-xs text-muted-foreground/60">For now, use image URLs</p>
+              <p className="mt-2 text-xs font-medium text-muted-foreground">Drag & drop upload coming soon</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground/50">For now, use image URLs above</p>
             </div>
           </div>
 
           {/* Publishing */}
-          <div className="space-y-5">
+          <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Visibility & Publishing
             </h2>
