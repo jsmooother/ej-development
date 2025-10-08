@@ -21,7 +21,7 @@ export default async function ListingsPage() {
           </p>
         </div>
         <Link
-          href="/admin/listings/new"
+          href="/admin/listings/new" 
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           Add New Listing

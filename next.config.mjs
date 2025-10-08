@@ -3,7 +3,6 @@ const isDev = process.env.NODE_ENV !== "production";
 
 const nextConfig = {
   experimental: {
-    typedRoutes: true,
     serverActions: {
       bodySizeLimit: "8mb",
     },
