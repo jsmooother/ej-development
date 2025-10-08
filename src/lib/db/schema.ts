@@ -10,8 +10,6 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 import { type getDb } from ".";
 
 export const listingStatusEnum = pgEnum("listing_status", ["coming_soon", "for_sale", "sold"]);
@@ -232,39 +230,6 @@ export type NewInstagramCache = typeof instagramCache.$inferInsert;
 
 export type Profile = typeof profiles.$inferSelect;
 export type NewProfile = typeof profiles.$inferInsert;
-
-// Zod schemas for validation
-export const insertSiteSettingsSchema = createInsertSchema(siteSettings);
-export const selectSiteSettingsSchema = createSelectSchema(siteSettings);
-
-export const insertListingSchema = createInsertSchema(listings, {
-  facts: z.object({
-    bedrooms: z.number().optional(),
-    bathrooms: z.number().optional(),
-    builtAreaSqm: z.number().optional(),
-    plotSqm: z.number().optional(),
-    parkingSpaces: z.number().optional(),
-    orientation: z.string().optional(),
-    amenities: z.array(z.string()).optional(),
-  }).optional(),
-  location: z.object({
-    latitude: z.number().optional(),
-    longitude: z.number().optional(),
-    address: z.string().optional(),
-    locality: z.string().optional(),
-    country: z.string().optional(),
-  }).optional(),
-});
-export const selectListingSchema = createSelectSchema(listings);
-
-export const insertProjectSchema = createInsertSchema(projects);
-export const selectProjectSchema = createSelectSchema(projects);
-
-export const insertPostSchema = createInsertSchema(posts);
-export const selectPostSchema = createSelectSchema(posts);
-
-export const insertEnquirySchema = createInsertSchema(enquiries);
-export const selectEnquirySchema = createSelectSchema(enquiries);
 
 // Query helper type
 export type DbClient = ReturnType<typeof getDb>;
