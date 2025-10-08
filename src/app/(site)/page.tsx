@@ -169,11 +169,15 @@ export default async function HomePage() {
   // Fetch content status from API
   let contentStatus = { projects: {}, editorials: {} };
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/content/status`, {
+    // Use relative URL to avoid port issues
+    const response = await fetch('/api/content/status', {
       cache: 'no-store'
     });
     if (response.ok) {
       contentStatus = await response.json();
+      console.log('Fetched content status:', contentStatus);
+    } else {
+      console.log('API response not ok:', response.status);
     }
   } catch (error) {
     console.error('Failed to fetch content status:', error);
@@ -189,22 +193,33 @@ export default async function HomePage() {
     'Neighbourhood Guide · Golden Mile': 'golden-mile-guide'
   };
 
-  // Filter projects to only show published ones
+  // Filter projects to only show published ones (fallback to showing all if API fails)
   const publishedProjects = projects.filter(project => {
     const slug = titleToSlug[project.title];
-    return slug && contentStatus.projects[slug] !== false;
+    // If no slug mapping or API failed, show all content
+    if (!slug || Object.keys(contentStatus.projects).length === 0) {
+      return true;
+    }
+    return contentStatus.projects[slug] !== false;
   });
 
-  // Filter editorials to only show published ones  
+  // Filter editorials to only show published ones (fallback to showing all if API fails)
   const publishedEditorials = editorials.filter(editorial => {
     const slug = titleToSlug[editorial.title];
-    return slug && contentStatus.editorials[slug] !== false;
+    // If no slug mapping or API failed, show all content
+    if (!slug || Object.keys(contentStatus.editorials).length === 0) {
+      return true;
+    }
+    return contentStatus.editorials[slug] !== false;
   });
 
   // Select content based on published status
   const selectedProjects = shuffleArray(publishedProjects).slice(0, MAX_PROJECTS);
   const selectedEditorials = publishedEditorials.slice(0, MAX_EDITORIALS);
   const selectedInstagram = instagramCards.slice(0, MAX_INSTAGRAM);
+
+  console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
+  console.log('Published editorials:', publishedEditorials.length, 'Selected:', selectedEditorials.length);
 
   // Create a newspaper-style mixed stream - 9 items with varied heights like Lagerlings
   const featureStream = [
