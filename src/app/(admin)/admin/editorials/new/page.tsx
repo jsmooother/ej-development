@@ -9,6 +9,45 @@ import { Toggle } from "@/components/admin/toggle";
 export default function NewEditorialPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [content, setContent] = useState("");
+  const [factPrompt, setFactPrompt] = useState("");
+
+  const handleGenerateContent = async () => {
+    if (!factPrompt.trim()) {
+      alert("Please enter some facts or key points first");
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const formData = new FormData(document.querySelector('form') as HTMLFormElement);
+      const title = formData.get('title') as string;
+
+      const response = await fetch('/api/ai/generate-editorial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt: factPrompt,
+          title: title || 'Untitled Editorial'
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.content) {
+        setContent(data.content);
+      } else {
+        alert("Failed to generate content");
+      }
+    } catch (error) {
+      console.error("Error generating content:", error);
+      alert("Failed to generate content");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -79,6 +118,40 @@ export default function NewEditorialPage() {
             </FormField>
           </div>
 
+          {/* AI Content Generator */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              AI Content Assistant
+            </h2>
+
+            <FormField 
+              label="Key Facts & Points" 
+              id="factPrompt"
+              description="Enter the main facts and ideas you want to cover"
+            >
+              <Textarea 
+                id="factPrompt" 
+                name="factPrompt" 
+                rows={4}
+                value={factPrompt}
+                onChange={(e) => setFactPrompt(e.target.value)}
+                placeholder="e.g., The Marbella luxury market is shifting toward design-led properties. Buyers now prioritize architectural integrity over generic amenities. Golden Mile seeing new developments with clean lines and sustainable materials..."
+              />
+            </FormField>
+
+            <button
+              type="button"
+              onClick={handleGenerateContent}
+              disabled={isGenerating || !factPrompt.trim()}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/40 bg-gradient-to-r from-purple-50 to-blue-50 px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-border hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {isGenerating ? "Generating editorial content..." : "Generate Editorial with AI"}
+            </button>
+          </div>
+
           {/* Content */}
           <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
@@ -89,13 +162,15 @@ export default function NewEditorialPage() {
               label="Full Content" 
               id="content"
               required
-              description="The main body of your editorial article"
+              description="Edit the AI-generated content or write your own"
             >
               <Textarea 
                 id="content" 
                 name="content" 
                 rows={16}
-                placeholder="Write your article here... (Rich text editor coming soon)"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Write your article here, or use the AI assistant above to generate a draft..."
                 required
               />
             </FormField>
