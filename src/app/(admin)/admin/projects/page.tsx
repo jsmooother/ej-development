@@ -6,9 +6,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { InlineToggle } from "@/components/admin/inline-toggle";
 
 export default function ProjectsListPage() {
-  // TODO: Re-enable database once connection is optimized
-  // For now, using mock data for fast development
-  const allProjects = [
+  const [projects, setProjects] = useState([
     {
       id: '1',
       slug: 'sierra-horizon',
