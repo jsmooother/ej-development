@@ -10,6 +10,9 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+import { type getDb } from ".";
 
 export const listingStatusEnum = pgEnum("listing_status", ["coming_soon", "for_sale", "sold"]);
 
@@ -32,10 +35,7 @@ export const siteSettings = pgTable("site_settings", {
   heroVideoUrl: text("hero_video_url"),
   mapboxToken: text("mapbox_token"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const listings = pgTable(
@@ -69,10 +69,7 @@ export const listings = pgTable(
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     slugIdx: uniqueIndex("listings_slug_idx").on(table.slug),
@@ -129,10 +126,7 @@ export const projects = pgTable(
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     slugIdx: uniqueIndex("projects_slug_idx").on(table.slug),
@@ -170,10 +164,7 @@ export const posts = pgTable(
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow()
-      .$onUpdate(() => new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     slugIdx: uniqueIndex("posts_slug_idx").on(table.slug),
@@ -208,8 +199,72 @@ export const profiles = pgTable("profiles", {
   userId: uuid("user_id").primaryKey(),
   role: profileRoleEnum("role").notNull().default("editor"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Schema types
+export type SiteSettings = typeof siteSettings.$inferSelect;
+export type NewSiteSettings = typeof siteSettings.$inferInsert;
+
+export type Listing = typeof listings.$inferSelect;
+export type NewListing = typeof listings.$inferInsert;
+
+export type ListingImage = typeof listingImages.$inferSelect;
+export type NewListingImage = typeof listingImages.$inferInsert;
+
+export type ListingDocument = typeof listingDocuments.$inferSelect;
+export type NewListingDocument = typeof listingDocuments.$inferInsert;
+
+export type Project = typeof projects.$inferSelect;
+export type NewProject = typeof projects.$inferInsert;
+
+export type ProjectImage = typeof projectImages.$inferSelect;
+export type NewProjectImage = typeof projectImages.$inferInsert;
+
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
+
+export type Enquiry = typeof enquiries.$inferSelect;
+export type NewEnquiry = typeof enquiries.$inferInsert;
+
+export type InstagramCache = typeof instagramCache.$inferSelect;
+export type NewInstagramCache = typeof instagramCache.$inferInsert;
+
+export type Profile = typeof profiles.$inferSelect;
+export type NewProfile = typeof profiles.$inferInsert;
+
+// Zod schemas for validation
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings);
+export const selectSiteSettingsSchema = createSelectSchema(siteSettings);
+
+export const insertListingSchema = createInsertSchema(listings, {
+  facts: z.object({
+    bedrooms: z.number().optional(),
+    bathrooms: z.number().optional(),
+    builtAreaSqm: z.number().optional(),
+    plotSqm: z.number().optional(),
+    parkingSpaces: z.number().optional(),
+    orientation: z.string().optional(),
+    amenities: z.array(z.string()).optional(),
+  }).optional(),
+  location: z.object({
+    latitude: z.number().optional(),
+    longitude: z.number().optional(),
+    address: z.string().optional(),
+    locality: z.string().optional(),
+    country: z.string().optional(),
+  }).optional(),
+});
+export const selectListingSchema = createSelectSchema(listings);
+
+export const insertProjectSchema = createInsertSchema(projects);
+export const selectProjectSchema = createSelectSchema(projects);
+
+export const insertPostSchema = createInsertSchema(posts);
+export const selectPostSchema = createSelectSchema(posts);
+
+export const insertEnquirySchema = createInsertSchema(enquiries);
+export const selectEnquirySchema = createSelectSchema(enquiries);
+
+// Query helper type
+export type DbClient = ReturnType<typeof getDb>;

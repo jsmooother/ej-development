@@ -3,8 +3,9 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
     SUPABASE_DB_URL: z.string().min(1, "SUPABASE_DB_URL is required"),
+    DIRECT_URL: z.string().optional(),
     RESEND_API_KEY: z.string().optional(),
     INSTAGRAM_ACCESS_TOKEN: z.string().optional(),
     MAPBOX_TOKEN: z.string().optional(),

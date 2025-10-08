@@ -1,4 +1,6 @@
 /** @type {import("next").NextConfig} */
+const isDev = process.env.NODE_ENV !== "production";
+
 const nextConfig = {
   experimental: {
     typedRoutes: true,
@@ -11,6 +13,7 @@ const nextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    unoptimized: isDev, // speed up local dev; Next will not optimize remote images
     remotePatterns: [
       {
         protocol: "https",

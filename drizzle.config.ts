@@ -1,15 +1,22 @@
-import "dotenv/config";
-import { defineConfig } from "drizzle-kit";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-if (!process.env.SUPABASE_DB_URL) {
-  throw new Error("Missing SUPABASE_DB_URL environment variable for Drizzle configuration.");
+import type { Config } from "drizzle-kit";
+
+// Prefer DIRECT_URL for migrations (bypasses PgBouncer). Fallback to SUPABASE_DB_URL if needed.
+const migrationUrl = process.env.DIRECT_URL ?? process.env.SUPABASE_DB_URL;
+
+if (!migrationUrl) {
+  throw new Error(
+    "Missing DIRECT_URL (preferred) or SUPABASE_DB_URL environment variable for Drizzle configuration.",
+  );
 }
 
-export default defineConfig({
+export default {
   schema: "./src/lib/db/schema.ts",
   out: "./drizzle",
-  dialect: "postgresql",
+  driver: "pg",
   dbCredentials: {
-    url: process.env.SUPABASE_DB_URL,
+    connectionString: migrationUrl,
   },
-});
+} satisfies Config;

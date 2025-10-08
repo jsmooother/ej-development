@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { env } from "@/lib/env";
@@ -21,8 +20,16 @@ const getOrCreateConnection = () => {
   return globalForDb.connection;
 };
 
-export const getDb = cache(() => drizzle(getOrCreateConnection(), { schema }));
+// For use in Next.js server components
+let db: ReturnType<typeof drizzle> | null = null;
+export const getDb = () => {
+  if (!db) {
+    db = drizzle(getOrCreateConnection(), { schema });
+  }
+  return db;
+};
 
+// For use in scripts and API routes
 export const createDbClient = () => drizzle(createConnection(), { schema });
 
 export type Database = ReturnType<typeof getDb>;
