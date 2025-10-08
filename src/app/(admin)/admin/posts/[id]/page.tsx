@@ -1,14 +1,14 @@
 import type { Route } from "next";
 import Link from "next/link";
 
-export default function NewPostPage() {
+export default function PostEditorPlaceholder({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-light">Create Post</h1>
+        <h1 className="font-serif text-3xl font-light">Blog Post Editor</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Our in-app markdown editor is being finalised. Publish via Supabase Studio or the seed
-          script until the authoring experience ships.
+          The on-site article editor is planned for a future sprint. Update post&nbsp;
+          <span className="font-medium">{params.id}</span> using Supabase Studio or your preferred CMS tooling for now.
         </p>
       </div>
       <Link

@@ -1,14 +1,14 @@
 import type { Route } from "next";
 import Link from "next/link";
 
-export default function NewProjectPage() {
+export default function ProjectEditorPlaceholder({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-light">Add Project</h1>
+        <h1 className="font-serif text-3xl font-light">Project Editor</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          The project editor is in progress. Please use the Supabase dashboard or seed scripts
-          to add projects until the inline editor is ready.
+          The case study editor is being assembled. For now, adjust project&nbsp;
+          <span className="font-medium">{params.id}</span> directly in Supabase Studio or through migrations.
         </p>
       </div>
       <Link

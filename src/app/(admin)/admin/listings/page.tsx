@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { getDb } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
@@ -18,7 +19,7 @@ export default async function ListingsPage() {
           </p>
         </div>
         <Link
-          href="/admin/listings/new"
+          href={"/admin/listings/new" as Route}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           Add New Listing
@@ -64,7 +65,7 @@ export default async function ListingsPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/admin/listings/${listing.id}`}
+                        href={`/admin/listings/${listing.id}` as Route}
                         className="text-xs text-primary hover:underline"
                       >
                         Edit

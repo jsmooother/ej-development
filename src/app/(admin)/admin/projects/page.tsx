@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 
 import { getDb } from "@/lib/db";
@@ -19,7 +20,7 @@ export default async function ProjectsPage() {
           </p>
         </div>
         <Link
-          href="/admin/projects/new"
+          href={"/admin/projects/new" as Route}
           className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
         >
           Add New Project
@@ -57,7 +58,7 @@ export default async function ProjectsPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/admin/projects/${project.id}`}
+                        href={`/admin/projects/${project.id}` as Route}
                         className="text-xs text-primary hover:underline"
                       >
                         Edit

@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { sql } from "drizzle-orm";
 import type { AnyPgTable } from "drizzle-orm/pg-core";
@@ -17,7 +18,7 @@ type ActivityItem = {
   label: string;
   type: "Listing" | "Project" | "Post" | "Enquiry";
   timestamp: Date | null;
-  href: string;
+  href: Route;
 };
 
 export default async function AdminDashboardPage() {
@@ -84,28 +85,28 @@ export default async function AdminDashboardPage() {
       label: item.title,
       type: "Listing" as const,
       timestamp: item.createdAt,
-      href: `/admin/listings/${item.id}`,
+      href: `/admin/listings/${item.id}` as Route,
     })),
     ...recentProjects.map((item) => ({
       id: item.id,
       label: item.title,
       type: "Project" as const,
       timestamp: item.createdAt,
-      href: `/admin/projects/${item.id}`,
+      href: `/admin/projects/${item.id}` as Route,
     })),
     ...recentPosts.map((item) => ({
       id: item.id,
       label: item.title,
       type: "Post" as const,
       timestamp: item.createdAt,
-      href: `/admin/posts/${item.id}`,
+      href: `/admin/posts/${item.id}` as Route,
     })),
     ...recentEnquiries.map((item) => ({
       id: item.id,
       label: item.name,
       type: "Enquiry" as const,
       timestamp: item.createdAt,
-      href: `/admin/enquiries`,
+      href: "/admin/enquiries" as Route,
     })),
   ]
     .sort((a, b) => {
@@ -152,7 +153,10 @@ export default async function AdminDashboardPage() {
                 Latest updates across listings, projects, posts, and inbound enquiries.
               </p>
             </div>
-            <Link href="/admin/enquiries" className="text-xs font-medium text-primary hover:underline">
+            <Link
+              href={"/admin/enquiries" as Route}
+              className="text-xs font-medium text-primary hover:underline"
+            >
               View all enquiries
             </Link>
           </div>
@@ -243,25 +247,25 @@ export default async function AdminDashboardPage() {
           <h2 className="font-serif text-xl font-light">Quick Links</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <Link
-              href="/admin/listings"
+              href={"/admin/listings" as Route}
               className="rounded-xl border border-border px-4 py-3 text-sm font-medium transition hover:border-primary"
             >
               Manage Listings
             </Link>
             <Link
-              href="/admin/projects"
+              href={"/admin/projects" as Route}
               className="rounded-xl border border-border px-4 py-3 text-sm font-medium transition hover:border-primary"
             >
               Manage Projects
             </Link>
             <Link
-              href="/admin/posts"
+              href={"/admin/posts" as Route}
               className="rounded-xl border border-border px-4 py-3 text-sm font-medium transition hover:border-primary"
             >
               Manage Blog Posts
             </Link>
             <Link
-              href="/admin/site-settings"
+              href={"/admin/site-settings" as Route}
               className="rounded-xl border border-border px-4 py-3 text-sm font-medium transition hover:border-primary"
             >
               Site Settings

@@ -1,14 +1,14 @@
 import type { Route } from "next";
 import Link from "next/link";
 
-export default function NewListingPage() {
+export default function ListingEditorPlaceholder({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-serif text-3xl font-light">Create Listing</h1>
+        <h1 className="font-serif text-3xl font-light">Listing Editor</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Listing creation is coming soon. In the meantime you can manage existing listings
-          or seed data via the Supabase dashboard.
+          The inline listing editor is still under construction. Manage listing&nbsp;
+          <span className="font-medium">{params.id}</span> through Supabase Studio for now or use the seed script.
         </p>
       </div>
       <Link
