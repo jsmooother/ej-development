@@ -18,13 +18,13 @@ const serif = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.ejdevelopment.com"),
+  metadataBase: new URL("https://www.ejproperties.com"),
   title: {
-    default: "EJ Development — Luxury Marbella Villas",
-    template: "%s | EJ Development",
+    default: "EJ Properties — Precision in Every Square Meter",
+    template: "%s | EJ Properties",
   },
   description:
-    "EJ Development curates refined living experiences along the Costa del Sol. Explore our Marbella flagship villa, completed projects, and editorial insights.",
+    "EJ Properties creates homes where every square meter is optimized with precision. We design spaces that feel effortless, harmonious, and perfectly balanced with understated luxury.",
 };
 
 export const viewport: Viewport = {

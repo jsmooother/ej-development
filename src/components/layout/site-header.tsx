@@ -6,12 +6,12 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS: Array<{ href: string; label: string }> = [
-  { href: "#top", label: "Home" },
-  { href: "#upcoming", label: "Upcoming" },
-  { href: "#portfolio", label: "Portfolio" },
-  { href: "#instagram", label: "Instagram" },
-  { href: "#studio", label: "Studio" },
-  { href: "#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/projects", label: "Projects" },
+  { href: "/editorials", label: "Editorials" },
+  { href: "/instagram", label: "Instagram" },
+  { href: "/studio", label: "Studio" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function SiteHeader() {
@@ -37,8 +37,8 @@ export function SiteHeader() {
       )}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="#top" scroll className="font-serif text-xl uppercase tracking-[0.3em]">
-          EJ Development
+        <Link href="/" className="font-serif text-xl uppercase tracking-[0.3em]">
+          EJ Properties
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm uppercase tracking-[0.3em] text-muted-foreground md:flex">

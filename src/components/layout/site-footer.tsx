@@ -10,15 +10,15 @@ export function SiteFooter() {
             Marbella · Costa del Sol
           </p>
           <p className="text-sm text-muted-foreground">
-            Tailored property development and project leadership across Andalusia.
+            Precision property development where every square meter is optimized with timeless design and refined luxury.
           </p>
         </div>
 
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Contact</p>
           <div className="space-y-1 text-sm text-muted-foreground">
-            <Link href="mailto:hello@ejdevelopment.com" className="block hover:text-foreground">
-              hello@ejdevelopment.com
+            <Link href="mailto:hello@ejproperties.com" className="block hover:text-foreground">
+              hello@ejproperties.com
             </Link>
             <Link href="tel:+34600123456" className="block hover:text-foreground">
               +34 600 123 456
@@ -39,7 +39,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border bg-card px-6 py-6 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        © {new Date().getFullYear()} EJ Development. All rights reserved.
+        © {new Date().getFullYear()} EJ Properties. All rights reserved.
       </div>
     </footer>
   );

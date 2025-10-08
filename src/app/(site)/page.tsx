@@ -9,6 +9,8 @@ type ProjectCard = {
   summary: string;
   location: string;
   image: string;
+  sqm: number;
+  rooms: number;
 };
 
 type EditorialCard = {
@@ -16,6 +18,13 @@ type EditorialCard = {
   title: string;
   excerpt: string;
   category: string;
+  image?: string;
+};
+
+type InstagramCard = {
+  type: "instagram";
+  image: string;
+  alt: string;
 };
 
 const projects: ProjectCard[] = [
@@ -24,6 +33,8 @@ const projects: ProjectCard[] = [
     title: "Sierra Horizon",
     summary: "Adaptive reuse opening a hillside estate toward the sea with layered courtyards.",
     location: "La Zagaleta · 2023",
+    sqm: 420,
+    rooms: 6,
     image: "https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80",
   },
   {
@@ -31,6 +42,8 @@ const projects: ProjectCard[] = [
     title: "Loma Azul",
     summary: "Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.",
     location: "Benahavís · 2022",
+    sqm: 380,
+    rooms: 5,
     image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
   },
   {
@@ -38,6 +51,8 @@ const projects: ProjectCard[] = [
     title: "Casa Palma",
     summary: "Palm-framed sanctuary with shaded loggias and a terraced pool axis.",
     location: "Marbella Club · 2021",
+    sqm: 320,
+    rooms: 4,
     image: "https://images.unsplash.com/photo-1521783988139-8930bd045bfa?auto=format&fit=crop&w=1400&q=80",
   },
   {
@@ -45,6 +60,8 @@ const projects: ProjectCard[] = [
     title: "Mirador Alto",
     summary: "Art-filled penthouse reimagined with sculptural joinery and panoramic glazing.",
     location: "Puerto Banús · 2020",
+    sqm: 280,
+    rooms: 3,
     image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1400&q=80",
   },
   {
@@ -52,6 +69,8 @@ const projects: ProjectCard[] = [
     title: "Villa Ladera",
     summary: "Split-level home cantilevered over native landscaping and a reflecting pool.",
     location: "Nueva Andalucía · 2019",
+    sqm: 450,
+    rooms: 7,
     image: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1400&q=80",
   },
 ];
@@ -62,44 +81,87 @@ const editorials: EditorialCard[] = [
     title: "Marbella Market, Reframed",
     excerpt: "Design-led developments are resetting expectations along the Golden Mile.",
     category: "Market Insight",
+    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80",
   },
   {
     type: "editorial",
     title: "Designing with Andalusian Light",
     excerpt: "Glazing, shading, and thermal comfort principles for coastal villas.",
     category: "Design Journal",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80",
   },
   {
     type: "editorial",
     title: "Neighbourhood Guide · Golden Mile",
     excerpt: "Our shortlist of dining, wellness, and cultural highlights near Casa Serrana.",
     category: "Guide",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80",
   },
   {
     type: "editorial",
     title: "Inside the Atelier",
     excerpt: "Material stories and collaborations from our Marbella workshop.",
     category: "Studio",
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80",
   },
   {
     type: "editorial",
     title: "Sourcing Sustainable Stone",
     excerpt: "Tracing quarry provenance for each terrazzo slab and limestone block.",
     category: "Process",
+    image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=600&q=80",
   },
 ];
 
-const featureStream = projects.flatMap((project, index) => [project, editorials[index % editorials.length]]);
+const instagramCards: InstagramCard[] = [
+  {
+    type: "instagram",
+    image: "https://images.unsplash.com/photo-1598928636135-d146006ff4be?auto=format&fit=crop&w=600&q=80",
+    alt: "Coastal living",
+  },
+  {
+    type: "instagram",
+    image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80",
+    alt: "Mediterranean architecture",
+  },
+  {
+    type: "instagram",
+    image: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=600&q=80",
+    alt: "Property showcase",
+  },
+];
 
-featureStream.push(editorials[(projects.length + 1) % editorials.length]);
+// Create a newspaper-style mixed stream
+const featureStream = [
+  projects[0], // Sierra Horizon - main feature
+  editorials[0], // Market Insight
+  instagramCards[0], // Instagram
+  projects[1], // Loma Azul
+  editorials[1], // Design Journal
+  instagramCards[1], // Instagram
+  projects[2], // Casa Palma
+  editorials[2], // Guide
+  projects[3], // Mirador Alto
+  editorials[3], // Studio
+  instagramCards[2], // Instagram
+  projects[4], // Villa Ladera
+  editorials[4], // Process
+];
 
 const layoutPattern = [
-  { className: "md:col-span-4", tall: true },
-  { className: "md:col-span-2" },
-  { className: "md:col-span-3" },
-  { className: "md:col-span-3" },
-  { className: "md:col-span-2" },
-  { className: "md:col-span-4", tall: true },
+  { className: "md:col-span-4", tall: true }, // Sierra Horizon - main feature
+  { className: "md:col-span-2" }, // Editorial
+  { className: "md:col-span-2" }, // Instagram
+  { className: "md:col-span-3" }, // Project
+  { className: "md:col-span-3" }, // Editorial
+  { className: "md:col-span-2" }, // Instagram
+  { className: "md:col-span-4", tall: true }, // Casa Palma - large
+  { className: "md:col-span-2" }, // Editorial
+  { className: "md:col-span-3" }, // Project
+  { className: "md:col-span-3" }, // Editorial
+  { className: "md:col-span-2" }, // Instagram
+  { className: "md:col-span-3" }, // Project
+  { className: "md:col-span-3" }, // Editorial
 ];
 
 const instagramTiles = [
@@ -127,15 +189,21 @@ export default function HomePage() {
       {/* Hero Intro */}
       <section className="relative overflow-hidden">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-6 pb-24 pt-28 text-center md:pt-32">
-          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">EJ Development</p>
+          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">EJ Properties</p>
           <h1 className="font-serif text-4xl font-light leading-tight text-foreground md:text-6xl">
-            Editorial living for the Costa del Sol.
+            Precision in every square meter.
           </h1>
-          <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-            We choreograph architecture, interiors, and development strategy into cohesive experiences. Browse
-            current and past work, ongoing research, and glimpses of Andalusian life on a single front page—our
-            homage to classic property newspapers.
-          </p>
+          <div className="max-w-4xl space-y-6 text-base text-muted-foreground md:text-lg">
+            <p>
+              We create homes where every square meter is optimized with precision. Through smart layouts and a natural flow between rooms, we design spaces that feel effortless, harmonious, and perfectly balanced.
+            </p>
+            <p>
+              Our strength lies in tailoring every detail – from intelligent storage solutions to seamless integrations – ensuring that function and elegance go hand in hand.
+            </p>
+            <p>
+              With a foundation of timeless design, refined by a modern touch, we work with warm tones and natural materials to bring a sense of sophistication and comfort. The result is homes that radiate understated luxury while remaining inviting, personal, and truly livable.
+            </p>
+          </div>
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs uppercase tracking-[0.3em]">
             <Link href="#portfolio" scroll className="rounded-full border border-border px-6 py-3 hover:border-primary">
               Explore Portfolio
@@ -198,7 +266,7 @@ export default function HomePage() {
                 <article
                   key={`${item.title}-${index}`}
                   className={cn(
-                    "group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg",
+                    "group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg",
                     layout.className,
                     layout.tall && "md:row-span-2",
                   )}
@@ -210,9 +278,19 @@ export default function HomePage() {
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    {/* SQM and Rooms overlay like lagerlings.se */}
+                    <div className="absolute top-4 left-4">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                        {item.sqm} m²
+                      </span>
+                    </div>
+                    <div className="absolute bottom-4 right-4">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                        {item.rooms} rum
+                      </span>
+                    </div>
                   </div>
                   <div className="flex flex-1 flex-col gap-4 p-6">
-                    <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground/70">Completed Project</p>
                     <div className="space-y-2">
                       <h3 className="font-serif text-2xl font-light text-foreground">{item.title}</h3>
                       <p className="text-sm text-muted-foreground">{item.summary}</p>
@@ -226,23 +304,72 @@ export default function HomePage() {
               );
             }
 
-            return (
-              <article
-                key={`${item.title}-${index}`}
-                className={cn(
-                  "flex h-full flex-col justify-between rounded-3xl border border-border bg-background/80 p-6 transition hover:border-primary",
-                  layout.className,
-                  layout.tall && "md:row-span-2",
-                )}
-              >
-                <div className="space-y-3">
-                  <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground/70">{item.category}</p>
-                  <h3 className="font-serif text-2xl font-light text-foreground">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.excerpt}</p>
-                </div>
-                <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Full editorial launching soon</span>
-              </article>
-            );
+            if (item.type === "editorial") {
+              return (
+                <article
+                  key={`${item.title}-${index}`}
+                  className={cn(
+                    "flex h-full flex-col justify-between rounded-3xl border border-border bg-background/80 p-6 transition hover:border-primary",
+                    layout.className,
+                    layout.tall && "md:row-span-2",
+                  )}
+                >
+                  <div className="space-y-4">
+                    {/* Editorial header like "PROFILER" */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold uppercase tracking-[0.4em] text-red-600">Editorial</span>
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="font-serif text-2xl font-light text-foreground">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.excerpt}</p>
+                    </div>
+                    {item.image && (
+                      <div className="relative h-32 w-full overflow-hidden rounded-lg">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Full editorial launching soon</span>
+                </article>
+              );
+            }
+
+            if (item.type === "instagram") {
+              return (
+                <article
+                  key={`${item.alt}-${index}`}
+                  className={cn(
+                    "group relative overflow-hidden rounded-3xl border border-border bg-card transition hover:-translate-y-1 hover:shadow-lg",
+                    layout.className,
+                    layout.tall && "md:row-span-2",
+                  )}
+                >
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={item.image}
+                      alt={item.alt}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {/* Instagram icon overlay */}
+                    <div className="absolute top-4 right-4">
+                      <div className="rounded-full bg-white/90 p-2 shadow-sm">
+                        <svg className="h-5 w-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            }
+
+            return null;
           })}
         </div>
       </section>
@@ -306,8 +433,8 @@ export default function HomePage() {
             documentation, floorplans, and schedules.
           </p>
           <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.3em]">
-            <Link href="mailto:hello@ejdevelopment.com" className="rounded-full border border-border px-5 py-2 hover:border-primary">
-              hello@ejdevelopment.com
+            <Link href="mailto:hello@ejproperties.com" className="rounded-full border border-border px-5 py-2 hover:border-primary">
+              hello@ejproperties.com
             </Link>
             <Link href="tel:+34600123456" className="rounded-full border border-border px-5 py-2 hover:border-primary">
               +34 600 123 456
@@ -322,7 +449,7 @@ export default function HomePage() {
           </div>
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">Press & Partnerships</p>
-            <p className="mt-2">press@ejdevelopment.com</p>
+            <p className="mt-2">press@ejproperties.com</p>
           </div>
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">Office Hours</p>
