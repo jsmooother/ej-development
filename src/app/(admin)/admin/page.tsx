@@ -19,7 +19,7 @@ export default async function AdminDashboardPage() {
   const stats = [
     { label: "Active Listings", value: listingsCount },
     { label: "Case Studies", value: projectsCount },
-    { label: "Blog Posts", value: postsCount },
+    { label: "Editorials", value: postsCount },
     { label: "Enquiries", value: enquiriesCount },
   ];
 
@@ -47,7 +47,9 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="col-span-2 space-y-4 rounded-lg border border-border p-4">
           <h2 className="font-serif text-xl font-light">Recent Activity</h2>
-          <p className="text-sm text-muted-foreground">Coming soon: Activity feed showing recent content updates and enquiries.</p>
+          <p className="text-sm text-muted-foreground">
+            Coming soon: Activity feed showing recent content updates and enquiries.
+          </p>
         </div>
 
         <div className="space-y-4 rounded-lg border border-border p-4">
@@ -60,10 +62,22 @@ export default async function AdminDashboardPage() {
               Add New Listing
             </a>
             <a
-              href="/admin/posts/new"
+              href="/admin/projects/new"
+              className="block rounded-md bg-primary/90 px-4 py-2 text-center text-sm font-medium text-primary-foreground hover:bg-primary"
+            >
+              Add New Project
+            </a>
+            <a
+              href="/admin/editorials/new"
               className="block rounded-md bg-primary/10 px-4 py-2 text-center text-sm font-medium text-primary hover:bg-primary/20"
             >
-              Create Blog Post
+              Create Editorial
+            </a>
+            <a
+              href="/admin/instagram"
+              className="block rounded-md border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:border-foreground"
+            >
+              Instagram Settings
             </a>
           </div>
         </div>

@@ -9,6 +9,8 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().optional(),
     INSTAGRAM_ACCESS_TOKEN: z.string().optional(),
     MAPBOX_TOKEN: z.string().optional(),
+    OPENAI_API_KEY: z.string().optional(),
+    SORA_API_KEY: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.string().url("NEXT_PUBLIC_SUPABASE_URL must be a valid URL"),

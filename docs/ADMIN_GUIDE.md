@@ -5,8 +5,9 @@ Complete guide for managing content on the EJ Development website.
 ## Table of Contents
 - [Getting Started](#getting-started)
 - [Dashboard Overview](#dashboard-overview)
-- [Managing Blog Posts](#managing-blog-posts)
+- [Managing Editorials](#managing-editorials)
 - [Managing Properties](#managing-properties)
+- [Managing Projects](#managing-projects)
 - [Managing Instagram Feed](#managing-instagram-feed)
 - [Best Practices](#best-practices)
 - [Troubleshooting](#troubleshooting)
@@ -27,7 +28,7 @@ Complete guide for managing content on the EJ Development website.
 ### First-Time Setup
 
 After logging in for the first time:
-1. Add your first blog post
+1. Add your first editorial
 2. Add property listings
 3. Connect Instagram feed
 4. Review and update the About section (in code)
@@ -39,8 +40,8 @@ After logging in for the first time:
 
 After logging in, you'll see three main sections:
 
-### 📝 Blog Posts
-Manage editorial content and articles for your website.
+### 📝 Editorials
+Manage editorial content and articles for your website. Use the AI assistant to draft pieces quickly.
 
 ### 🏠 Properties
 Manage property listings with images, details, and descriptions.
@@ -52,67 +53,57 @@ Click any card to manage that content type.
 
 ---
 
-## Managing Blog Posts
+## Managing Editorials
 
-### Creating a New Blog Post
+### Creating a New Editorial
 
-1. Click **Blog Posts** from the dashboard
-2. Click **NEW POST** button (top right)
+1. Click **Editorials** from the dashboard
+2. Click **CREATE EDITORIAL** (top right)
 3. Fill in the form:
 
 #### Required Fields
 
-**Category**
-- Use UPPERCASE text (e.g., `DESIGN`, `LIFESTYLE`, `INSIGHTS`)
-- Keep it short and descriptive
-- Examples: `DESIGN`, `SUSTAINABILITY`, `CRAFTSMANSHIP`, `CULTURE`
+**Category tag**
+- Keep it short (e.g., `Market Insight`, `Design Journal`)
+- This renders as the badge on the homepage card
 
 **Title**
-- Use title case
-- Keep under 80 characters for best display
-- Make it engaging and descriptive
+- Aim for 60–80 characters
+- Use editorial tone, title case recommended
 
 **Excerpt**
-- Brief summary of the post (2-3 sentences)
-- This appears on the homepage
-- Keep under 200 characters
+- 1–2 sentences (max 220 characters)
+- Appears on the homepage stream beneath the title
 
-**Image URL**
-- Full URL to the image
-- Recommended size: 1200x900px or larger
-- Use high-quality images
-- Supported sources: Unsplash, direct image URLs
+**Body copy**
+- Three short paragraphs read best in the detail view
+- You can paste formatted text—line breaks are preserved
 
-**Content** (Optional)
-- Full article content
-- Currently displayed on detail pages (if implemented)
-- Can include paragraphs and line breaks
+**Primary image URL**
+- Full URL to the lead image (1200px wide or greater)
+- Supabase Storage paths are also accepted
 
-**Published**
-- ✅ Checked: Post appears on homepage
-- ❌ Unchecked: Post saved as draft
+**Publish toggle**
+- ✅ Checked: Editorial surfaces on the homepage
+- ❌ Unchecked: Saved as draft for later
 
-4. Click **CREATE**
+4. Click **SAVE EDITORIAL**
 
-### Editing a Blog Post
+### Using the AI Draft Assistant
 
-1. Find the post in the list
-2. Click **EDIT** button
-3. Modify any fields
-4. Click **UPDATE**
+1. Scroll to **Generate with AI**
+2. Enter a topic, desired tone, and keywords
+3. Click **Draft with AI**
+4. Review the generated title, excerpt, body, and creative prompts
+5. Paste the suggested image prompts into Midjourney, DALL·E, or Sora as needed
 
-### Deleting a Blog Post
+> **Note:** An OpenAI API key must be configured in the environment for this feature. If unavailable, the assistant will explain what is missing.
 
-1. Find the post in the list
-2. Click **DELETE** button
-3. Confirm deletion (this cannot be undone!)
+### Editorial Display
 
-### Blog Post Display
-
-- Up to 6 most recent published posts appear on the homepage
-- Posts are arranged in a masonry grid layout
-- Each post shows: category tag, title, excerpt, and image
-- Clicking a post navigates to `/blog/[post-id]` (detail page)
+- The six most recent published editorials appear in rotation with projects on the homepage
+- Cards show the category tag, title, and excerpt
+- Clicking a card navigates to the editorial detail page once implemented
 
 ---
 
@@ -171,45 +162,87 @@ Click any card to manage that content type.
 
 ---
 
+## Managing Projects
+
+Projects power the "Portfolio & Editorial" stream and require both hero and transformation imagery.
+
+### Adding a New Project
+
+1. Click **Projects** from the dashboard
+2. Click **ADD PROJECT**
+3. Complete the form:
+
+#### Core Details
+
+**Title & Summary**
+- Title appears on the homepage card
+- Summary should be 1–2 sentences describing the concept
+
+**Location & Year**
+- Use the format `Neighbourhood · Year` for consistency (e.g., `Sierra Blanca · 2024`)
+- Year is optional but helps with chronological filtering later
+
+**Full Description**
+- Optional longer copy for the forthcoming project detail page
+- Use paragraphs to describe phases, materials, and partners
+
+#### Imagery
+
+**Hero image**
+- Required
+- Landscape orientation works best (min 1400px wide)
+- The hero image is also stored in the gallery with the `hero` tag
+
+**Before image**
+- Optional but recommended
+- Shows the property before renovation
+- You can add an optional caption for context
+
+**After image**
+- Optional but recommended to highlight transformation
+- Add a caption to describe the update
+
+> Tip: Upload images to Supabase Storage or paste full CDN URLs.
+
+#### Publish Toggle
+
+- ✅ Checked: Project appears on the homepage stream
+- ❌ Unchecked: Keeps the project hidden while drafting
+
+4. Click **SAVE PROJECT**
+
+### Project Display
+
+- Published projects interleave with editorials on the homepage grid
+- Before/after pairs allow future compare sliders and timeline modules
+- Additional gallery slots will be added in subsequent iterations
+
+---
+
 ## Managing Instagram Feed
 
-The Instagram feed shows your recent posts in a grid at the bottom of the homepage.
+The Instagram feed now refreshes automatically from the official API.
 
-### Adding an Instagram Post
+### Connecting Instagram
 
 1. Click **Instagram** from the dashboard
-2. Click **NEW POST** button
-3. Fill in all required fields:
+2. Paste your **Instagram username**
+3. Paste a **long-lived access token** generated via Meta's Graph API tools
+4. Click **SAVE SETTINGS**
 
-**Image URL**
-- Direct link to the Instagram image
-- High-quality, square images (1:1 ratio) work best
-- Example: Download from Instagram or use screenshot
+> The token is stored securely in Supabase. Rotate it whenever Meta prompts you to refresh permissions.
 
-**Instagram URL**
-- Full Instagram post URL
-- Format: `https://instagram.com/p/POST_ID`
-- Example: `https://instagram.com/p/ABC123xyz`
+### Refreshing the Feed
 
-**Caption**
-- Short description of the post
-- This helps with accessibility
-- Not displayed publicly but used for alt text
+- The system caches the last API response to avoid rate limits
+- Use **Clear cache** to force a refresh (e.g., after posting new content)
+- The dashboard shows when the feed was last refreshed
 
-4. Click **CREATE**
+### Roadmap
 
-### Deleting an Instagram Post
-
-1. Find the post in the grid
-2. Click **DELETE** button
-3. Confirm deletion
-
-### Instagram Feed Display
-
-- Up to 6 most recent posts shown on homepage
-- Displayed in a 2-3-6 column grid (responsive)
-- Clicking an image opens the Instagram post
-- Hover effects add interactivity
+- Manual pinning of favourite posts
+- Auto-syncing Sora reels into the hero slot
+- Scheduling quiet hours to respect API limits
 
 ---
 

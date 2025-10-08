@@ -22,6 +22,13 @@ export const listingDocumentTypeEnum = pgEnum("listing_document_type", [
   "document",
 ]);
 
+export const projectImageVariantEnum = pgEnum("project_image_variant", [
+  "hero",
+  "before",
+  "after",
+  "detail",
+]);
+
 export const siteSettings = pgTable("site_settings", {
   id: uuid("id").defaultRandom().primaryKey(),
   brandName: text("brand_name").notNull(),
@@ -119,8 +126,11 @@ export const projects = pgTable(
     summary: text("summary"),
     content: text("content"),
     year: integer("year"),
+    location: text("location"),
     facts: jsonb("facts").$type<Record<string, string | number | null>>(),
     heroImagePath: text("hero_image_path"),
+    beforeImagePath: text("before_image_path"),
+    afterImagePath: text("after_image_path"),
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -142,6 +152,7 @@ export const projectImages = pgTable(
     imagePath: text("image_path").notNull(),
     altText: text("alt_text"),
     sortOrder: integer("sort_order").default(0),
+    variant: projectImageVariantEnum("variant").notNull().default("detail"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
@@ -158,6 +169,7 @@ export const posts = pgTable(
     excerpt: text("excerpt"),
     content: text("content"),
     coverImagePath: text("cover_image_path"),
+    secondaryImagePath: text("secondary_image_path"),
     tags: text("tags").array(),
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
