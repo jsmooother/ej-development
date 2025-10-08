@@ -28,11 +28,11 @@ export default function NewProjectPage() {
         description="Create a new portfolio project to showcase your work"
       />
 
-      <div className="mx-auto max-w-4xl p-12">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="mx-auto max-w-2xl p-8">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {/* Basic Information */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Basic Information
             </h2>
             
@@ -94,8 +94,8 @@ export default function NewProjectPage() {
           </div>
 
           {/* Content */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Content
             </h2>
 
@@ -114,12 +114,12 @@ export default function NewProjectPage() {
           </div>
 
           {/* Project Facts */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Project Details
             </h2>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <FormField 
                 label="Square Meters" 
                 id="sqm"
@@ -172,8 +172,8 @@ export default function NewProjectPage() {
           </div>
 
           {/* Images */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Images
             </h2>
 
@@ -200,8 +200,8 @@ export default function NewProjectPage() {
           </div>
 
           {/* Publishing */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Visibility & Publishing
             </h2>
 

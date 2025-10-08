@@ -28,11 +28,11 @@ export default function NewEditorialPage() {
         description="Write a new article to share insights and stories"
       />
 
-      <div className="mx-auto max-w-4xl p-12">
-        <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="mx-auto max-w-2xl p-8">
+        <form onSubmit={handleSubmit} className="space-y-10">
           {/* Basic Information */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Basic Information
             </h2>
             
@@ -80,8 +80,8 @@ export default function NewEditorialPage() {
           </div>
 
           {/* Content */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Article Content
             </h2>
 
@@ -102,8 +102,8 @@ export default function NewEditorialPage() {
           </div>
 
           {/* Categorization */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Categorization
             </h2>
 
@@ -121,8 +121,8 @@ export default function NewEditorialPage() {
           </div>
 
           {/* Images */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Cover Image
             </h2>
 
@@ -149,8 +149,8 @@ export default function NewEditorialPage() {
           </div>
 
           {/* Publishing */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <div className="space-y-5">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
               Visibility & Publishing
             </h2>
 
