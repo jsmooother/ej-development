@@ -170,33 +170,43 @@ export default async function HomePage() {
   let dbProjects: ProjectCard[] = [];
   let dbEditorials: EditorialCard[] = [];
   let dbInstagram: InstagramCard[] = [];
-  
+
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    
+
+    console.log('Fetching data from:', baseUrl);
+
     // Fetch projects from database with 60s cache
     const projectsResponse = await fetch(`${baseUrl}/api/projects`, {
       next: { revalidate: 60 }
     });
-    
+
     // Fetch editorials from database with 60s cache
     const editorialsResponse = await fetch(`${baseUrl}/api/editorials`, {
       next: { revalidate: 60 }
     });
-    
+
     // Fetch Instagram posts from database with 60s cache
     const instagramResponse = await fetch(`${baseUrl}/api/instagram/posts`, {
       next: { revalidate: 60 }
     });
-    
+
+    console.log('API Response Status:', {
+      projects: projectsResponse.status,
+      editorials: editorialsResponse.status,
+      instagram: instagramResponse.status
+    });
+
     if (projectsResponse.ok && editorialsResponse.ok && instagramResponse.ok) {
       const rawProjects = await projectsResponse.json();
       const rawEditorials = await editorialsResponse.json();
       const rawInstagram = await instagramResponse.json();
-      
-      console.log('Fetched projects from DB:', rawProjects.length);
-      console.log('Fetched editorials from DB:', rawEditorials.length);
-      console.log('Fetched Instagram posts from DB:', rawInstagram.length);
+
+      console.log('✅ Fetched from DB:', {
+        projects: rawProjects.length,
+        editorials: rawEditorials.length,
+        instagram: rawInstagram.length
+      });
       
       // Map and filter published projects
       dbProjects = rawProjects
@@ -229,13 +239,18 @@ export default async function HomePage() {
         permalink: post.permalink
       }));
     } else {
-      console.log('Failed to fetch from database, using fallback data');
+      console.log('❌ Failed to fetch from database, using fallback data');
+      console.log('Response details:', {
+        projects: projectsResponse.status,
+        editorials: editorialsResponse.status,
+        instagram: instagramResponse.status
+      });
       dbProjects = projects;
       dbEditorials = editorials;
       dbInstagram = instagramCards;
     }
   } catch (error) {
-    console.error('Error fetching live data:', error);
+    console.error('❌ Error fetching live data:', error);
     dbProjects = projects;
     dbEditorials = editorials;
     dbInstagram = instagramCards;
