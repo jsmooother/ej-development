@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { FormField, Input, Textarea, Select, Toggle } from "@/components/admin/form-field";
+import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
+import { Toggle } from "@/components/admin/toggle";
 
 interface Editorial {
   id: string;
@@ -263,8 +264,12 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                   </p>
                 </div>
                 <Toggle
-                  checked={editorial.isPublished}
-                  onCheckedChange={(checked) => setEditorial({ ...editorial, isPublished: checked })}
+                  id="isPublished"
+                  name="isPublished"
+                  label="Publish to Site"
+                  description="When enabled, this editorial will be visible on the public site"
+                  defaultChecked={editorial.isPublished}
+                  onChange={(checked) => setEditorial({ ...editorial, isPublished: checked })}
                 />
               </div>
 
