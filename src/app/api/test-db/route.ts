@@ -96,7 +96,7 @@ export async function GET() {
     const db = getDb();
     // Try to count records in listings table
     const { sql } = await import("drizzle-orm");
-    const { listings } = await import("@/lib/db");
+    const { listings } = await import("@/lib/db/schema");
     
     const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(listings);
     
