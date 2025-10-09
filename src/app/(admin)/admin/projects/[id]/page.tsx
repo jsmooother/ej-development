@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { FormField, Input, Textarea, Select, Toggle } from "@/components/admin/form-field";
+import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
+import { Toggle } from "@/components/admin/toggle";
 
 interface Project {
   id: string;
@@ -289,18 +290,14 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           {/* Publishing */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
             <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Publishing</h2>
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-sans text-sm font-medium text-foreground">Published</h3>
-                <p className="text-xs text-muted-foreground/60">
-                  Make this project visible on the website
-                </p>
-              </div>
-              <Toggle
-                checked={project.isPublished}
-                onCheckedChange={(checked) => setProject({ ...project, isPublished: checked })}
-              />
-            </div>
+            <Toggle
+              id="isPublished"
+              name="isPublished"
+              label="Publish to Site"
+              description="When enabled, this project will be visible on the public site"
+              defaultChecked={project.isPublished}
+              onChange={(checked) => setProject({ ...project, isPublished: checked })}
+            />
           </div>
 
           {/* Actions */}
