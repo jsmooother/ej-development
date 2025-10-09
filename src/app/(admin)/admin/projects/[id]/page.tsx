@@ -10,11 +10,9 @@ interface Project {
   slug: string;
   title: string;
   summary: string;
-  facts: {
-    sqm: number;
-    bedrooms: number;
-    bathrooms: number;
-  };
+  content: string;
+  year: number | null;
+  facts: Record<string, string | number | null>;
   heroImagePath: string;
   additionalImages: string[];
   isPublished: boolean;
@@ -44,7 +42,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             slug: data.project.slug,
             title: data.project.title,
             summary: data.project.summary || '',
-            facts: data.project.facts || { sqm: 0, bedrooms: 0, bathrooms: 0 },
+            content: data.project.content || '',
+            year: data.project.year,
+            facts: data.project.facts || {},
             heroImagePath: data.project.heroImagePath || '',
             additionalImages: [], // Will be handled when we add image relations
             isPublished: data.project.isPublished,
@@ -78,8 +78,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           title: project.title,
           slug: project.slug,
           summary: project.summary,
-          content: '', // Will add content field later
-          year: null, // Will add year field later
+          content: project.content,
+          year: project.year,
           facts: project.facts,
           heroImagePath: project.heroImagePath,
           isPublished: project.isPublished,
@@ -196,63 +196,61 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                   placeholder="Location · Year"
                 />
               </FormField>
+
+              <FormField
+                label="Year"
+                description="Year the project was completed"
+              >
+                <Input
+                  type="number"
+                  value={project.year || ''}
+                  onChange={(e) => setProject({ ...project, year: e.target.value ? parseInt(e.target.value) : null })}
+                  placeholder="2023"
+                  min="2000"
+                  max="2030"
+                />
+              </FormField>
             </div>
+          </div>
+
+          {/* Content */}
+          <div className="rounded-2xl border border-border/50 bg-card p-6">
+            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Project Description</h2>
+            <FormField
+              label="Content"
+              description="Detailed project description and case study"
+            >
+              <Textarea
+                value={project.content}
+                onChange={(e) => setProject({ ...project, content: e.target.value })}
+                placeholder="Describe your project in detail..."
+                rows={8}
+              />
+            </FormField>
           </div>
 
           {/* Project Details */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Project Details</h2>
-            <div className="grid gap-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <FormField
-                  label="Square Meters"
-                  description="Total area in m²"
-                  required
-                >
-                  <Input
-                    type="number"
-                    value={project.facts.sqm}
-                    onChange={(e) => setProject({ 
-                      ...project, 
-                      facts: { ...project.facts, sqm: parseInt(e.target.value) || 0 }
-                    })}
-                    placeholder="420"
-                  />
-                </FormField>
-
-                <FormField
-                  label="Bedrooms"
-                  description="Number of bedrooms"
-                  required
-                >
-                  <Input
-                    type="number"
-                    value={project.facts.bedrooms}
-                    onChange={(e) => setProject({ 
-                      ...project, 
-                      facts: { ...project.facts, bedrooms: parseInt(e.target.value) || 0 }
-                    })}
-                    placeholder="6"
-                  />
-                </FormField>
-
-                <FormField
-                  label="Bathrooms"
-                  description="Number of bathrooms"
-                  required
-                >
-                  <Input
-                    type="number"
-                    value={project.facts.bathrooms}
-                    onChange={(e) => setProject({ 
-                      ...project, 
-                      facts: { ...project.facts, bathrooms: parseInt(e.target.value) || 0 }
-                    })}
-                    placeholder="5"
-                  />
-                </FormField>
-              </div>
-            </div>
+            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Project Facts (JSON)</h2>
+            <FormField
+              label="Facts"
+              description="Project details as JSON (e.g., location, size, role, etc.)"
+            >
+              <Textarea
+                value={JSON.stringify(project.facts, null, 2)}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    setProject({ ...project, facts: parsed });
+                  } catch (err) {
+                    // Invalid JSON, don't update
+                  }
+                }}
+                placeholder='{\n  "location": "La Zagaleta",\n  "sizeSqm": 1200,\n  "role": "Design & Development"\n}'
+                rows={8}
+                className="font-mono text-xs"
+              />
+            </FormField>
           </div>
 
           {/* Images */}
