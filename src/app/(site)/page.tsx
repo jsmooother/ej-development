@@ -169,6 +169,7 @@ export default async function HomePage() {
   // Fetch live data from database
   let dbProjects: ProjectCard[] = [];
   let dbEditorials: EditorialCard[] = [];
+  let dbInstagram: InstagramCard[] = [];
   
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
@@ -183,12 +184,19 @@ export default async function HomePage() {
       cache: 'no-store'
     });
     
-    if (projectsResponse.ok && editorialsResponse.ok) {
+    // Fetch Instagram posts from database
+    const instagramResponse = await fetch(`${baseUrl}/api/instagram/posts`, {
+      cache: 'no-store'
+    });
+    
+    if (projectsResponse.ok && editorialsResponse.ok && instagramResponse.ok) {
       const rawProjects = await projectsResponse.json();
       const rawEditorials = await editorialsResponse.json();
+      const rawInstagram = await instagramResponse.json();
       
       console.log('Fetched projects from DB:', rawProjects.length);
       console.log('Fetched editorials from DB:', rawEditorials.length);
+      console.log('Fetched Instagram posts from DB:', rawInstagram.length);
       
       // Map and filter published projects
       dbProjects = rawProjects
@@ -213,25 +221,35 @@ export default async function HomePage() {
           excerpt: editorial.excerpt,
           image: editorial.coverImagePath || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80'
         }));
+      
+      // Map Instagram posts
+      dbInstagram = rawInstagram.map((post: any) => ({
+        id: post.id,
+        image: post.mediaUrl,
+        permalink: post.permalink
+      }));
     } else {
       console.log('Failed to fetch from database, using fallback data');
       dbProjects = projects;
       dbEditorials = editorials;
+      dbInstagram = instagramCards;
     }
   } catch (error) {
     console.error('Error fetching live data:', error);
     dbProjects = projects;
     dbEditorials = editorials;
+    dbInstagram = instagramCards;
   }
 
   // Use live data if available, otherwise fallback to static data
   const publishedProjects = dbProjects.length > 0 ? dbProjects : projects;
   const publishedEditorials = dbEditorials.length > 0 ? dbEditorials : editorials;
+  const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : instagramCards;
 
   // Select content based on published status
   const selectedProjects = shuffleArray(publishedProjects).slice(0, MAX_PROJECTS);
   const selectedEditorials = publishedEditorials.slice(0, MAX_EDITORIALS);
-  const selectedInstagram = instagramCards.slice(0, MAX_INSTAGRAM);
+  const selectedInstagram = publishedInstagram.slice(0, MAX_INSTAGRAM);
 
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
   console.log('Published editorials:', publishedEditorials.length, 'Selected:', selectedEditorials.length);

@@ -16,11 +16,56 @@ export default function NewProjectPage() {
     e.preventDefault();
     setIsSaving(true);
 
-    // TODO: Replace with actual API call
-    setTimeout(() => {
-      alert("Project would be created here!");
-      router.push("/admin/projects");
-    }, 1000);
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      // Parse facts from JSON input
+      let facts = {};
+      const factsInput = formData.get('facts') as string;
+      if (factsInput) {
+        try {
+          facts = JSON.parse(factsInput);
+        } catch (error) {
+          alert('Invalid JSON in facts field');
+          setIsSaving(false);
+          return;
+        }
+      }
+      
+      // Create project object
+      const projectData = {
+        title: formData.get('title') as string,
+        slug: formData.get('slug') as string,
+        summary: formData.get('summary') as string || '',
+        content: formData.get('content') as string || '',
+        year: formData.get('year') ? parseInt(formData.get('year') as string) : new Date().getFullYear(),
+        facts,
+        heroImagePath: heroImageUrl || '',
+        isPublished: formData.get('isPublished') === 'on',
+      };
+      
+      // Call API to create project
+      const response = await fetch('/api/projects/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(projectData),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create project');
+      }
+      
+      const result = await response.json();
+      console.log('Created project:', result);
+      
+      // Redirect to projects list
+      router.push('/admin/projects');
+    } catch (error) {
+      console.error('Error creating project:', error);
+      alert(error instanceof Error ? error.message : 'Failed to create project');
+      setIsSaving(false);
+    }
   };
 
   return (

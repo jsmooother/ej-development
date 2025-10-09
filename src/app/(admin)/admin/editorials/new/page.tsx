@@ -53,11 +53,46 @@ export default function NewEditorialPage() {
     e.preventDefault();
     setIsSaving(true);
 
-    // TODO: Replace with actual API call
-    setTimeout(() => {
-      alert("Editorial would be created here!");
-      router.push("/admin/editorials");
-    }, 1000);
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      // Parse tags from comma-separated string
+      const tagsInput = formData.get('tags') as string;
+      const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+      
+      // Create editorial object
+      const editorialData = {
+        title: formData.get('title') as string,
+        slug: formData.get('slug') as string,
+        excerpt: formData.get('excerpt') as string || '',
+        content: content || (formData.get('content') as string) || '',
+        coverImagePath: formData.get('coverImagePath') as string || '',
+        tags,
+        isPublished: formData.get('isPublished') === 'on',
+      };
+      
+      // Call API to create editorial
+      const response = await fetch('/api/editorials/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editorialData),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create editorial');
+      }
+      
+      const result = await response.json();
+      console.log('Created editorial:', result);
+      
+      // Redirect to editorials list
+      router.push('/admin/editorials');
+    } catch (error) {
+      console.error('Error creating editorial:', error);
+      alert(error instanceof Error ? error.message : 'Failed to create editorial');
+      setIsSaving(false);
+    }
   };
 
   return (

@@ -11,11 +11,15 @@ const createConnection = () => {
   if (!env.SUPABASE_DB_URL) {
     throw new Error("SUPABASE_DB_URL is not configured. Set it in your .env file to use database features.");
   }
+  
+  // Use connection pooling mode for better performance
+  // Supabase connection pooler settings
   return postgres(env.SUPABASE_DB_URL, {
     ssl: "require",
-    max: 1,
+    max: 10, // Increased from 1 for better concurrency
     idle_timeout: 20,
     connect_timeout: 10,
+    prepare: false, // Required for Supabase connection pooler in transaction mode
   });
 };
 
