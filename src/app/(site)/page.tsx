@@ -374,8 +374,9 @@ export default async function HomePage() {
 
             if (item.type === "project") {
               return (
-                <article
+                <Link
                   key={`${item.title}-${index}`}
+                  href={`/projects/${item.slug}`}
                   className={cn(
                     "group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg",
                     layout.className,
@@ -408,17 +409,18 @@ export default async function HomePage() {
                     </div>
                     <div className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
                       <span>{item.location}</span>
-                      <span>View case study soon →</span>
+                      <span>View project →</span>
                     </div>
                   </div>
-                </article>
+                </Link>
               );
             }
 
             if (item.type === "editorial") {
               return (
-                <article
+                <Link
                   key={`${item.title}-${index}`}
+                  href={`/editorials/${item.slug}`}
                   className={cn(
                     "flex h-full flex-col justify-between rounded-3xl border border-border bg-background/80 p-6 transition hover:border-primary",
                     layout.className,
@@ -445,8 +447,8 @@ export default async function HomePage() {
                       </div>
                     )}
                   </div>
-                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Full editorial launching soon</span>
-                </article>
+                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Read full editorial →</span>
+                </Link>
               );
             }
 

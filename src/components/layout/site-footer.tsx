@@ -38,8 +38,20 @@ export function SiteFooter() {
           </div>
         </div>
       </div>
-      <div className="border-t border-border bg-card px-6 py-6 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        © {new Date().getFullYear()} EJ Properties. All rights reserved.
+      <div className="border-t border-border bg-card px-6 py-6">
+        <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            © {new Date().getFullYear()} EJ Properties. All rights reserved.
+          </div>
+          <div className="flex items-center gap-6 text-xs">
+            <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition">
+              Privacy Policy
+            </Link>
+            <Link href="/cookies" className="text-muted-foreground hover:text-foreground transition">
+              Cookie Policy
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   );

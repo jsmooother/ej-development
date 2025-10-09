@@ -13,8 +13,8 @@ type ProjectCard = {
   isPublished: boolean;
 };
 
-export const dynamic = "force-static";
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -26,9 +26,10 @@ export default async function ProjectsPage() {
   let projects: ProjectCard[] = [];
   
   try {
+    // Use localhost for development, or environment variable for production
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
     const response = await fetch(`${baseUrl}/api/projects`, {
-      next: { revalidate: 60 }
+      cache: 'no-store' // Ensure fresh data
     });
     
     if (response.ok) {
