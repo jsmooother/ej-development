@@ -1,0 +1,163 @@
+
+> ej-development@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.10
+  - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/(admin)/admin/editorials/page.tsx
+177:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/(admin)/admin/instagram/page.tsx
+300:73  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+300:82  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/app/(admin)/admin/projects/[id]/page.tsx
+250:73  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+250:85  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+252:62  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+252:83  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+
+./src/app/(admin)/admin/projects/page.tsx
+178:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/app/(site)/contact/page.tsx
+17:18  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+21:81  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+35:19  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+156:19  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+229:63  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+255:19  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/(site)/cookies/page.tsx
+52:71  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+100:50  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/(site)/privacy/page.tsx
+24:28  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+24:32  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+24:34  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+24:39  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+24:44  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+24:47  Warning: `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`.  react/no-unescaped-entities
+147:23  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/(site)/projects/[slug]/page.tsx
+358:29  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/(site)/projects/page.tsx
+149:16  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/app/(site)/studio/page.tsx
+197:16  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+./src/components/admin/hero-image-manager.tsx
+61:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/admin/image-manager.tsx
+78:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/components/cookie-banner.tsx
+137:71  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+138:27  Warning: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  react/no-unescaped-entities
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/29) ...
+   Generating static pages (7/29) 
+ReferenceError: localStorage is not defined
+    at i.getOrCreateUserId (/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(admin)/analytics/page.js:1:3244)
+    at new i (/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(admin)/analytics/page.js:1:3106)
+    at 8509 (/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(admin)/analytics/page.js:1:6176)
+    at Object.t [as require] (/Users/jesper/Documents/GitHub/ej-development/.next/server/webpack-runtime.js:1:128)
+    at require (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:16:18142)
+    at a (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:88294)
+    at /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:98817
+    at /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:98904
+    at t (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:99107) {
+  digest: '4149694925'
+}
+
+Error occurred prerendering page "/analytics". Read more: https://nextjs.org/docs/messages/prerender-error
+
+ReferenceError: localStorage is not defined
+    at i.getOrCreateUserId (/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(admin)/analytics/page.js:1:3244)
+    at new i (/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(admin)/analytics/page.js:1:3106)
+    at 8509 (/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(admin)/analytics/page.js:1:6176)
+    at Object.t [as require] (/Users/jesper/Documents/GitHub/ej-development/.next/server/webpack-runtime.js:1:128)
+    at require (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:16:18142)
+    at a (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:88294)
+    at /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:98817
+    at /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:98904
+    at t (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:99107)
+Error: Event handlers cannot be passed to Client Component props.
+  {onClick: function onClick, className: ..., children: ...}
+            ^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at ek (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140437)
+    at Object.toJSON (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eR (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090)
+    at eE (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142569)
+    at AsyncLocalStorage.run (node:async_hooks:346:14)
+    at Timeout._onTimeout (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:150268)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7) {
+  digest: '489643184'
+}
+Error: Event handlers cannot be passed to Client Component props.
+  {onClick: function onClick, className: ..., children: ...}
+            ^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at ek (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140437)
+    at Object.toJSON (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eR (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090)
+    at eE (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142569)
+    at Timeout._onTimeout (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135346)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7) {
+  digest: '1794935474'
+}
+Error: Event handlers cannot be passed to Client Component props.
+  {onClick: function onClick, className: ..., children: ...}
+            ^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at ek (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:140437)
+    at Object.toJSON (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135626)
+    at stringify (<anonymous>)
+    at eR (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142090)
+    at eE (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:142569)
+    at Timeout._onTimeout (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/compiled/next-server/app-page.runtime.prod.js:12:135346)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7) {
+  digest: '1794935474'
+}
+   Generating static pages (14/29) 
+   Generating static pages (21/29) 
+ ⚠ Sending SIGTERM signal to static worker due to timeout of 60 seconds. Subsequent errors may be a result of the worker exiting.
+ ⚠ Restarted static page generation for /cookies because it took more than 60 seconds
+ ⚠ See more info here https://nextjs.org/docs/messages/static-page-generation-timeout
+
+Error occurred prerendering page "/cookies". Read more: https://nextjs.org/docs/messages/prerender-error
+
+Error: ENOENT: no such file or directory, open '/Users/jesper/Documents/GitHub/ej-development/.next/build-manifest.json'
+    at readFileSync (node:fs:448:20)
+    at loadManifest (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-manifest.js:36:52)
+    at loadManifestWithRetries (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js:40:51)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at listOnTimeout (node:internal/timers:545:9)
+    at process.processTimers (node:internal/timers:519:7)
+    at async Promise.all (index 0)
+    at async loadComponentsImpl (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js:79:100)
+    at async exportPageImpl (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/export/worker.js:177:28)
+    at async Span.traceAsyncFn (/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/trace/trace.js:154:20)
+ ✓ Generating static pages (29/29)
+
+> Export encountered errors on following paths:
+	/(admin)/analytics/page: /analytics
+	/(site)/cookies/page: /cookies
