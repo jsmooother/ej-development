@@ -1,4 +1,4 @@
-import { sql, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { getDb, listings, projects, posts, enquiries } from "@/lib/db";
 import { AdminHeader } from "@/components/admin/admin-header";
@@ -20,16 +20,18 @@ export default async function AdminDashboardPage() {
   try {
     const db = await getDb();
     
-    // Get counts
-    const [listingsResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${listings}`);
-    const [projectsResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${projects}`);
-    const [postsResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${posts}`);
-    const [enquiriesResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${enquiries}`);
+    // Get counts using proper Drizzle ORM queries
+    const allListings = await db.query.listings.findMany();
+    const allProjects = await db.query.projects.findMany();
+    const allPosts = await db.query.posts.findMany();
+    const allEnquiries = await db.query.enquiries.findMany();
     
-    listingsCount = listingsResult.count || 0;
-    projectsCount = projectsResult.count || 0;
-    postsCount = postsResult.count || 0;
-    enquiriesCount = enquiriesResult.count || 0;
+    listingsCount = allListings.length;
+    projectsCount = allProjects.length;
+    postsCount = allPosts.length;
+    enquiriesCount = allEnquiries.length;
+    
+    console.log('Dashboard counts:', { listingsCount, projectsCount, postsCount, enquiriesCount });
     
     // Get recent projects (published only)
     const dbProjects = await db.query.projects.findMany({
