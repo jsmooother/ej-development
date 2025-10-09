@@ -33,7 +33,7 @@ interface SiteSettings {
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<"general" | "users" | "seo" | "integrations">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "users" | "seo">("general");
 
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({
     siteName: "EJ Properties",
@@ -126,10 +126,9 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: "general", label: "General", icon: "⚙️" },
-    { id: "users", label: "Users", icon: "👥" },
-    { id: "seo", label: "SEO", icon: "🔍" },
-    { id: "integrations", label: "Integrations", icon: "🔗" },
+    { id: "general", label: "General" },
+    { id: "users", label: "Users" },
+    { id: "seo", label: "SEO" },
   ];
 
   return (
@@ -154,7 +153,6 @@ export default function SettingsPage() {
                       : "text-muted-foreground/70 hover:text-foreground hover:bg-foreground/[0.04]"
                   }`}
                 >
-                  <span className="text-base">{tab.icon}</span>
                   {tab.label}
                 </button>
               ))}
@@ -437,39 +435,6 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Integrations */}
-          {activeTab === "integrations" && (
-            <div className="space-y-8">
-              <div className="rounded-2xl border border-border/50 bg-card p-6">
-                <h2 className="mb-6 font-sans text-lg font-medium text-foreground">API Keys & Integrations</h2>
-                <div className="space-y-6">
-                  <FormField label="Instagram Access Token">
-                    <Input
-                      type="password"
-                      placeholder="Enter Instagram API token"
-                      className="font-mono text-xs"
-                    />
-                  </FormField>
-
-                  <FormField label="Supabase Database URL">
-                    <Input
-                      type="password"
-                      placeholder="Enter Supabase connection string"
-                      className="font-mono text-xs"
-                    />
-                  </FormField>
-
-                  <FormField label="Email Service (Resend)">
-                    <Input
-                      type="password"
-                      placeholder="Enter Resend API key"
-                      className="font-mono text-xs"
-                    />
-                  </FormField>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Save Button */}
           <div className="mt-8 flex justify-end">
