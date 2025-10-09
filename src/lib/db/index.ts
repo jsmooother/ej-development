@@ -44,14 +44,17 @@ const getOrCreateConnection = () => {
   return globalForDb.connection;
 };
 
-// For use in Next.js server components
-let db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+// For use in Next.js server components and API routes
+let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 export const getDb = () => {
-  if (!db) {
-    db = drizzle(getOrCreateConnection(), { schema });
+  if (!dbInstance) {
+    dbInstance = drizzle(getOrCreateConnection(), { schema });
   }
-  return db;
+  return dbInstance;
 };
+
+// Export db as a getter for convenience
+export const db = getDb();
 
 // For use in scripts and API routes
 export const createDbClient = () =>
