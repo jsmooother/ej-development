@@ -45,12 +45,8 @@ export async function POST(request: NextRequest) {
       .insert(instagramCache)
       .values(
         newPosts.map((post: any) => ({
-          id: post.id,
-          mediaUrl: post.mediaUrl,
-          permalink: post.permalink,
-          caption: post.caption || '',
-          mediaType: post.mediaType || 'IMAGE',
-          timestamp: post.timestamp || new Date().toISOString(),
+          payload: post,
+          fetchedAt: new Date(),
         }))
       )
       .returning();
