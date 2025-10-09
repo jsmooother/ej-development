@@ -11,12 +11,10 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   process.exit(1);
 }
 
-import { getDb, projects, posts } from "@/lib/db";
+import { db, projects, posts } from "@/lib/db";
 
 async function seedMockData() {
   console.log("🌱 Seeding database with mock data...\n");
-
-  const db = getDb();
 
   try {
     // Mock Projects (from homepage)

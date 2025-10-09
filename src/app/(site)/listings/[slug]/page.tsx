@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import { listings } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -10,7 +10,6 @@ interface ListingPageProps {
 }
 
 export default async function ListingPage({ params }: ListingPageProps) {
-  const db = getDb();
   const listing = await db
     .select()
     .from(listings)
