@@ -27,25 +27,41 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Mock data - in real app, fetch from API
+  // Fetch project data from API
   useEffect(() => {
-    const mockProject: Project = {
-      id: params.id,
-      slug: 'sierra-horizon',
-      title: 'Sierra Horizon',
-      summary: 'La Zagaleta · 2023',
-      facts: { sqm: 420, bedrooms: 6, bathrooms: 5 },
-      heroImagePath: 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
-      additionalImages: [
-        'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80',
-        'https://images.unsplash.com/photo-1521783988139-8930bd045bfa?auto=format&fit=crop&w=1400&q=80'
-      ],
-      isPublished: true,
-      createdAt: new Date('2023-06-15'),
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(`/api/projects/${params.id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch project');
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+          // Map database fields to component state
+          const fetchedProject: Project = {
+            id: data.project.id,
+            slug: data.project.slug,
+            title: data.project.title,
+            summary: data.project.summary || '',
+            facts: data.project.facts || { sqm: 0, bedrooms: 0, bathrooms: 0 },
+            heroImagePath: data.project.heroImagePath || '',
+            additionalImages: [], // Will be handled when we add image relations
+            isPublished: data.project.isPublished,
+            createdAt: new Date(data.project.createdAt),
+          };
+          
+          setProject(fetchedProject);
+        }
+      } catch (error) {
+        console.error('Error fetching project:', error);
+        alert('Failed to load project');
+      } finally {
+        setIsLoading(false);
+      }
     };
     
-    setProject(mockProject);
-    setIsLoading(false);
+    fetchProject();
   }, [params.id]);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -55,29 +71,58 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     setIsSaving(true);
     
     try {
-      // TODO: Replace with actual API call
-      console.log('Saving project:', project);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
-      router.push('/admin/projects');
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: project.title,
+          slug: project.slug,
+          summary: project.summary,
+          content: '', // Will add content field later
+          year: null, // Will add year field later
+          facts: project.facts,
+          heroImagePath: project.heroImagePath,
+          isPublished: project.isPublished,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update project');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Project updated successfully!');
+        router.push('/admin/projects');
+      }
     } catch (error) {
       console.error('Failed to save project:', error);
+      alert('Failed to save project. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!project || !confirm('Are you sure you want to delete this project?')) return;
+    if (!project || !confirm('Are you sure you want to delete this project? This action cannot be undone.')) return;
 
     try {
-      // TODO: Replace with actual API call
-      console.log('Deleting project:', project.id);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
-      router.push('/admin/projects');
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete project');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Project deleted successfully!');
+        router.push('/admin/projects');
+      }
     } catch (error) {
       console.error('Failed to delete project:', error);
+      alert('Failed to delete project. Please try again.');
     }
   };
 
