@@ -5,61 +5,59 @@ import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { InlineToggle } from "@/components/admin/inline-toggle";
 
-export default function ProjectsListPage() {
-  const [projects, setProjects] = useState([
-    {
-      id: '1',
-      slug: 'sierra-horizon',
-      title: 'Sierra Horizon',
-      summary: 'La Zagaleta · 2023',
-      facts: { sqm: 420, bedrooms: 6, bathrooms: 5 },
-      heroImagePath: 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
-      isPublished: true,
-      createdAt: new Date('2023-06-15'),
-    },
-    {
-      id: '2',
-      slug: 'loma-azul',
-      title: 'Loma Azul',
-      summary: 'Benahavís · 2022',
-      facts: { sqm: 380, bedrooms: 5, bathrooms: 4 },
-      heroImagePath: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80',
-      isPublished: true,
-      createdAt: new Date('2022-09-20'),
-    },
-    {
-      id: '3',
-      slug: 'casa-palma',
-      title: 'Casa Palma',
-      summary: 'Marbella Club · 2021',
-      facts: { sqm: 320, bedrooms: 4, bathrooms: 3 },
-      heroImagePath: 'https://images.unsplash.com/photo-1521783988139-8930bd045bfa?auto=format&fit=crop&w=1400&q=80',
-      isPublished: true,
-      createdAt: new Date('2021-05-10'),
-    },
-  ]);
+interface Project {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  year: number | null;
+  facts: Record<string, string | number | null>;
+  heroImagePath: string;
+  isPublished: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  // Fetch current status from API on component mount
+export default function ProjectsListPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch projects from database on component mount
   useEffect(() => {
-    const fetchStatus = async () => {
+    const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/content/status');
-        if (response.ok) {
-          const status = await response.json();
-          console.log('Fetched status for projects:', status.projects);
-          
-          // Update projects with current status from API
-          setProjects(prev => prev.map(project => ({
-            ...project,
-            isPublished: status.projects[project.slug] !== false
-          })));
+        setIsLoading(true);
+        const response = await fetch('/api/projects');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
         }
+        
+        const data = await response.json();
+        
+        // Fetch status from content API
+        const statusResponse = await fetch('/api/content/status');
+        const statusData = await statusResponse.json();
+        
+        // Merge projects with their publish status
+        const projectsWithStatus = data.map((project: Project) => ({
+          ...project,
+          isPublished: statusData.projects[project.slug]?.isPublished || project.isPublished
+        }));
+        
+        setProjects(projectsWithStatus);
       } catch (error) {
-        console.error('Failed to fetch project status:', error);
+        console.error('Failed to fetch projects:', error);
+        // Fallback to empty array on error
+        setProjects([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchStatus();
+    fetchProjects();
   }, []);
 
   const handleTogglePublish = async (projectId: string, newStatus: boolean) => {
@@ -98,16 +96,21 @@ export default function ProjectsListPage() {
     if (!confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      // TODO: Replace with actual API call
-      console.log(`Deleting project ${projectId}`);
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete project');
+      }
       
       // Remove from local state
       setProjects(prev => prev.filter(p => p.id !== projectId));
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log(`Successfully deleted project ${projectId}`);
     } catch (error) {
       console.error('Failed to delete project:', error);
+      alert('Failed to delete project. Please try again.');
     }
   };
 
@@ -123,7 +126,21 @@ export default function ProjectsListPage() {
       />
 
       <div className="p-8">
-        {projects.length === 0 ? (
+        {isLoading ? (
+          <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
+                <svg className="h-10 w-10 animate-spin text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">Loading projects...</h3>
+              <p className="mt-2 text-sm text-muted-foreground/60">
+                Fetching your portfolio projects from the database.
+              </p>
+            </div>
+          </div>
+        ) : projects.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
             <div className="mx-auto max-w-md">
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">

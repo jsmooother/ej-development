@@ -5,61 +5,58 @@ import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { InlineToggle } from "@/components/admin/inline-toggle";
 
-export default function EditorialsListPage() {
-  const [posts, setPosts] = useState([
-    {
-      id: '1',
-      slug: 'marbella-market-reframed',
-      title: 'Marbella Market, Reframed',
-      excerpt: 'Design-led developments are resetting expectations along the Golden Mile.',
-      tags: ['Market Insight'],
-      coverImagePath: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
-      isPublished: true,
-      createdAt: new Date('2025-10-01'),
-    },
-    {
-      id: '2',
-      slug: 'andalusian-light',
-      title: 'Designing with Andalusian Light',
-      excerpt: 'Glazing, shading, and thermal comfort principles for coastal villas.',
-      tags: ['Design Journal'],
-      coverImagePath: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
-      isPublished: true,
-      createdAt: new Date('2025-09-15'),
-    },
-    {
-      id: '3',
-      slug: 'golden-mile-guide',
-      title: 'Neighbourhood Guide · Golden Mile',
-      excerpt: 'Our curated shortlist of dining, wellness, and cultural highlights.',
-      tags: ['Guide'],
-      coverImagePath: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80',
-      isPublished: true,
-      createdAt: new Date('2025-08-20'),
-    },
-  ]);
+interface Editorial {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImagePath: string;
+  tags: string[];
+  isPublished: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  // Fetch current status from API on component mount
+export default function EditorialsListPage() {
+  const [posts, setPosts] = useState<Editorial[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch editorials from database on component mount
   useEffect(() => {
-    const fetchStatus = async () => {
+    const fetchEditorials = async () => {
       try {
-        const response = await fetch('/api/content/status');
-        if (response.ok) {
-          const status = await response.json();
-          console.log('Fetched status for editorials:', status.editorials);
-          
-          // Update posts with current status from API
-          setPosts(prev => prev.map(post => ({
-            ...post,
-            isPublished: status.editorials[post.slug] !== false
-          })));
+        setIsLoading(true);
+        const response = await fetch('/api/editorials');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch editorials');
         }
+        
+        const data = await response.json();
+        
+        // Fetch status from content API
+        const statusResponse = await fetch('/api/content/status');
+        const statusData = await statusResponse.json();
+        
+        // Merge editorials with their publish status
+        const editorialsWithStatus = data.map((editorial: Editorial) => ({
+          ...editorial,
+          isPublished: statusData.editorials[editorial.slug]?.isPublished || editorial.isPublished
+        }));
+        
+        setPosts(editorialsWithStatus);
       } catch (error) {
-        console.error('Failed to fetch editorial status:', error);
+        console.error('Failed to fetch editorials:', error);
+        // Fallback to empty array on error
+        setPosts([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchStatus();
+    fetchEditorials();
   }, []);
 
   const handleTogglePublish = async (postId: string, newStatus: boolean) => {
@@ -98,16 +95,21 @@ export default function EditorialsListPage() {
     if (!confirm('Are you sure you want to delete this editorial?')) return;
 
     try {
-      // TODO: Replace with actual API call
-      console.log(`Deleting editorial ${postId}`);
+      const response = await fetch(`/api/editorials/${postId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete editorial');
+      }
       
       // Remove from local state
       setPosts(prev => prev.filter(p => p.id !== postId));
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log(`Successfully deleted editorial ${postId}`);
     } catch (error) {
       console.error('Failed to delete editorial:', error);
+      alert('Failed to delete editorial. Please try again.');
     }
   };
 
@@ -123,7 +125,21 @@ export default function EditorialsListPage() {
       />
 
       <div className="p-8">
-        {posts.length === 0 ? (
+        {isLoading ? (
+          <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
+                <svg className="h-10 w-10 animate-spin text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">Loading editorials...</h3>
+              <p className="mt-2 text-sm text-muted-foreground/60">
+                Fetching your editorial content from the database.
+              </p>
+            </div>
+          </div>
+        ) : posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
             <div className="mx-auto max-w-md">
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">

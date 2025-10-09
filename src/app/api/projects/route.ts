@@ -10,17 +10,14 @@ export async function GET() {
     const db = getDb();
     const allProjects = await db.select().from(projects).orderBy(desc(projects.createdAt));
     
-    return NextResponse.json({
-      success: true,
-      count: allProjects.length,
-      projects: allProjects
-    });
+    // Return array directly for frontend compatibility
+    return NextResponse.json(allProjects);
   } catch (error) {
     console.error('Database error:', error);
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
   }
 }
 

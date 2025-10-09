@@ -147,8 +147,8 @@ export const metadata: Metadata = {
     "Luxury property development in Marbella with a focus on modern Mediterranean architecture and curated living experiences.",
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0; // Always fetch fresh data
+export const dynamic = "force-static";
+export const revalidate = 3600; // Revalidate every hour // Always fetch fresh data
 
 // Helper function to shuffle array (for randomizing projects)
 function shuffleArray<T>(array: T[]): T[] {
@@ -166,53 +166,67 @@ export default async function HomePage() {
   const MAX_EDITORIALS = 3; // Show 3 latest editorials
   const MAX_INSTAGRAM = 3; // Show 3 Instagram posts
 
-  // Fetch content status from API
-  let contentStatus = { projects: {}, editorials: {} };
+  // Fetch live data from database
+  let dbProjects: ProjectCard[] = [];
+  let dbEditorials: EditorialCard[] = [];
+  
   try {
-    // Use full URL for server-side rendering
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const response = await fetch(`${baseUrl}/api/content/status`, {
+    
+    // Fetch projects from database
+    const projectsResponse = await fetch(`${baseUrl}/api/projects`, {
       cache: 'no-store'
     });
-    if (response.ok) {
-      contentStatus = await response.json();
-      console.log('Fetched content status:', contentStatus);
+    
+    // Fetch editorials from database
+    const editorialsResponse = await fetch(`${baseUrl}/api/editorials`, {
+      cache: 'no-store'
+    });
+    
+    if (projectsResponse.ok && editorialsResponse.ok) {
+      const rawProjects = await projectsResponse.json();
+      const rawEditorials = await editorialsResponse.json();
+      
+      console.log('Fetched projects from DB:', rawProjects.length);
+      console.log('Fetched editorials from DB:', rawEditorials.length);
+      
+      // Map and filter published projects
+      dbProjects = rawProjects
+        .filter((project: any) => project.isPublished)
+        .map((project: any) => ({
+          id: project.id,
+          slug: project.slug,
+          title: project.title,
+          summary: project.summary,
+          sqm: project.facts?.sqm || 0,
+          rooms: project.facts?.bedrooms || 0,
+          image: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80'
+        }));
+      
+      // Map and filter published editorials
+      dbEditorials = rawEditorials
+        .filter((editorial: any) => editorial.isPublished)
+        .map((editorial: any) => ({
+          id: editorial.id,
+          slug: editorial.slug,
+          title: editorial.title,
+          excerpt: editorial.excerpt,
+          image: editorial.coverImagePath || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80'
+        }));
     } else {
-      console.log('API response not ok:', response.status);
+      console.log('Failed to fetch from database, using fallback data');
+      dbProjects = projects;
+      dbEditorials = editorials;
     }
   } catch (error) {
-    console.error('Failed to fetch content status:', error);
+    console.error('Error fetching live data:', error);
+    dbProjects = projects;
+    dbEditorials = editorials;
   }
 
-  // Map titles to slugs for filtering
-  const titleToSlug: Record<string, string> = {
-    'Sierra Horizon': 'sierra-horizon',
-    'Loma Azul': 'loma-azul', 
-    'Casa Palma': 'casa-palma',
-    'Marbella Market, Reframed': 'marbella-market-reframed',
-    'Designing with Andalusian Light': 'andalusian-light',
-    'Neighbourhood Guide · Golden Mile': 'golden-mile-guide'
-  };
-
-  // Filter projects to only show published ones (fallback to showing all if API fails)
-  const publishedProjects = projects.filter(project => {
-    const slug = titleToSlug[project.title];
-    // If no slug mapping or API failed, show all content
-    if (!slug || Object.keys(contentStatus.projects).length === 0) {
-      return true;
-    }
-    return contentStatus.projects[slug] !== false;
-  });
-
-  // Filter editorials to only show published ones (fallback to showing all if API fails)
-  const publishedEditorials = editorials.filter(editorial => {
-    const slug = titleToSlug[editorial.title];
-    // If no slug mapping or API failed, show all content
-    if (!slug || Object.keys(contentStatus.editorials).length === 0) {
-      return true;
-    }
-    return contentStatus.editorials[slug] !== false;
-  });
+  // Use live data if available, otherwise fallback to static data
+  const publishedProjects = dbProjects.length > 0 ? dbProjects : projects;
+  const publishedEditorials = dbEditorials.length > 0 ? dbEditorials : editorials;
 
   // Select content based on published status
   const selectedProjects = shuffleArray(publishedProjects).slice(0, MAX_PROJECTS);
