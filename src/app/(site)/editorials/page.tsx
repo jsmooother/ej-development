@@ -37,6 +37,9 @@ export default async function EditorialsPage() {
       cache: 'no-store' // Ensure fresh data
     });
     
+    console.log('📊 Fetch URL:', new URL("/api/editorials", baseUrl).toString());
+    console.log('📊 Response status:', response.status, response.statusText);
+    
     if (response.ok) {
       const dbEditorials = await response.json();
       console.log('📊 API returned editorials:', dbEditorials.length);

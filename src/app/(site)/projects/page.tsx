@@ -39,6 +39,9 @@ export default async function ProjectsPage() {
       cache: 'no-store' // Ensure fresh data
     });
     
+    console.log('📊 Fetch URL:', new URL("/api/projects", baseUrl).toString());
+    console.log('📊 Response status:', response.status, response.statusText);
+    
     if (response.ok) {
       const dbProjects = await response.json();
       console.log('📊 API returned projects:', dbProjects.length);
