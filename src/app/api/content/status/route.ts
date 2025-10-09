@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
         .update(projects)
         .set({ 
           isPublished,
-          publishedAt: isPublished ? new Date().toISOString() : null,
-          updatedAt: new Date().toISOString()
+          publishedAt: isPublished ? new Date() : null,
+          updatedAt: new Date()
         })
         .where(eq(projects.slug, id));
         
@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
         .update(posts)
         .set({ 
           isPublished,
-          publishedAt: isPublished ? new Date().toISOString() : null,
-          updatedAt: new Date().toISOString()
+          publishedAt: isPublished ? new Date() : null,
+          updatedAt: new Date()
         })
         .where(eq(posts.slug, id));
         

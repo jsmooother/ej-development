@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
         facts: body.facts || {},
         heroImagePath: body.heroImagePath || '',
         isPublished: body.isPublished || false,
-        publishedAt: body.isPublished ? new Date().toISOString() : null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        publishedAt: body.isPublished ? new Date() : null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning();
     

@@ -53,8 +53,8 @@ export async function PUT(
         coverImagePath: body.coverImagePath,
         tags: body.tags,
         isPublished: body.isPublished,
-        publishedAt: body.isPublished ? new Date().toISOString() : null,
-        updatedAt: new Date().toISOString(),
+        publishedAt: body.isPublished ? new Date() : null,
+        updatedAt: new Date(),
       })
       .where(eq(posts.id, editorialId))
       .returning();

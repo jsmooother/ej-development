@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { getDb } from "@/lib/db/index";
 import { env } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 
