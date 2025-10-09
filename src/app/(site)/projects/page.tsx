@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { cn } from "@/lib/utils";
 
 type ProjectCard = {
   id: string;
@@ -36,8 +35,8 @@ export default async function ProjectsPage() {
       const dbProjects = await response.json();
       // Filter only published projects
       projects = dbProjects
-        .filter((project: any) => project.isPublished)
-        .map((project: any) => ({
+        .filter((project: ProjectCard) => project.isPublished)
+        .map((project: ProjectCard) => ({
           id: project.id,
           title: project.title,
           summary: project.summary,
@@ -88,7 +87,7 @@ export default async function ProjectsPage() {
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.map((project, index) => (
+            {projects.map((project) => (
               <article
                 key={project.id}
                 className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"

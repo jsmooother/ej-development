@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/index';
 import { instagramCache } from '@/lib/db/schema';
-import { desc } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 

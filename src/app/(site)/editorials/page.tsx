@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 
 type EditorialCard = {
@@ -35,8 +34,8 @@ export default async function EditorialsPage() {
       const dbEditorials = await response.json();
       // Filter only published editorials
       editorials = dbEditorials
-        .filter((editorial: any) => editorial.isPublished)
-        .map((editorial: any) => ({
+        .filter((editorial: EditorialCard) => editorial.isPublished)
+        .map((editorial: EditorialCard) => ({
           id: editorial.id,
           title: editorial.title,
           excerpt: editorial.excerpt,
@@ -87,7 +86,7 @@ export default async function EditorialsPage() {
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {editorials.map((editorial, index) => (
+            {editorials.map((editorial) => (
               <article
                 key={editorial.id}
                 className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
