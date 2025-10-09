@@ -3,63 +3,53 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 type EditorialCard = {
+  id: string;
   title: string;
   excerpt: string;
-  category: string;
-  image?: string;
-  publishedAt: string;
+  coverImagePath: string;
+  tags: string[];
+  publishedAt: string | null;
+  isPublished: boolean;
 };
 
-const editorials: EditorialCard[] = [
-  {
-    title: "Marbella Market, Reframed",
-    excerpt: "Design-led developments are resetting expectations along the Golden Mile, creating a new paradigm for luxury coastal living.",
-    category: "Market Insight",
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80",
-    publishedAt: "October 2025",
-  },
-  {
-    title: "Designing with Andalusian Light",
-    excerpt: "Glazing, shading, and thermal comfort principles for coastal villas that embrace the Mediterranean climate.",
-    category: "Design Journal",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-    publishedAt: "September 2025",
-  },
-  {
-    title: "Neighbourhood Guide · Golden Mile",
-    excerpt: "Our curated shortlist of dining, wellness, and cultural highlights near Casa Serrana and our other developments.",
-    category: "Guide",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80",
-    publishedAt: "August 2025",
-  },
-  {
-    title: "Inside the Atelier",
-    excerpt: "Material stories and artisan collaborations from our Marbella workshop, where tradition meets innovation.",
-    category: "Studio",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80",
-    publishedAt: "July 2025",
-  },
-  {
-    title: "Sourcing Sustainable Stone",
-    excerpt: "Tracing quarry provenance for each terrazzo slab and limestone block, ensuring ethical and aesthetic excellence.",
-    category: "Process",
-    image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=800&q=80",
-    publishedAt: "June 2025",
-  },
-  {
-    title: "The Art of Editorial Living",
-    excerpt: "How thoughtful curation and design create spaces that tell stories and inspire daily rituals.",
-    category: "Philosophy",
-    publishedAt: "May 2025",
-  },
-];
+export const dynamic = "force-static";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Editorials",
   description: "Insights, guides, and stories from our practice in precision property development and refined living.",
 };
 
-export default function EditorialsPage() {
+export default async function EditorialsPage() {
+  // Fetch editorials from database
+  let editorials: EditorialCard[] = [];
+  
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+    const response = await fetch(`${baseUrl}/api/editorials`, {
+      next: { revalidate: 60 }
+    });
+    
+    if (response.ok) {
+      const dbEditorials = await response.json();
+      // Filter only published editorials
+      editorials = dbEditorials
+        .filter((editorial: any) => editorial.isPublished)
+        .map((editorial: any) => ({
+          id: editorial.id,
+          title: editorial.title,
+          excerpt: editorial.excerpt,
+          coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
+          tags: editorial.tags || [],
+          publishedAt: editorial.publishedAt,
+          isPublished: editorial.isPublished
+        }));
+    }
+  } catch (error) {
+    console.error('Error fetching editorials:', error);
+    editorials = [];
+  }
+
   return (
     <main className="space-y-24 pb-24">
       {/* Hero */}
@@ -80,43 +70,65 @@ export default function EditorialsPage() {
 
       {/* Editorials Grid */}
       <section className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {editorials.map((editorial, index) => (
-            <article
-              key={editorial.title}
-              className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              {editorial.image && (
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={editorial.image}
-                    alt={editorial.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-              )}
-              <div className="flex flex-1 flex-col gap-4 p-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-[0.4em] text-red-600">
-                    {editorial.category}
-                  </span>
-                  <span className="text-xs text-muted-foreground">·</span>
-                  <span className="text-xs text-muted-foreground">{editorial.publishedAt}</span>
-                </div>
-                <div className="space-y-3">
-                  <h3 className="font-serif text-2xl font-light text-foreground">{editorial.title}</h3>
-                  <p className="text-sm text-muted-foreground">{editorial.excerpt}</p>
-                </div>
-                <div className="mt-auto">
-                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                    Read full article →
-                  </span>
-                </div>
+        {editorials.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border/50 bg-card p-16 text-center">
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
+                <svg className="h-10 w-10 text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
               </div>
-            </article>
-          ))}
-        </div>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">No editorials yet</h3>
+              <p className="mt-2 text-sm text-muted-foreground/60">
+                Check back soon for our latest insights and stories.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {editorials.map((editorial, index) => (
+              <article
+                key={editorial.id}
+                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                {editorial.coverImagePath && (
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={editorial.coverImagePath}
+                      alt={editorial.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-1 flex-col gap-4 p-6">
+                  <div className="flex items-center gap-2">
+                    {editorial.tags.length > 0 && (
+                      <>
+                        <span className="text-xs font-bold uppercase tracking-[0.4em] text-red-600">
+                          {editorial.tags[0]}
+                        </span>
+                        <span className="text-xs text-muted-foreground">·</span>
+                      </>
+                    )}
+                    <span className="text-xs text-muted-foreground">
+                      {editorial.publishedAt ? new Date(editorial.publishedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Draft'}
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="font-serif text-2xl font-light text-foreground">{editorial.title}</h3>
+                    <p className="text-sm text-muted-foreground">{editorial.excerpt}</p>
+                  </div>
+                  <div className="mt-auto">
+                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                      Read full article →
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Newsletter CTA */}

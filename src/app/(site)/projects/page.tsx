@@ -4,63 +4,53 @@ import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 
 type ProjectCard = {
+  id: string;
   title: string;
   summary: string;
-  location: string;
-  image: string;
-  sqm: number;
-  rooms: number;
+  year: number | null;
+  facts: Record<string, string | number | null>;
+  heroImagePath: string;
+  isPublished: boolean;
 };
 
-const projects: ProjectCard[] = [
-  {
-    title: "Sierra Horizon",
-    summary: "Adaptive reuse opening a hillside estate toward the sea with layered courtyards.",
-    location: "La Zagaleta · 2023",
-    sqm: 420,
-    rooms: 6,
-    image: "https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    title: "Loma Azul",
-    summary: "Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.",
-    location: "Benahavís · 2022",
-    sqm: 380,
-    rooms: 5,
-    image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    title: "Casa Palma",
-    summary: "Palm-framed sanctuary with shaded loggias and a terraced pool axis.",
-    location: "Marbella Club · 2021",
-    sqm: 320,
-    rooms: 4,
-    image: "https://images.unsplash.com/photo-1521783988139-8930bd045bfa?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    title: "Mirador Alto",
-    summary: "Art-filled penthouse reimagined with sculptural joinery and panoramic glazing.",
-    location: "Puerto Banús · 2020",
-    sqm: 280,
-    rooms: 3,
-    image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1400&q=80",
-  },
-  {
-    title: "Villa Ladera",
-    summary: "Split-level home cantilevered over native landscaping and a reflecting pool.",
-    location: "Nueva Andalucía · 2019",
-    sqm: 450,
-    rooms: 7,
-    image: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1400&q=80",
-  },
-];
+export const dynamic = "force-static";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Projects",
   description: "Our completed luxury property developments across the Costa del Sol, where every square meter is optimized with precision.",
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  // Fetch projects from database
+  let projects: ProjectCard[] = [];
+  
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+    const response = await fetch(`${baseUrl}/api/projects`, {
+      next: { revalidate: 60 }
+    });
+    
+    if (response.ok) {
+      const dbProjects = await response.json();
+      // Filter only published projects
+      projects = dbProjects
+        .filter((project: any) => project.isPublished)
+        .map((project: any) => ({
+          id: project.id,
+          title: project.title,
+          summary: project.summary,
+          year: project.year,
+          facts: project.facts || {},
+          heroImagePath: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
+          isPublished: project.isPublished
+        }));
+    }
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    projects = [];
+  }
+
   return (
     <main className="space-y-24 pb-24">
       {/* Hero */}
@@ -81,44 +71,64 @@ export default function ProjectsPage() {
 
       {/* Projects Grid */}
       <section className="mx-auto max-w-6xl px-6">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
-            <article
-              key={project.title}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="relative h-64 w-full">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                {/* SQM and Rooms overlay */}
-                <div className="absolute top-4 left-4">
-                  <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
-                    {project.sqm} m²
-                  </span>
-                </div>
-                <div className="absolute bottom-4 right-4">
-                  <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
-                    {project.rooms} rum
-                  </span>
-                </div>
+        {projects.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border/50 bg-card p-16 text-center">
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
+                <svg className="h-10 w-10 text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
               </div>
-              <div className="flex flex-1 flex-col gap-4 p-6">
-                <div className="space-y-2">
-                  <h3 className="font-serif text-2xl font-light text-foreground">{project.title}</h3>
-                  <p className="text-sm text-muted-foreground">{project.summary}</p>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">No projects yet</h3>
+              <p className="mt-2 text-sm text-muted-foreground/60">
+                Check back soon for our latest luxury property developments.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project, index) => (
+              <article
+                key={project.id}
+                className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="relative h-64 w-full">
+                  <Image
+                    src={project.heroImagePath}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  {/* SQM and Rooms overlay */}
+                  {project.facts?.sqm && (
+                    <div className="absolute top-4 left-4">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                        {project.facts.sqm} m²
+                      </span>
+                    </div>
+                  )}
+                  {project.facts?.bedrooms && (
+                    <div className="absolute bottom-4 right-4">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                        {project.facts.bedrooms} rum
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
-                  <span>{project.location}</span>
-                  <span>View case study soon →</span>
+                <div className="flex flex-1 flex-col gap-4 p-6">
+                  <div className="space-y-2">
+                    <h3 className="font-serif text-2xl font-light text-foreground">{project.title}</h3>
+                    <p className="text-sm text-muted-foreground">{project.summary}</p>
+                  </div>
+                  <div className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
+                    <span>{project.year ? `${project.year}` : 'Coming soon'}</span>
+                    <span>View case study soon →</span>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA Section */}
