@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const db = await getDb();
+    const db = getDb();
     const editorialId = params.id;
 
     // Fetch editorial by ID
@@ -38,7 +38,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const db = await getDb();
+    const db = getDb();
     const editorialId = params.id;
     const body = await request.json();
 
@@ -81,7 +81,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const db = await getDb();
+    const db = getDb();
     const editorialId = params.id;
 
     // Delete editorial

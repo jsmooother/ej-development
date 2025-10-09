@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 
 export async function GET() {
   try {
-    const db = await getDb();
+    const db = getDb();
     
     // Fetch projects status
     const projects = await db.query.projects.findMany({
@@ -42,7 +42,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const { type, id, isPublished } = await request.json();
-    const db = await getDb();
+    const db = getDb();
     
     if (type === 'project') {
       // Update project in database
