@@ -3,6 +3,9 @@ import { getDb } from "@/lib/db/index";
 import { env } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 
+export const dynamic = 'force-dynamic';
+
+
 export async function GET() {
   const results = {
     timestamp: new Date().toISOString(),
