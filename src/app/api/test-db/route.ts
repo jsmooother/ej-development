@@ -32,7 +32,8 @@ export async function GET() {
   // 2. Test Drizzle ORM connection
   try {
     const db = getDb();
-    const result = await db.execute("SELECT NOW() as current_time");
+    const { sql } = await import("drizzle-orm");
+    const result = await db.execute(sql`SELECT NOW() as current_time`);
     results.checks.push({
       name: "Drizzle ORM Connection",
       status: "✅ PASS",
@@ -69,7 +70,8 @@ export async function GET() {
   // 4. Test database schema - check if tables exist
   try {
     const db = getDb();
-    const tablesQuery = await db.execute(`
+    const { sql } = await import("drizzle-orm");
+    const tablesQuery = await db.execute(sql`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
