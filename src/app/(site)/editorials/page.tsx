@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 
 type EditorialCard = {
   id: string;
@@ -25,44 +24,34 @@ export default async function EditorialsPage() {
   let editorials: EditorialCard[] = [];
   
   try {
-    const headerList = headers();
-    const protocol = headerList.get("x-forwarded-proto") ?? "http";
-    const host =
-      headerList.get("x-forwarded-host") ??
-      headerList.get("host") ??
-      `localhost:${process.env.PORT || 3000}`;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
-    const response = await fetch(new URL("/api/editorials", baseUrl).toString(), {
-      cache: 'no-store' // Ensure fresh data
-    });
+    // Use direct database access instead of internal API call
+    const { getDb } = await import('@/lib/db/index');
+    const { posts } = await import('@/lib/db/schema');
+    const { desc } = await import('drizzle-orm');
     
-    console.log('📊 Fetch URL:', new URL("/api/editorials", baseUrl).toString());
-    console.log('📊 Response status:', response.status, response.statusText);
+    const db = getDb();
+    const dbEditorials = await db.select().from(posts).orderBy(desc(posts.createdAt));
     
-    if (response.ok) {
-      const dbEditorials = await response.json();
-      console.log('📊 API returned editorials:', dbEditorials.length);
-      console.log('📊 Editorials data:', JSON.stringify(dbEditorials, null, 2));
-      
-      // Filter only published editorials
-      editorials = dbEditorials
-        .filter((editorial: EditorialCard) => {
-          console.log(`Editorial ${editorial.title}: isPublished=${editorial.isPublished}`);
-          return editorial.isPublished;
-        })
-        .map((editorial: EditorialCard) => ({
-          id: editorial.id,
-          title: editorial.title,
-          excerpt: editorial.excerpt,
-          coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
-          tags: editorial.tags || [],
-          publishedAt: editorial.publishedAt,
-          isPublished: editorial.isPublished
-        }));
-      
-      console.log('📊 After filtering:', editorials.length, 'published editorials');
-    }
+    console.log('📊 Database returned editorials:', dbEditorials.length);
+    console.log('📊 Editorials data:', JSON.stringify(dbEditorials, null, 2));
+    
+    // Filter only published editorials
+    editorials = dbEditorials
+      .filter((editorial: EditorialCard) => {
+        console.log(`Editorial ${editorial.title}: isPublished=${editorial.isPublished}`);
+        return editorial.isPublished;
+      })
+      .map((editorial: EditorialCard) => ({
+        id: editorial.id,
+        title: editorial.title,
+        excerpt: editorial.excerpt,
+        coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
+        tags: editorial.tags || [],
+        publishedAt: editorial.publishedAt,
+        isPublished: editorial.isPublished
+      }));
+    
+    console.log('📊 After filtering:', editorials.length, 'published editorials');
   } catch (error) {
     console.error('Error fetching editorials:', error);
     editorials = [];

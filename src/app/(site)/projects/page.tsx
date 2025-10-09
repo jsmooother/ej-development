@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 
 type ProjectCard = {
   id: string;
@@ -26,45 +25,34 @@ export default async function ProjectsPage() {
   let projects: ProjectCard[] = [];
   
   try {
-    // Use localhost for development, or environment variable for production
-    const headerList = headers();
-    const protocol = headerList.get("x-forwarded-proto") ?? "http";
-    const host =
-      headerList.get("x-forwarded-host") ??
-      headerList.get("host") ??
-      `localhost:${process.env.PORT || 3000}`;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
-    const response = await fetch(new URL("/api/projects", baseUrl).toString(), {
-      cache: 'no-store' // Ensure fresh data
-    });
+    // Use direct database access instead of internal API call
+    const { getDb } = await import('@/lib/db/index');
+    const { projects: projectsSchema } = await import('@/lib/db/schema');
+    const { desc } = await import('drizzle-orm');
     
-    console.log('📊 Fetch URL:', new URL("/api/projects", baseUrl).toString());
-    console.log('📊 Response status:', response.status, response.statusText);
+    const db = getDb();
+    const dbProjects = await db.select().from(projectsSchema).orderBy(desc(projectsSchema.createdAt));
     
-    if (response.ok) {
-      const dbProjects = await response.json();
-      console.log('📊 API returned projects:', dbProjects.length);
-      console.log('📊 Projects data:', JSON.stringify(dbProjects, null, 2));
-      
-      // Filter only published projects
-      projects = dbProjects
-        .filter((project: ProjectCard) => {
-          console.log(`Project ${project.title}: isPublished=${project.isPublished}`);
-          return project.isPublished;
-        })
-        .map((project: ProjectCard) => ({
-          id: project.id,
-          title: project.title,
-          summary: project.summary,
-          year: project.year,
-          facts: project.facts || {},
-          heroImagePath: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
-          isPublished: project.isPublished
-        }));
-      
-      console.log('📊 After filtering:', projects.length, 'published projects');
-    }
+    console.log('📊 Database returned projects:', dbProjects.length);
+    console.log('📊 Projects data:', JSON.stringify(dbProjects, null, 2));
+    
+    // Filter only published projects
+    projects = dbProjects
+      .filter((project: ProjectCard) => {
+        console.log(`Project ${project.title}: isPublished=${project.isPublished}`);
+        return project.isPublished;
+      })
+      .map((project: ProjectCard) => ({
+        id: project.id,
+        title: project.title,
+        summary: project.summary,
+        year: project.year,
+        facts: project.facts || {},
+        heroImagePath: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
+        isPublished: project.isPublished
+      }));
+    
+    console.log('📊 After filtering:', projects.length, 'published projects');
   } catch (error) {
     console.error('Error fetching projects:', error);
     projects = [];
