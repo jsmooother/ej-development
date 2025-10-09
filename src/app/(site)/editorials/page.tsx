@@ -39,9 +39,15 @@ export default async function EditorialsPage() {
     
     if (response.ok) {
       const dbEditorials = await response.json();
+      console.log('📊 API returned editorials:', dbEditorials.length);
+      console.log('📊 Editorials data:', JSON.stringify(dbEditorials, null, 2));
+      
       // Filter only published editorials
       editorials = dbEditorials
-        .filter((editorial: EditorialCard) => editorial.isPublished)
+        .filter((editorial: EditorialCard) => {
+          console.log(`Editorial ${editorial.title}: isPublished=${editorial.isPublished}`);
+          return editorial.isPublished;
+        })
         .map((editorial: EditorialCard) => ({
           id: editorial.id,
           title: editorial.title,
@@ -51,6 +57,8 @@ export default async function EditorialsPage() {
           publishedAt: editorial.publishedAt,
           isPublished: editorial.isPublished
         }));
+      
+      console.log('📊 After filtering:', editorials.length, 'published editorials');
     }
   } catch (error) {
     console.error('Error fetching editorials:', error);

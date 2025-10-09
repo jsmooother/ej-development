@@ -41,9 +41,15 @@ export default async function ProjectsPage() {
     
     if (response.ok) {
       const dbProjects = await response.json();
+      console.log('📊 API returned projects:', dbProjects.length);
+      console.log('📊 Projects data:', JSON.stringify(dbProjects, null, 2));
+      
       // Filter only published projects
       projects = dbProjects
-        .filter((project: ProjectCard) => project.isPublished)
+        .filter((project: ProjectCard) => {
+          console.log(`Project ${project.title}: isPublished=${project.isPublished}`);
+          return project.isPublished;
+        })
         .map((project: ProjectCard) => ({
           id: project.id,
           title: project.title,
@@ -53,6 +59,8 @@ export default async function ProjectsPage() {
           heroImagePath: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
           isPublished: project.isPublished
         }));
+      
+      console.log('📊 After filtering:', projects.length, 'published projects');
     }
   } catch (error) {
     console.error('Error fetching projects:', error);
