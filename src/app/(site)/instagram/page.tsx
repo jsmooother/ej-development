@@ -11,7 +11,7 @@ type InstagramPost = {
   timestamp: string;
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 export const metadata: Metadata = {

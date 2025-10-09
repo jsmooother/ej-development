@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+export const dynamic = 'force-dynamic';
 import { AdminHeader } from "@/components/admin/admin-header";
 import { analytics } from "@/lib/analytics";
 
