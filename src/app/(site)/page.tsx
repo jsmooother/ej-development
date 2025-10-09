@@ -147,8 +147,8 @@ export const metadata: Metadata = {
     "Luxury property development in Marbella with a focus on modern Mediterranean architecture and curated living experiences.",
 };
 
-export const dynamic = "force-static";
-export const revalidate = 60; // Revalidate every minute for faster updates
+export const dynamic = "force-dynamic";
+export const revalidate = 0; // Revalidate every minute for faster updates
 
 // Helper function to shuffle array (for randomizing projects)
 function shuffleArray<T>(array: T[]): T[] {
