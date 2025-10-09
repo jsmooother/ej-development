@@ -254,7 +254,7 @@ export default async function HomePage() {
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
   console.log('Published editorials:', publishedEditorials.length, 'Selected:', selectedEditorials.length);
 
-  // Create a newspaper-style mixed stream - 9 items with varied heights like Lagerlings
+  // Create a newspaper-style mixed stream - filter out undefined items
   const featureStream = [
     selectedProjects[0], // Main hero project - full width, double height
     selectedEditorials[0], // Editorial - single column, double height
@@ -265,7 +265,7 @@ export default async function HomePage() {
     selectedEditorials[2], // Editorial - single, standard
     selectedInstagram[1], // Instagram - single, standard
     selectedInstagram[2], // Instagram - single, standard
-  ];
+  ].filter(Boolean); // Remove undefined items
 
   // Layout pattern with varied heights for newspaper aesthetic (like Lagerlings)
   const layoutPattern = [
