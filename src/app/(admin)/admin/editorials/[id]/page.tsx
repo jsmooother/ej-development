@@ -214,7 +214,8 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                 value={editorial.content}
                 onChange={(e) => setEditorial({ ...editorial, content: e.target.value })}
                 placeholder="Write your editorial content here..."
-                rows={12}
+                rows={16}
+                className="resize-y min-h-[300px]"
               />
             </FormField>
           </div>
@@ -246,7 +247,8 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                     additionalImages: e.target.value.split('\n').filter(url => url.trim())
                   })}
                   placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
-                  rows={4}
+                  rows={6}
+                  className="resize-y min-h-[100px]"
                 />
               </FormField>
             </div>

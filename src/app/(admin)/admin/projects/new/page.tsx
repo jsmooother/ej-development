@@ -109,8 +109,9 @@ export default function NewProjectPage() {
               <Textarea 
                 id="content" 
                 name="content" 
-                rows={8}
+                rows={12}
                 placeholder="Describe your project in detail..."
+                className="resize-y min-h-[200px]"
               />
             </FormField>
           </div>

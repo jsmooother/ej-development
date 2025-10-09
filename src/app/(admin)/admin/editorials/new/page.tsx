@@ -112,8 +112,9 @@ export default function NewEditorialPage() {
               <Textarea 
                 id="excerpt" 
                 name="excerpt" 
-                rows={3}
+                rows={4}
                 placeholder="A compelling summary of your article..."
+                className="resize-y min-h-[80px]"
               />
             </FormField>
           </div>
@@ -132,10 +133,11 @@ export default function NewEditorialPage() {
               <Textarea 
                 id="factPrompt" 
                 name="factPrompt" 
-                rows={4}
+                rows={5}
                 value={factPrompt}
                 onChange={(e) => setFactPrompt(e.target.value)}
                 placeholder="e.g., The Marbella luxury market is shifting toward design-led properties. Buyers now prioritize architectural integrity over generic amenities. Golden Mile seeing new developments with clean lines and sustainable materials..."
+                className="resize-y min-h-[100px]"
               />
             </FormField>
 
@@ -167,10 +169,11 @@ export default function NewEditorialPage() {
               <Textarea 
                 id="content" 
                 name="content" 
-                rows={16}
+                rows={20}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Write your article here, or use the AI assistant above to generate a draft..."
+                className="resize-y min-h-[400px]"
                 required
               />
             </FormField>

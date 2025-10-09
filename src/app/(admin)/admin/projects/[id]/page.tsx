@@ -227,7 +227,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 value={project.content}
                 onChange={(e) => setProject({ ...project, content: e.target.value })}
                 placeholder="Describe your project in detail..."
-                rows={8}
+                rows={12}
+                className="resize-y min-h-[200px]"
               />
             </FormField>
           </div>
@@ -270,8 +271,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                   }
                 }}
                 placeholder='{\n  "location": "La Zagaleta",\n  "sizeSqm": 1200,\n  "role": "Design & Development",\n  "features": ["Private Pool", "Garden", "Sea Views"]\n}'
-                rows={8}
-                className="font-mono text-xs"
+                rows={10}
+                className="font-mono text-xs resize-y min-h-[150px]"
               />
             </FormField>
           </div>
