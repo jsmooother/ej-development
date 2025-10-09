@@ -148,7 +148,7 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-static";
-export const revalidate = 3600; // Revalidate every hour // Always fetch fresh data
+export const revalidate = 60; // Revalidate every minute for faster updates
 
 // Helper function to shuffle array (for randomizing projects)
 function shuffleArray<T>(array: T[]): T[] {
@@ -174,19 +174,19 @@ export default async function HomePage() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
     
-    // Fetch projects from database
+    // Fetch projects from database with 60s cache
     const projectsResponse = await fetch(`${baseUrl}/api/projects`, {
-      cache: 'no-store'
+      next: { revalidate: 60 }
     });
     
-    // Fetch editorials from database
+    // Fetch editorials from database with 60s cache
     const editorialsResponse = await fetch(`${baseUrl}/api/editorials`, {
-      cache: 'no-store'
+      next: { revalidate: 60 }
     });
     
-    // Fetch Instagram posts from database
+    // Fetch Instagram posts from database with 60s cache
     const instagramResponse = await fetch(`${baseUrl}/api/instagram/posts`, {
-      cache: 'no-store'
+      next: { revalidate: 60 }
     });
     
     if (projectsResponse.ok && editorialsResponse.ok && instagramResponse.ok) {
