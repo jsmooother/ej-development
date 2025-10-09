@@ -1,0 +1,265 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { InlineToggle } from "@/components/admin/inline-toggle";
+
+interface Editorial {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImagePath: string;
+  tags: string[];
+  isPublished: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export default function EditorialsListPage() {
+  const [posts, setPosts] = useState<Editorial[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch editorials from database on component mount
+  useEffect(() => {
+    const fetchEditorials = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/editorials');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch editorials');
+        }
+        
+        const data = await response.json();
+        
+        // Fetch status from content API
+        const statusResponse = await fetch('/api/content/status');
+        const statusData = await statusResponse.json();
+        
+        // Merge editorials with their publish status
+        const editorialsWithStatus = data.map((editorial: Editorial) => ({
+          ...editorial,
+          isPublished: statusData.editorials[editorial.slug]?.isPublished || editorial.isPublished
+        }));
+        
+        setPosts(editorialsWithStatus);
+      } catch (error) {
+        console.error('Failed to fetch editorials:', error);
+        // Fallback to empty array on error
+        setPosts([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEditorials();
+  }, []);
+
+  const handleTogglePublish = async (postId: string, newStatus: boolean) => {
+    console.log(`Toggling post ${postId} to ${newStatus ? 'published' : 'draft'}`);
+    
+    try {
+      // Call API to update status using slug
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      
+      const response = await fetch('/api/content/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'editorial',
+          id: post.slug,
+          isPublished: newStatus
+        })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setPosts(prev => 
+          prev.map(p => p.id === postId ? { ...p, isPublished: newStatus } : p)
+        );
+        console.log(`Successfully updated editorial ${postId} status`);
+      } else {
+        console.error('Failed to update editorial status');
+      }
+    } catch (error) {
+      console.error('Error updating editorial status:', error);
+    }
+  };
+
+  const handleDelete = async (postId: string) => {
+    if (!confirm('Are you sure you want to delete this editorial?')) return;
+
+    try {
+      const response = await fetch(`/api/editorials/${postId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete editorial');
+      }
+      
+      // Remove from local state
+      setPosts(prev => prev.filter(p => p.id !== postId));
+      
+      console.log(`Successfully deleted editorial ${postId}`);
+    } catch (error) {
+      console.error('Failed to delete editorial:', error);
+      alert('Failed to delete editorial. Please try again.');
+    }
+  };
+
+  return (
+    <div>
+      <AdminHeader 
+        title="Editorials" 
+        description={`Manage your editorial content (${posts.length} total)`}
+        action={{
+          label: "New Editorial",
+          href: "/admin/editorials/new"
+        }}
+      />
+
+      <div className="p-8">
+        {isLoading ? (
+          <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
+                <svg className="h-10 w-10 animate-spin text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">Loading editorials...</h3>
+              <p className="mt-2 text-sm text-muted-foreground/60">
+                Fetching your editorial content from the database.
+              </p>
+            </div>
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
+            <div className="mx-auto max-w-md">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
+                <svg className="h-10 w-10 text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">No editorials yet</h3>
+              <p className="mt-2 text-sm text-muted-foreground/60">
+                Start writing your first editorial article to share insights and stories.
+              </p>
+              <Link
+                href="/admin/editorials/new"
+                className="mt-8 inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-3 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Write Your First Editorial
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/admin/editorials/${post.id}`}
+                className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
+              >
+                <div className="flex items-center gap-6 p-6">
+                  {/* Cover Image */}
+                  <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                    {post.coverImagePath ? (
+                      <img 
+                        src={post.coverImagePath} 
+                        alt={post.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Post Info */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
+                          {post.title}
+                        </h3>
+                        <p className="mt-1 text-sm text-muted-foreground/60">{post.excerpt}</p>
+                      </div>
+                      <div className="ml-4 flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <InlineToggle
+                            id={post.id}
+                            initialChecked={post.isPublished}
+                            onToggle={(checked) => handleTogglePublish(post.id, checked)}
+                          />
+                          <span className={`text-[10px] font-medium uppercase tracking-wide ${
+                            post.isPublished 
+                              ? "text-green-700" 
+                              : "text-muted-foreground/60"
+                          }`}>
+                            {post.isPublished ? "Live" : "Draft"}
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDelete(post.id);
+                          }}
+                          className="text-muted-foreground/40 transition-colors hover:text-red-600"
+                          title="Delete editorial"
+                        >
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Post Meta */}
+                    <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {post.tags.map((tag) => (
+                            <span key={tag} className="rounded-full bg-foreground/5 px-2.5 py-1 text-[10px] font-medium text-foreground/60">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
+                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>Created {new Date(post.createdAt!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="text-muted-foreground/40 transition-all group-hover:translate-x-1 group-hover:text-foreground">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+

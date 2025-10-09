@@ -1,0 +1,346 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AdminHeader } from "@/components/admin/admin-header";
+import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
+import { Toggle } from "@/components/admin/toggle";
+
+export default function NewEditorialPage() {
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [content, setContent] = useState("");
+  const [factPrompt, setFactPrompt] = useState("");
+
+  const handleGenerateContent = async () => {
+    if (!factPrompt.trim()) {
+      alert("Please enter some facts or key points first");
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const formData = new FormData(document.querySelector('form') as HTMLFormElement);
+      const title = formData.get('title') as string;
+
+      const response = await fetch('/api/ai/generate-editorial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt: factPrompt,
+          title: title || 'Untitled Editorial'
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.content) {
+        setContent(data.content);
+      } else {
+        alert("Failed to generate content");
+      }
+    } catch (error) {
+      console.error("Error generating content:", error);
+      alert("Failed to generate content");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      // Parse tags from comma-separated string
+      const tagsInput = formData.get('tags') as string;
+      const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+      
+      // Create editorial object
+      const editorialData = {
+        title: formData.get('title') as string,
+        slug: formData.get('slug') as string,
+        excerpt: formData.get('excerpt') as string || '',
+        content: content || (formData.get('content') as string) || '',
+        coverImagePath: formData.get('coverImagePath') as string || '',
+        tags,
+        isPublished: formData.get('isPublished') === 'on',
+      };
+      
+      // Call API to create editorial
+      const response = await fetch('/api/editorials/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editorialData),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create editorial');
+      }
+      
+      const result = await response.json();
+      console.log('Created editorial:', result);
+      
+      // Redirect to editorials list
+      router.push('/admin/editorials');
+    } catch (error) {
+      console.error('Error creating editorial:', error);
+      alert(error instanceof Error ? error.message : 'Failed to create editorial');
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <AdminHeader 
+        title="New Editorial" 
+        description="Write a new article to share insights and stories"
+      />
+
+      <div className="mx-auto max-w-2xl p-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Basic Information */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              Basic Information
+            </h2>
+            
+            <FormField 
+              label="Title" 
+              id="title" 
+              required
+              description="The headline of your editorial"
+            >
+              <Input 
+                id="title" 
+                name="title" 
+                placeholder="e.g., Marbella Market, Reframed" 
+                required 
+              />
+            </FormField>
+
+            <FormField 
+              label="Slug" 
+              id="slug"
+              required
+              description="URL-friendly identifier (e.g., marbella-market-reframed)"
+            >
+              <Input 
+                id="slug" 
+                name="slug" 
+                placeholder="marbella-market-reframed" 
+                pattern="[a-z0-9-]+"
+                required 
+              />
+            </FormField>
+
+            <FormField 
+              label="Excerpt" 
+              id="excerpt"
+              description="Brief summary that appears in previews"
+            >
+              <Textarea 
+                id="excerpt" 
+                name="excerpt" 
+                rows={4}
+                placeholder="A compelling summary of your article..."
+                className="resize-y min-h-[80px]"
+              />
+            </FormField>
+          </div>
+
+          {/* AI Content Generator */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              AI Content Assistant
+            </h2>
+
+            <FormField 
+              label="Key Facts & Points" 
+              id="factPrompt"
+              description="Enter the main facts and ideas you want to cover"
+            >
+              <Textarea 
+                id="factPrompt" 
+                name="factPrompt" 
+                rows={5}
+                value={factPrompt}
+                onChange={(e) => setFactPrompt(e.target.value)}
+                placeholder="e.g., The Marbella luxury market is shifting toward design-led properties. Buyers now prioritize architectural integrity over generic amenities. Golden Mile seeing new developments with clean lines and sustainable materials..."
+                className="resize-y min-h-[100px]"
+              />
+            </FormField>
+
+            <button
+              type="button"
+              onClick={handleGenerateContent}
+              disabled={isGenerating || !factPrompt.trim()}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-border/40 bg-gradient-to-r from-purple-50 to-blue-50 px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-border hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              {isGenerating ? "Generating editorial content..." : "Generate Editorial with AI"}
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              Article Content
+            </h2>
+
+            <FormField 
+              label="Full Content" 
+              id="content"
+              required
+              description="Edit the AI-generated content or write your own"
+            >
+              <Textarea 
+                id="content" 
+                name="content" 
+                rows={20}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Write your article here, or use the AI assistant above to generate a draft..."
+                className="resize-y min-h-[400px]"
+                required
+              />
+            </FormField>
+          </div>
+
+          {/* Categorization */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              Categorization
+            </h2>
+
+            <FormField 
+              label="Tags" 
+              id="tags"
+              description="Categories or topics (comma-separated)"
+            >
+              <Input 
+                id="tags" 
+                name="tags" 
+                placeholder="Market Insight, Design Journal, Guide"
+              />
+            </FormField>
+          </div>
+
+          {/* Images */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              Article Images
+            </h2>
+
+            <FormField 
+              label="Cover Image URL" 
+              id="coverImage"
+              description="Featured image for the article (temporary - upload coming soon)"
+            >
+              <Input 
+                id="coverImage" 
+                name="coverImage" 
+                type="url"
+                placeholder="https://images.unsplash.com/photo-..."
+              />
+            </FormField>
+
+            <FormField 
+              label="Additional Images" 
+              id="additionalImages"
+              description="Article images, one URL per line"
+            >
+              <Textarea 
+                id="additionalImages" 
+                name="additionalImages" 
+                rows={5}
+                placeholder="https://images.unsplash.com/photo-1...&#10;https://images.unsplash.com/photo-2...&#10;https://images.unsplash.com/photo-3..."
+              />
+            </FormField>
+
+            <div className="rounded-lg border border-dashed border-border/50 bg-muted/20 p-6 text-center">
+              <svg className="mx-auto h-10 w-10 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p className="mt-2 text-xs font-medium text-muted-foreground">Drag & drop upload coming soon</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground/50">For now, use image URLs above</p>
+            </div>
+          </div>
+
+          {/* Publishing */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
+              Visibility & Publishing
+            </h2>
+
+            <Toggle
+              id="isPublished"
+              name="isPublished"
+              label="Publish to Site"
+              description="When enabled, this editorial will be visible on the public site"
+              defaultChecked={true}
+            />
+
+            <FormField 
+              label="Publish Date" 
+              id="publishedAt"
+              description="Schedule when this article should go live (optional)"
+            >
+              <Input 
+                id="publishedAt" 
+                name="publishedAt" 
+                type="datetime-local"
+              />
+            </FormField>
+
+            <div className="rounded-lg border border-border/30 bg-muted/10 p-4">
+              <div className="flex items-start gap-3">
+                <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-xs text-muted-foreground/70">
+                  <p className="font-medium text-foreground/80">Publishing tip</p>
+                  <p className="mt-1">Turn off to keep this editorial in draft mode. You can also schedule a future publish date.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-between border-t border-border/20 pt-8">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
+            >
+              Cancel
+            </button>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                className="rounded-xl border border-border/40 px-6 py-2.5 text-sm font-medium text-foreground transition-all hover:border-border hover:bg-muted/50"
+              >
+                Save as Draft
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="rounded-xl bg-foreground px-6 py-2.5 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md disabled:opacity-50"
+              >
+                {isSaving ? "Publishing..." : "Publish Editorial"}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
