@@ -17,7 +17,7 @@ if (!migrationUrl) {
 async function applyMigrations() {
   console.log("🚀 Starting database migration...\n");
 
-  const sql = postgres(migrationUrl, {
+  const sql = postgres(migrationUrl!, {
     ssl: "require",
     max: 1,
   });
