@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { env } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 
@@ -31,6 +31,7 @@ export async function GET() {
 
   // 2. Test Drizzle ORM connection
   try {
+    const db = getDb();
     const result = await db.execute("SELECT NOW() as current_time");
     results.checks.push({
       name: "Drizzle ORM Connection",
@@ -67,6 +68,7 @@ export async function GET() {
 
   // 4. Test database schema - check if tables exist
   try {
+    const db = getDb();
     const tablesQuery = await db.execute(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -89,6 +91,7 @@ export async function GET() {
 
   // 5. Test basic CRUD on a table
   try {
+    const db = getDb();
     // Try to count records in listings table
     const { sql } = await import("drizzle-orm");
     const { listings } = await import("@/lib/db");

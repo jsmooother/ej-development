@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 type ProjectCard = {
   type: "project";
   title: string;
+  slug: string;
   summary: string;
   location: string;
   image: string;
@@ -17,6 +18,7 @@ type ProjectCard = {
 type EditorialCard = {
   type: "editorial";
   title: string;
+  slug: string;
   excerpt: string;
   category: string;
   image?: string;
@@ -32,6 +34,7 @@ const projects: ProjectCard[] = [
   {
     type: "project",
     title: "Sierra Horizon",
+    slug: "sierra-horizon",
     summary: "Adaptive reuse opening a hillside estate toward the sea with layered courtyards.",
     location: "La Zagaleta · 2023",
     sqm: 420,
@@ -41,6 +44,7 @@ const projects: ProjectCard[] = [
   {
     type: "project",
     title: "Loma Azul",
+    slug: "loma-azul",
     summary: "Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.",
     location: "Benahavís · 2022",
     sqm: 380,
@@ -50,6 +54,7 @@ const projects: ProjectCard[] = [
   {
     type: "project",
     title: "Casa Palma",
+    slug: "casa-palma",
     summary: "Palm-framed sanctuary with shaded loggias and a terraced pool axis.",
     location: "Marbella Club · 2021",
     sqm: 320,
@@ -59,6 +64,7 @@ const projects: ProjectCard[] = [
   {
     type: "project",
     title: "Mirador Alto",
+    slug: "mirador-alto",
     summary: "Art-filled penthouse reimagined with sculptural joinery and panoramic glazing.",
     location: "Puerto Banús · 2020",
     sqm: 280,
@@ -68,6 +74,7 @@ const projects: ProjectCard[] = [
   {
     type: "project",
     title: "Villa Ladera",
+    slug: "villa-ladera",
     summary: "Split-level home cantilevered over native landscaping and a reflecting pool.",
     location: "Nueva Andalucía · 2019",
     sqm: 450,
@@ -80,6 +87,7 @@ const editorials: EditorialCard[] = [
   {
     type: "editorial",
     title: "Marbella Market, Reframed",
+    slug: "marbella-market-reframed",
     excerpt: "Design-led developments are resetting expectations along the Golden Mile.",
     category: "Market Insight",
     image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80",
@@ -87,6 +95,7 @@ const editorials: EditorialCard[] = [
   {
     type: "editorial",
     title: "Designing with Andalusian Light",
+    slug: "designing-with-andalusian-light",
     excerpt: "Glazing, shading, and thermal comfort principles for coastal villas.",
     category: "Design Journal",
     image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80",
@@ -94,6 +103,7 @@ const editorials: EditorialCard[] = [
   {
     type: "editorial",
     title: "Neighbourhood Guide · Golden Mile",
+    slug: "neighbourhood-guide-golden-mile",
     excerpt: "Our shortlist of dining, wellness, and cultural highlights near Casa Serrana.",
     category: "Guide",
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80",
@@ -101,6 +111,7 @@ const editorials: EditorialCard[] = [
   {
     type: "editorial",
     title: "Inside the Atelier",
+    slug: "inside-the-atelier",
     excerpt: "Material stories and collaborations from our Marbella workshop.",
     category: "Studio",
     image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80",
@@ -108,6 +119,7 @@ const editorials: EditorialCard[] = [
   {
     type: "editorial",
     title: "Sourcing Sustainable Stone",
+    slug: "sourcing-sustainable-stone",
     excerpt: "Tracing quarry provenance for each terrazzo slab and limestone block.",
     category: "Process",
     image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=600&q=80",

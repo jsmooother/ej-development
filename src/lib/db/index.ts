@@ -7,16 +7,19 @@ const globalForDb = globalThis as unknown as {
   connection?: ReturnType<typeof postgres>;
 };
 
-const pooledConnectionString = env.SUPABASE_DB_POOL_URL ?? env.SUPABASE_DB_URL ?? env.DIRECT_URL;
+const getPooledConnectionString = () => {
+  const pooledConnectionString = env.SUPABASE_DB_POOL_URL ?? env.SUPABASE_DB_URL ?? env.DIRECT_URL;
+  if (!pooledConnectionString) {
+    throw new Error(
+      "Missing database configuration. Provide SUPABASE_DB_POOL_URL (preferred), SUPABASE_DB_URL, or DIRECT_URL.",
+    );
+  }
+  return pooledConnectionString;
+};
 
-if (!pooledConnectionString) {
-  throw new Error(
-    "Missing database configuration. Provide SUPABASE_DB_POOL_URL (preferred), SUPABASE_DB_URL, or DIRECT_URL.",
-  );
-}
-
-const directConnectionString =
-  env.DIRECT_URL ?? env.SUPABASE_DB_URL ?? env.SUPABASE_DB_POOL_URL;
+const getDirectConnectionString = () => {
+  return env.DIRECT_URL ?? env.SUPABASE_DB_URL ?? env.SUPABASE_DB_POOL_URL;
+};
 
 const looksLikePooledUrl = (value?: string | null) =>
   Boolean(value && /pgbouncer=true|pooler\.supabase/i.test(value));
@@ -38,6 +41,7 @@ const createSupabaseConnection = (connectionString: string, { forcePooling = fal
 
 const getOrCreateConnection = () => {
   if (!globalForDb.connection) {
+    const pooledConnectionString = getPooledConnectionString();
     const shouldPool = pooledConnectionString === env.SUPABASE_DB_POOL_URL || looksLikePooledUrl(pooledConnectionString);
     globalForDb.connection = createSupabaseConnection(pooledConnectionString, { forcePooling: shouldPool });
   }
@@ -53,12 +57,10 @@ export const getDb = () => {
   return dbInstance;
 };
 
-// Export db as a getter for convenience
-export const db = getDb();
-
 // For use in scripts and API routes
-export const createDbClient = () =>
-  drizzle(
+export const createDbClient = () => {
+  const directConnectionString = getDirectConnectionString();
+  return drizzle(
     createSupabaseConnection(directConnectionString, {
       forcePooling:
         (directConnectionString === env.SUPABASE_DB_POOL_URL || looksLikePooledUrl(directConnectionString)) &&
@@ -66,6 +68,7 @@ export const createDbClient = () =>
     }),
     { schema },
   );
+};
 
 export type Database = ReturnType<typeof getDb>;
 export * from "./schema";
