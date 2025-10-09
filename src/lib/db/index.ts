@@ -18,7 +18,13 @@ const getPooledConnectionString = () => {
 };
 
 const getDirectConnectionString = () => {
-  return env.DIRECT_URL ?? env.SUPABASE_DB_URL ?? env.SUPABASE_DB_POOL_URL;
+  const directConnectionString = env.DIRECT_URL ?? env.SUPABASE_DB_URL ?? env.SUPABASE_DB_POOL_URL;
+  if (!directConnectionString) {
+    throw new Error(
+      "Missing database configuration. Provide DIRECT_URL, SUPABASE_DB_URL, or SUPABASE_DB_POOL_URL.",
+    );
+  }
+  return directConnectionString;
 };
 
 const looksLikePooledUrl = (value?: string | null) =>
