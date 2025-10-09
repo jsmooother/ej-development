@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
-import { getDb, listings, projects, posts, enquiries } from "@/lib/db";
+import { createDbClient, listings, projects, posts, enquiries } from "@/lib/db";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { StatCard } from "@/components/admin/stat-card";
 
@@ -18,7 +18,7 @@ export default async function AdminDashboardPage() {
   let recentPosts: any[] = [];
 
   try {
-    const db = await getDb();
+    const db = createDbClient();
     
     // Get counts using proper Drizzle ORM queries
     const allListings = await db.query.listings.findMany();
