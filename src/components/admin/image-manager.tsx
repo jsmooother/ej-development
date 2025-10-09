@@ -43,22 +43,25 @@ export function ImageManager({ images, onChange, label = "Images", description }
       )}
 
       {/* Add new image */}
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <input
           type="url"
           value={newImageUrl}
           onChange={(e) => setNewImageUrl(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="https://example.com/image.jpg"
-          className="flex-1 rounded-lg border border-border/50 bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:border-foreground/50 focus:outline-none"
+          className="flex-1 rounded-lg border border-border/50 bg-background px-4 py-2.5 text-sm placeholder:text-muted-foreground/50 focus:border-foreground/50 focus:outline-none"
         />
         <button
           type="button"
           onClick={addImage}
           disabled={!newImageUrl.trim()}
-          className="rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
         >
-          Add
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Add Image
         </button>
       </div>
 
@@ -67,10 +70,10 @@ export function ImageManager({ images, onChange, label = "Images", description }
         {images.map((image, index) => (
           <div
             key={index}
-            className="flex items-center gap-3 rounded-lg border border-border/30 bg-card p-3"
+            className="flex items-center gap-4 rounded-xl border border-border/40 bg-card p-4 shadow-sm transition-all hover:shadow-md"
           >
             {/* Image preview */}
-            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-muted">
+            <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
               {image ? (
                 <img
                   src={image}
@@ -82,7 +85,7 @@ export function ImageManager({ images, onChange, label = "Images", description }
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
-                  <svg className="h-6 w-6 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-8 w-8 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -91,15 +94,15 @@ export function ImageManager({ images, onChange, label = "Images", description }
 
             {/* URL */}
             <div className="flex-1 min-w-0">
-              <p className="truncate text-sm text-foreground">{image}</p>
-              <p className="text-xs text-muted-foreground/60">Image {index + 1}</p>
+              <p className="truncate text-sm font-medium text-foreground">{image}</p>
+              <p className="text-xs text-muted-foreground/60">Gallery Image {index + 1}</p>
             </div>
 
             {/* Remove button */}
             <button
               type="button"
               onClick={() => removeImage(index)}
-              className="flex-shrink-0 rounded-md p-1.5 text-muted-foreground/40 transition-colors hover:bg-red-50 hover:text-red-600"
+              className="flex-shrink-0 rounded-lg bg-red-50 px-3 py-2 text-red-600 transition-all hover:bg-red-100 hover:text-red-700"
               title="Remove image"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,12 +114,12 @@ export function ImageManager({ images, onChange, label = "Images", description }
       </div>
 
       {images.length === 0 && (
-        <div className="rounded-lg border border-dashed border-border/50 bg-muted/20 p-6 text-center">
-          <svg className="mx-auto h-8 w-8 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="rounded-lg border border-dashed border-border/50 bg-muted/20 p-8 text-center">
+          <svg className="mx-auto h-10 w-10 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <p className="mt-2 text-sm text-muted-foreground/60">No images added yet</p>
-          <p className="text-xs text-muted-foreground/40">Add image URLs above</p>
+          <p className="mt-3 text-sm font-medium text-muted-foreground">No images yet</p>
+          <p className="mt-1 text-xs text-muted-foreground/60">Add your first image using the URL field above</p>
         </div>
       )}
     </div>
