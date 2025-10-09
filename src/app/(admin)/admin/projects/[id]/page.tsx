@@ -6,6 +6,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { ImageManager } from "@/components/admin/image-manager";
+import { HeroImageManager } from "@/components/admin/hero-image-manager";
 
 interface Project {
   id: string;
@@ -279,17 +280,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           <div className="rounded-2xl border border-border/50 bg-card p-6">
             <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Images</h2>
             <div className="grid gap-6">
-              <FormField
-                label="Hero Image URL"
+              <HeroImageManager
+                imageUrl={project.heroImagePath}
+                onChange={(url) => setProject({ ...project, heroImagePath: url })}
+                label="Hero Image"
                 description="Main image displayed on project cards and detail pages"
                 required
-              >
-                <Input
-                  value={project.heroImagePath}
-                  onChange={(e) => setProject({ ...project, heroImagePath: e.target.value })}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </FormField>
+              />
 
               <ImageManager
                 images={project.additionalImages}

@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
+import { HeroImageManager } from "@/components/admin/hero-image-manager";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [heroImageUrl, setHeroImageUrl] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -177,18 +179,13 @@ export default function NewProjectPage() {
               Project Images
             </h2>
 
-            <FormField 
-              label="Hero Image URL" 
-              id="heroImage"
-              description="Main project image (temporary - upload coming soon)"
-            >
-              <Input 
-                id="heroImage" 
-                name="heroImage" 
-                type="url"
-                placeholder="https://images.unsplash.com/photo-..."
-              />
-            </FormField>
+            <HeroImageManager
+              imageUrl={heroImageUrl}
+              onChange={setHeroImageUrl}
+              label="Hero Image"
+              description="Main project image displayed on cards and detail pages"
+              required
+            />
 
             <FormField 
               label="Additional Images" 
