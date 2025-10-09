@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { sql, desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { getDb, listings, projects, posts, enquiries } from "@/lib/db";
 import { AdminHeader } from "@/components/admin/admin-header";
@@ -9,24 +9,79 @@ export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
 export default async function AdminDashboardPage() {
-  // TODO: Re-enable database once connection is optimized
-  // For now, using mock data for fast development
-  const listingsCount = 1;
-  const projectsCount = 3;
-  const postsCount = 3;
-  const enquiriesCount = 0;
-  
-  const recentProjects = [
-    { id: '1', title: 'Sierra Horizon', summary: 'La Zagaleta · 2023', isPublished: true },
-    { id: '2', title: 'Loma Azul', summary: 'Benahavís · 2022', isPublished: true },
-    { id: '3', title: 'Casa Palma', summary: 'Marbella Club · 2021', isPublished: true },
-  ];
-  
-  const recentPosts = [
-    { id: '1', title: 'Marbella Market, Reframed', excerpt: 'Design-led developments...', isPublished: true },
-    { id: '2', title: 'Designing with Andalusian Light', excerpt: 'Glazing principles...', isPublished: true },
-    { id: '3', title: 'Neighbourhood Guide', excerpt: 'Golden Mile highlights...', isPublished: true },
-  ];
+  // Fetch real data from database
+  let listingsCount = 0;
+  let projectsCount = 0;
+  let postsCount = 0;
+  let enquiriesCount = 0;
+  let recentProjects: any[] = [];
+  let recentPosts: any[] = [];
+
+  try {
+    const db = await getDb();
+    
+    // Get counts
+    const [listingsResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${listings}`);
+    const [projectsResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${projects}`);
+    const [postsResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${posts}`);
+    const [enquiriesResult] = await db.execute(sql`SELECT COUNT(*)::int as count FROM ${enquiries}`);
+    
+    listingsCount = listingsResult.count || 0;
+    projectsCount = projectsResult.count || 0;
+    postsCount = postsResult.count || 0;
+    enquiriesCount = enquiriesResult.count || 0;
+    
+    // Get recent projects (published only)
+    const dbProjects = await db.query.projects.findMany({
+      where: (projects, { eq }) => eq(projects.isPublished, true),
+      orderBy: (projects, { desc }) => [desc(projects.createdAt)],
+      limit: 3,
+      columns: {
+        id: true,
+        title: true,
+        summary: true,
+        year: true,
+        isPublished: true
+      }
+    });
+    
+    recentProjects = dbProjects.map(project => ({
+      id: project.id,
+      title: project.title,
+      summary: `${project.year || 'Coming soon'}`,
+      isPublished: project.isPublished
+    }));
+    
+    // Get recent posts (published only)
+    const dbPosts = await db.query.posts.findMany({
+      where: (posts, { eq }) => eq(posts.isPublished, true),
+      orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+      limit: 3,
+      columns: {
+        id: true,
+        title: true,
+        excerpt: true,
+        isPublished: true
+      }
+    });
+    
+    recentPosts = dbPosts.map(post => ({
+      id: post.id,
+      title: post.title,
+      excerpt: post.excerpt,
+      isPublished: post.isPublished
+    }));
+    
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    // Fallback to empty data on error
+    listingsCount = 0;
+    projectsCount = 0;
+    postsCount = 0;
+    enquiriesCount = 0;
+    recentProjects = [];
+    recentPosts = [];
+  }
 
   return (
     <div>
