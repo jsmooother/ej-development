@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 type EditorialCard = {
   id: string;
+  slug: string;
   title: string;
   excerpt: string;
   coverImagePath: string;
@@ -43,6 +45,7 @@ export default async function EditorialsPage() {
       })
       .map((editorial: any) => ({
         id: editorial.id,
+        slug: editorial.slug,
         title: editorial.title,
         excerpt: editorial.excerpt || '',
         coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
@@ -58,107 +61,129 @@ export default async function EditorialsPage() {
   }
 
   return (
-    <main className="space-y-24 pb-24">
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pt-28 md:pt-32">
-        <div className="flex flex-col gap-8 text-center md:gap-12">
-          <div>
-            <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Editorial</p>
-            <h1 className="mt-4 font-serif text-4xl font-light text-foreground md:text-6xl">
-              Stories & Insights
-            </h1>
+    <main className="bg-[#f8f6f0]">
+      {/* Classic Newspaper Masthead */}
+      <header className="border-b-[3px] border-black bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-6">
+          <div className="flex items-center justify-between border-b border-gray-300 pb-4">
+            <div className="text-xs text-gray-500">VOL. 2025</div>
+            <div className="text-center flex-1">
+              <h1 className="font-serif text-5xl font-black tracking-tight text-black md:text-6xl">
+                THE EJ TIMES
+              </h1>
+              <p className="mt-1 text-xs font-medium uppercase tracking-[0.4em] text-gray-600">
+                Editorial Collection
+              </p>
+            </div>
+            <div className="text-xs text-gray-500">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
           </div>
-          <p className="mx-auto max-w-2xl text-base text-muted-foreground md:text-lg">
-            From market analysis to design philosophy, explore our perspective on luxury living 
-            and architectural practice in Andalusia.
+          <div className="mt-2 flex items-center justify-center gap-8 text-[10px] uppercase tracking-widest text-gray-600">
+            <Link href="/" className="hover:text-black">Home</Link>
+            <span>·</span>
+            <Link href="/projects" className="hover:text-black">Projects</Link>
+            <span>·</span>
+            <span className="font-bold text-black">Editorials</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Page Title */}
+      <section className="mx-auto max-w-6xl px-6 pt-12 pb-8">
+        <div className="border-b-2 border-black pb-6">
+          <h2 className="font-serif text-4xl font-black uppercase text-black md:text-5xl">
+            All Stories
+          </h2>
+          <p className="mt-3 text-sm uppercase tracking-widest text-gray-600">
+            {editorials.length} {editorials.length === 1 ? 'Article' : 'Articles'} Published
           </p>
         </div>
       </section>
 
-      {/* Editorials Grid */}
-      <section className="mx-auto max-w-6xl px-6">
+      {/* Editorials Grid - Newspaper Style */}
+      <section className="mx-auto max-w-6xl px-6 pb-16">
         {editorials.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-border/50 bg-card p-16 text-center">
+          <div className="border-2 border-black bg-white p-16 text-center">
             <div className="mx-auto max-w-md">
-              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-foreground/5">
-                <svg className="h-10 w-10 text-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-              </div>
-              <h3 className="mt-6 font-sans text-2xl font-normal tracking-tight text-foreground">No editorials yet</h3>
-              <p className="mt-2 text-sm text-muted-foreground/60">
+              <h3 className="font-serif text-2xl font-bold text-black">No Articles Published</h3>
+              <p className="mt-2 text-sm text-gray-600">
                 Check back soon for our latest insights and stories.
               </p>
             </div>
           </div>
         ) : (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2">
             {editorials.map((editorial) => (
-              <article
+              <Link
                 key={editorial.id}
-                className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                href={`/editorials/${editorial.slug}`}
+                className="group block border-2 border-black bg-white transition-all hover:shadow-lg"
               >
                 {editorial.coverImagePath && (
-                  <div className="relative h-48 w-full">
+                  <div className="relative h-64 w-full border-b-2 border-black">
                     <Image
                       src={editorial.coverImagePath}
                       alt={editorial.title}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                 )}
-                <div className="flex flex-1 flex-col gap-4 p-6">
-                  <div className="flex items-center gap-2">
-                    {editorial.tags.length > 0 && (
+                <div className="p-6 space-y-4">
+                  {/* Tags and Date */}
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    {editorial.tags.map((tag, index) => (
+                      <span key={index} className="border border-black px-2 py-1 font-bold uppercase tracking-wider text-black">
+                        {tag}
+                      </span>
+                    ))}
+                    {editorial.publishedAt && (
                       <>
-                        <span className="text-xs font-bold uppercase tracking-[0.4em] text-red-600">
-                          {editorial.tags[0]}
+                        <span className="text-gray-400">·</span>
+                        <span className="text-gray-600 uppercase">
+                          {new Date(editorial.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                         </span>
-                        <span className="text-xs text-muted-foreground">·</span>
                       </>
                     )}
-                    <span className="text-xs text-muted-foreground">
-                      {editorial.publishedAt ? new Date(editorial.publishedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Draft'}
-                    </span>
                   </div>
-                  <div className="space-y-3">
-                    <h3 className="font-serif text-2xl font-light text-foreground">{editorial.title}</h3>
-                    <p className="text-sm text-muted-foreground">{editorial.excerpt}</p>
-                  </div>
-                  <div className="mt-auto">
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                      Read full article →
-                    </span>
+                  
+                  {/* Title */}
+                  <h3 className="font-serif text-3xl font-black leading-tight text-black group-hover:underline">
+                    {editorial.title}
+                  </h3>
+                  
+                  {/* Excerpt */}
+                  <p className="border-l-2 border-gray-400 pl-4 text-base leading-relaxed text-gray-700">
+                    {editorial.excerpt}
+                  </p>
+                  
+                  {/* Read More */}
+                  <div className="pt-2 text-xs font-bold uppercase tracking-widest text-black">
+                    Read Article →
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}
       </section>
 
-      {/* Newsletter CTA */}
-      <section className="mx-auto max-w-4xl px-6">
-        <div className="rounded-3xl border border-border bg-card p-12 text-center">
-          <h2 className="font-serif text-3xl font-light text-foreground md:text-4xl">
-            Stay Updated
-          </h2>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Subscribe to receive our latest editorials and project updates.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="rounded-full border border-border bg-background px-6 py-3 text-sm focus:border-primary focus:outline-none"
-            />
-            <button className="rounded-full border border-foreground bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:bg-foreground/90">
-              Subscribe
-            </button>
+      {/* Bottom Navigation */}
+      <footer className="border-t-[3px] border-black bg-white py-6">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="flex items-center justify-between text-xs uppercase tracking-widest">
+            <Link
+              href="/"
+              className="group flex items-center gap-2 text-gray-600 transition hover:text-black"
+            >
+              <svg className="h-3 w-3 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Home
+            </Link>
+            <div className="text-gray-500">© 2025 EJ Properties</div>
           </div>
         </div>
-      </section>
+      </footer>
     </main>
   );
 }

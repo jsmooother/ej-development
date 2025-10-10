@@ -32,25 +32,46 @@ export default function ListingsPage() {
   const handleTogglePublish = async (listingId: string, newStatus: boolean) => {
     console.log(`Toggling listing ${listingId} to ${newStatus ? 'published' : 'draft'}`);
     
-    // Update local state
-    setListings(prev => 
-      prev.map(listing => listing.id === listingId ? { ...listing, isPublished: newStatus } : listing)
-    );
+    try {
+      const response = await fetch(`/api/listings/${listingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished: newStatus })
+      });
+
+      if (response.ok) {
+        // Update local state
+        setListings(prev => 
+          prev.map(listing => listing.id === listingId ? { ...listing, isPublished: newStatus } : listing)
+        );
+        console.log(`Successfully updated listing ${listingId} status`);
+      } else {
+        console.error('Failed to update listing status');
+      }
+    } catch (error) {
+      console.error('Error updating listing status:', error);
+    }
   };
 
   const handleDelete = async (listingId: string) => {
     if (!confirm('Are you sure you want to delete this listing?')) return;
 
     try {
-      console.log(`Deleting listing ${listingId}`);
+      const response = await fetch(`/api/listings/${listingId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete listing');
+      }
       
       // Remove from local state
       setListings(prev => prev.filter(l => l.id !== listingId));
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log(`Successfully deleted listing ${listingId}`);
     } catch (error) {
       console.error('Failed to delete listing:', error);
+      alert('Failed to delete listing. Please try again.');
     }
   };
 
@@ -98,6 +119,23 @@ export default function ListingsPage() {
                 className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
               >
                 <div className="flex items-center gap-6 p-6">
+                  {/* Listing Image */}
+                  <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                    {listing.heroImagePath ? (
+                      <img 
+                        src={listing.heroImagePath} 
+                        alt={listing.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Listing Info */}
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
@@ -142,22 +180,34 @@ export default function ListingsPage() {
                     {/* Listing Meta */}
                     <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <span className="font-sans">{listing.price}</span>
+                        <span className={`rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide ${
+                          listing.status === 'for_sale' 
+                            ? "bg-green-50 text-green-700" 
+                            : listing.status === 'sold'
+                            ? "bg-gray-50 text-gray-700"
+                            : "bg-blue-50 text-blue-700"
+                        }`}>
+                          {listing.status === 'for_sale' ? 'For Sale' : listing.status === 'sold' ? 'Sold' : 'Coming Soon'}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
-                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>{listing.location}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground/60">
-                        <span>{listing.beds} bed</span>
-                        <span>·</span>
-                        <span>{listing.baths} bath</span>
-                        <span>·</span>
-                        <span>{listing.sqm}m²</span>
-                      </div>
+                      {listing.location?.locality && (
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
+                          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>{listing.location.locality}{listing.location.country ? `, ${listing.location.country}` : ''}</span>
+                        </div>
+                      )}
+                      {listing.facts && (
+                        <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground/60">
+                          {listing.facts.bedrooms && <span>{listing.facts.bedrooms} bed</span>}
+                          {listing.facts.bedrooms && listing.facts.bathrooms && <span>·</span>}
+                          {listing.facts.bathrooms && <span>{listing.facts.bathrooms} bath</span>}
+                          {(listing.facts.bedrooms || listing.facts.bathrooms) && listing.facts.builtAreaSqm && <span>·</span>}
+                          {listing.facts.builtAreaSqm && <span>{listing.facts.builtAreaSqm}m²</span>}
+                        </div>
+                      )}
                       <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
                         <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

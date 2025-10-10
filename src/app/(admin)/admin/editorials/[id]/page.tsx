@@ -26,26 +26,44 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Mock data - in real app, fetch from API
+  // Fetch editorial data from API
   useEffect(() => {
-    const mockEditorial: Editorial = {
-      id: params.id,
-      slug: 'marbella-market-reframed',
-      title: 'Marbella Market, Reframed',
-      excerpt: 'Design-led developments are resetting expectations along the Golden Mile.',
-      content: 'The Marbella property market has undergone a significant transformation in recent years, with design-led developments setting new standards for luxury living along the Golden Mile...',
-      tags: ['Market Insight'],
-      coverImagePath: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
-      additionalImages: [
-        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'
-      ],
-      isPublished: true,
-      publishDate: new Date('2025-10-01'),
-      createdAt: new Date('2025-10-01'),
+    const fetchEditorial = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/editorials/${params.id}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch editorial');
+        }
+        
+        const data = await response.json();
+        
+        // Map API response to Editorial interface
+        const fetchedEditorial: Editorial = {
+          id: data.id,
+          slug: data.slug,
+          title: data.title,
+          excerpt: data.excerpt || '',
+          content: data.content || '',
+          tags: data.tags || [],
+          coverImagePath: data.coverImagePath || '',
+          additionalImages: [], // Can be extended later
+          isPublished: data.isPublished,
+          publishDate: data.publishedAt ? new Date(data.publishedAt) : undefined,
+          createdAt: new Date(data.createdAt),
+        };
+        
+        setEditorial(fetchedEditorial);
+      } catch (error) {
+        console.error('Error fetching editorial:', error);
+        alert('Failed to load editorial');
+      } finally {
+        setIsLoading(false);
+      }
     };
     
-    setEditorial(mockEditorial);
-    setIsLoading(false);
+    fetchEditorial();
   }, [params.id]);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -55,29 +73,51 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
     setIsSaving(true);
     
     try {
-      // TODO: Replace with actual API call
-      console.log('Saving editorial:', editorial);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      const response = await fetch(`/api/editorials/${editorial.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editorial.title,
+          slug: editorial.slug,
+          excerpt: editorial.excerpt,
+          content: editorial.content,
+          coverImagePath: editorial.coverImagePath,
+          tags: editorial.tags,
+          isPublished: editorial.isPublished,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update editorial');
+      }
+
+      alert('Editorial updated successfully!');
       router.push('/admin/editorials');
     } catch (error) {
       console.error('Failed to save editorial:', error);
+      alert('Failed to save editorial. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!editorial || !confirm('Are you sure you want to delete this editorial?')) return;
+    if (!editorial || !confirm('Are you sure you want to delete this editorial? This action cannot be undone.')) return;
 
     try {
-      // TODO: Replace with actual API call
-      console.log('Deleting editorial:', editorial.id);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      const response = await fetch(`/api/editorials/${editorial.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete editorial');
+      }
+
+      alert('Editorial deleted successfully!');
       router.push('/admin/editorials');
     } catch (error) {
       console.error('Failed to delete editorial:', error);
+      alert('Failed to delete editorial. Please try again.');
     }
   };
 

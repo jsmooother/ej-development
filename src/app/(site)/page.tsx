@@ -21,6 +21,7 @@ type ProjectCard = {
 };
 
 type EditorialCard = {
+  id: string;
   type: "editorial";
   title: string;
   slug: string;
@@ -162,26 +163,47 @@ export default async function HomePage() {
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
   console.log('Hero project:', heroProject?.title || 'None');
   console.log('Published editorials:', publishedEditorials.length, 'Selected:', selectedEditorials.length);
+  console.log('Content limits:', contentLimits);
 
-  // Create a newspaper-style mixed stream - filter out undefined items
-  const featureStream = [
-    selectedProjects[0], // Main hero project - full width, double height
-    selectedEditorials[0], // Editorial - single column, double height
-    selectedProjects[1], // Project - double width, single height
-    selectedEditorials[1], // Editorial - single, standard
-    selectedProjects[2], // Project - single, double height
-    selectedEditorials[2], // Editorial - single, standard
-  ].filter(Boolean); // Remove undefined items
+  // Create a dynamic mixed stream based on content limits
+  const featureStream: (ProjectCard | EditorialCard)[] = [];
+  let projectIndex = 0;
+  let editorialIndex = 0;
+  
+  // Start with hero project if available
+  if (selectedProjects[projectIndex]) {
+    featureStream.push(selectedProjects[projectIndex]);
+    projectIndex++;
+  }
+  
+  // Alternate between editorials and projects to fill the stream
+  const totalItems = selectedProjects.length + selectedEditorials.length;
+  for (let i = featureStream.length; i < totalItems; i++) {
+    // Prioritize editorials if we have them and haven't reached the limit
+    if (editorialIndex < selectedEditorials.length) {
+      featureStream.push(selectedEditorials[editorialIndex]);
+      editorialIndex++;
+    }
+    // Then add projects
+    if (projectIndex < selectedProjects.length) {
+      featureStream.push(selectedProjects[projectIndex]);
+      projectIndex++;
+    }
+  }
 
-  // Layout pattern with varied heights for newspaper aesthetic (like Lagerlings)
-  const layoutPattern = [
-    { className: "md:col-span-3 md:row-span-2", tall: true }, // Hero project: full width, double height
-    { className: "md:col-span-1 md:row-span-2", tall: true }, // Editorial: single col, double height
-    { className: "md:col-span-2" }, // Project: double width, single height
-    { className: "md:col-span-1" }, // Editorial: single, standard
-    { className: "md:col-span-1 md:row-span-2", tall: true }, // Project: single col, double height
-    { className: "md:col-span-1" }, // Editorial: single, standard
+  // Dynamic layout pattern generator
+  const layoutPatterns = [
+    { className: "md:col-span-3 md:row-span-2", tall: true }, // Hero/featured item
+    { className: "md:col-span-1 md:row-span-2", tall: true }, // Tall single column
+    { className: "md:col-span-2" }, // Double width
+    { className: "md:col-span-1" }, // Standard single
+    { className: "md:col-span-1 md:row-span-2", tall: true }, // Tall single
+    { className: "md:col-span-1" }, // Standard single
   ];
+  
+  const layoutPattern = featureStream.map((_, index) => 
+    layoutPatterns[index % layoutPatterns.length]
+  );
 
   return (
     <main id="top" className="space-y-24 pb-24">
@@ -303,7 +325,7 @@ export default async function HomePage() {
             if (item.type === "editorial") {
               return (
                 <Link
-                  key={`${item.title}-${index}`}
+                  key={item.id}
                   href={`/editorials/${item.slug}`}
                   className={cn(
                     "flex h-full flex-col justify-between rounded-3xl border border-border bg-background/80 p-6 transition hover:border-primary",
