@@ -32,6 +32,8 @@ export function HeroImageManager({
 }: HeroImageManagerProps) {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [showPresets, setShowPresets] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const updateImage = () => {
     if (newImageUrl.trim()) {
@@ -48,6 +50,63 @@ export function HeroImageManager({
   const selectPresetImage = (url: string) => {
     onChange(url);
     setShowPresets(false);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File too large. Maximum size: 10MB');
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'projects');
+
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 200);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const data = await response.json();
+      onChange(data.url);
+      setShowPresets(false);
+      
+      setTimeout(() => {
+        setUploadProgress(0);
+      }, 1000);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setIsUploading(false);
+      e.target.value = ''; // Reset file input
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -117,8 +176,63 @@ export function HeroImageManager({
         </div>
       )}
 
-      {/* Add/Update image */}
+      {/* Upload from Computer */}
+      <div className="rounded-lg border-2 border-dashed border-border/50 bg-muted/10 p-6">
+        <div className="flex items-center justify-center">
+          <label className="flex cursor-pointer flex-col items-center gap-2">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              disabled={isUploading}
+              className="hidden"
+            />
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-foreground/5 transition-colors hover:bg-foreground/10">
+              {isUploading ? (
+                <svg className="h-8 w-8 animate-spin text-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              ) : (
+                <svg className="h-8 w-8 text-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              )}
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-medium text-foreground">
+                {isUploading ? 'Uploading...' : 'Upload from Computer'}
+              </p>
+              <p className="text-xs text-muted-foreground/60">
+                {isUploading ? `${uploadProgress}%` : 'Click to browse or drag & drop'}
+              </p>
+            </div>
+          </label>
+        </div>
+        {isUploading && uploadProgress > 0 && (
+          <div className="mt-4">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+              <div 
+                className="h-full bg-foreground transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* OR Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border/30" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-3 text-xs font-medium text-muted-foreground/50">OR</span>
+        </div>
+      </div>
+
+      {/* Add/Update image via URL */}
       <div className="space-y-3">
+        <p className="text-xs font-medium text-foreground/70">Use Image URL</p>
         <div className="flex gap-3">
           <input
             type="url"

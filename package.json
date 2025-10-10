@@ -12,7 +12,8 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "import-projects": "tsx scripts/import-projects-from-folders.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
