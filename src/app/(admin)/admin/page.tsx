@@ -32,8 +32,28 @@ export default async function AdminDashboardPage() {
       fetch(`${baseUrl}/api/editorials`)
     ]);
     
-    const projectsData = projectsResponse.ok ? await projectsResponse.json() : [];
-    const editorialsData = editorialsResponse.ok ? await editorialsResponse.json() : [];
+    let projectsData = [];
+    let editorialsData = [];
+    
+    if (projectsResponse.ok) {
+      projectsData = await projectsResponse.json();
+    } else {
+      console.error('❌ Projects API failed:', {
+        status: projectsResponse.status,
+        statusText: projectsResponse.statusText,
+        url: `${baseUrl}/api/projects`
+      });
+    }
+    
+    if (editorialsResponse.ok) {
+      editorialsData = await editorialsResponse.json();
+    } else {
+      console.error('❌ Editorials API failed:', {
+        status: editorialsResponse.status,
+        statusText: editorialsResponse.statusText,
+        url: `${baseUrl}/api/editorials`
+      });
+    }
     
     console.log('📊 Admin Dashboard:', {
       projectsResponse: projectsResponse.status,
