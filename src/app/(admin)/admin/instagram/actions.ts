@@ -45,7 +45,7 @@ export async function updateInstagramSettings(
   const db = getDb();
 
   try {
-    const existing = await db.query.siteSettings.findFirst();
+    const [existing] = await db.select().from(siteSettings).limit(1);
 
     if (existing) {
       await db
