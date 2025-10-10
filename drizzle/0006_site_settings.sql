@@ -1,14 +1,14 @@
 -- Create site_settings table
 CREATE TABLE IF NOT EXISTS "site_settings" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  "key" text NOT NULL UNIQUE,
+  "key_name" text NOT NULL UNIQUE,
   "value" jsonb NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT now(),
   "updated_at" timestamptz NOT NULL DEFAULT now()
 );
 
 -- Insert default content limits
-INSERT INTO "site_settings" ("key", "value") 
+INSERT INTO "site_settings" ("key_name", "value") 
 VALUES (
   'content_limits',
   '{

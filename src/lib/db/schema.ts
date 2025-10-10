@@ -186,7 +186,7 @@ export const instagramCache = pgTable("instagram_cache", {
 
 export const siteSettings = pgTable("site_settings", {
   id: uuid("id").defaultRandom().primaryKey(),
-  key: text("key").notNull().unique(),
+  keyName: text("key_name").notNull().unique(),
   value: jsonb("value").$type<Record<string, any>>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

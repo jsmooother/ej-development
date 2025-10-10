@@ -11,7 +11,7 @@ export async function GET() {
     
     // Fetch content limits
     const settings = await db.query.siteSettings.findFirst({
-      where: eq(siteSettings.key, "content_limits")
+      where: eq(siteSettings.keyName, "content_limits")
     });
 
     if (!settings) {
@@ -63,11 +63,11 @@ export async function POST(request: Request) {
     await db
       .insert(siteSettings)
       .values({
-        key: "content_limits",
+        keyName: "content_limits",
         value: { frontpage },
       })
       .onConflictDoUpdate({
-        target: siteSettings.key,
+        target: siteSettings.keyName,
         set: {
           value: { frontpage },
           updatedAt: new Date(),

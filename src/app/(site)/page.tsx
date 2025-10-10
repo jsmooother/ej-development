@@ -223,7 +223,7 @@ export default async function HomePage() {
     
     const db = getDb();
     const settings = await db.query.siteSettings.findFirst({
-      where: eq(siteSettings.key, "content_limits")
+      where: eq(siteSettings.keyName, "content_limits")
     });
 
     if (settings) {
