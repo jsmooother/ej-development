@@ -45,31 +45,30 @@ export default async function AdminDashboardPage() {
     // Set counts
     projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
     postsCount = Array.isArray(editorialsData) ? editorialsData.length : 0;
-      
-      // Get recent projects (published only)
-      recentProjects = projectsData
-        .filter((project: any) => project.isPublished)
-        .slice(0, 3)
-        .map((project: any) => ({
-          id: project.id,
-          title: project.title,
-          summary: `${project.year || 'Coming soon'}`,
-          isPublished: project.isPublished
-        }));
-      
-      // Get recent posts (published only)
-      recentPosts = editorialsData
-        .filter((post: any) => post.isPublished)
-        .slice(0, 3)
-        .map((post: any) => ({
-          id: post.id,
-          title: post.title,
-          excerpt: post.excerpt,
-          isPublished: post.isPublished
-        }));
-      
-      console.log('Dashboard counts from API:', { projectsCount, postsCount, listingsCount: 1, enquiriesCount: 0 });
-    }
+    
+    // Get recent projects (published only)
+    recentProjects = projectsData
+      .filter((project: any) => project.isPublished)
+      .slice(0, 3)
+      .map((project: any) => ({
+        id: project.id,
+        title: project.title,
+        summary: `${project.year || 'Coming soon'}`,
+        isPublished: project.isPublished
+      }));
+    
+    // Get recent posts (published only)
+    recentPosts = editorialsData
+      .filter((post: any) => post.isPublished)
+      .slice(0, 3)
+      .map((post: any) => ({
+        id: post.id,
+        title: post.title,
+        excerpt: post.excerpt,
+        isPublished: post.isPublished
+      }));
+    
+    console.log('Dashboard counts from API:', { projectsCount, postsCount, listingsCount: 1, enquiriesCount: 0 });
     
     // For listings and enquiries, we'll use known values for now
     listingsCount = 1; // We know there's 1 listing from the database
@@ -291,7 +290,7 @@ export default async function AdminDashboardPage() {
               </svg>
             </Link>
             <Link
-              href="/admin/settings"
+              href="/admin/settings/content-limits"
               className="group flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-6 transition-all duration-300 hover:border-foreground/20 hover:shadow-lg"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground text-background">
@@ -301,8 +300,8 @@ export default async function AdminDashboardPage() {
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="font-medium text-foreground">Site Settings</p>
-                <p className="text-xs text-muted-foreground/60">Configure your site</p>
+                <p className="font-medium text-foreground">Content Limits</p>
+                <p className="text-xs text-muted-foreground/60">Configure display limits</p>
               </div>
               <svg className="h-5 w-5 text-muted-foreground/40 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
