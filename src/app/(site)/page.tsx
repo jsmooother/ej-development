@@ -274,12 +274,17 @@ export default async function HomePage() {
   // Only use static Instagram cards if no database data AND no error occurred
   const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : [];
 
+  // Find hero project and other projects
+  const heroProject = publishedProjects.find(p => p.isHero) || publishedProjects[0];
+  const otherProjects = publishedProjects.filter(p => p.id !== heroProject?.id);
+  
   // Select content based on published status
-  const selectedProjects = shuffleArray(publishedProjects).slice(0, maxProjects);
+  const selectedProjects = heroProject ? [heroProject, ...shuffleArray(otherProjects).slice(0, maxProjects - 1)] : shuffleArray(publishedProjects).slice(0, maxProjects);
   const selectedEditorials = publishedEditorials.slice(0, maxEditorials);
   const selectedInstagram = publishedInstagram.slice(0, maxInstagram);
 
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
+  console.log('Hero project:', heroProject?.title || 'None');
   console.log('Published editorials:', publishedEditorials.length, 'Selected:', selectedEditorials.length);
 
   // Create a newspaper-style mixed stream - filter out undefined items
