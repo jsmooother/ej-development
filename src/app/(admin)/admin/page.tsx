@@ -32,20 +32,19 @@ export default async function AdminDashboardPage() {
       fetch(`${baseUrl}/api/editorials`)
     ]);
     
-    if (projectsResponse.ok && editorialsResponse.ok) {
-      const projectsData = await projectsResponse.json();
-      const editorialsData = await editorialsResponse.json();
-      
-      console.log('📊 Admin Dashboard:', {
-        projectsResponse: projectsResponse.status,
-        editorialsResponse: editorialsResponse.status,
-        projectsData,
-        editorialsData
-      });
-      
-      // Set counts
-      projectsCount = projectsData.length;
-      postsCount = editorialsData.length;
+    const projectsData = projectsResponse.ok ? await projectsResponse.json() : [];
+    const editorialsData = editorialsResponse.ok ? await editorialsResponse.json() : [];
+    
+    console.log('📊 Admin Dashboard:', {
+      projectsResponse: projectsResponse.status,
+      editorialsResponse: editorialsResponse.status,
+      projectsData,
+      editorialsData
+    });
+    
+    // Set counts
+    projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
+    postsCount = Array.isArray(editorialsData) ? editorialsData.length : 0;
       
       // Get recent projects (published only)
       recentProjects = projectsData

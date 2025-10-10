@@ -6,22 +6,28 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { InlineToggle } from "@/components/admin/inline-toggle";
 
 export default function ListingsPage() {
-  const [listings, setListings] = useState([
-    {
-      id: '1',
-      slug: 'villa-sol-y-luna',
-      title: 'Villa Sol y Luna',
-      subtitle: 'Contemporary villa in La Zagaleta',
-      status: 'For Sale',
-      price: '€8,950,000',
-      location: 'La Zagaleta, Benahavís',
-      beds: 6,
-      baths: 7,
-      sqm: 850,
-      isPublished: true,
-      createdAt: new Date('2025-09-01'),
-    },
-  ]);
+  const [listings, setListings] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch listings on component mount
+  useEffect(() => {
+    const fetchListings = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/listings');
+        if (response.ok) {
+          const data = await response.json();
+          setListings(data);
+        }
+      } catch (error) {
+        console.error('Error fetching listings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, []);
 
   const handleTogglePublish = async (listingId: string, newStatus: boolean) => {
     console.log(`Toggling listing ${listingId} to ${newStatus ? 'published' : 'draft'}`);
