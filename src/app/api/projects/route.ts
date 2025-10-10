@@ -10,6 +10,17 @@ export async function GET() {
     const db = getDb();
     const allProjects = await db.select().from(projects).orderBy(desc(projects.createdAt));
     
+    console.log('📊 Projects API:', {
+      count: allProjects.length,
+      projects: allProjects.map(p => ({
+        id: p.id,
+        title: p.title,
+        isPublished: p.isPublished,
+        isHero: p.isHero,
+        isComingSoon: p.isComingSoon
+      }))
+    });
+    
     // Return array directly for frontend compatibility
     return NextResponse.json(allProjects);
   } catch (error) {

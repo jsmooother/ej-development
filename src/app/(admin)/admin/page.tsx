@@ -36,6 +36,13 @@ export default async function AdminDashboardPage() {
       const projectsData = await projectsResponse.json();
       const editorialsData = await editorialsResponse.json();
       
+      console.log('📊 Admin Dashboard:', {
+        projectsResponse: projectsResponse.status,
+        editorialsResponse: editorialsResponse.status,
+        projectsData,
+        editorialsData
+      });
+      
       // Set counts
       projectsCount = projectsData.length;
       postsCount = editorialsData.length;
