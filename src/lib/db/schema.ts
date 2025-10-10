@@ -183,6 +183,19 @@ export const siteSettings = pgTable(
   },
 );
 
+export const comingSoonProjects = pgTable(
+  "coming_soon_projects",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    highlights: text("highlights").array().notNull(),
+    isActive: boolean("is_active").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+);
+
 export const enquiries = pgTable(
   "enquiries",
   {
