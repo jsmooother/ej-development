@@ -11,6 +11,18 @@ interface HeroImageManagerProps {
   required?: boolean;
 }
 
+// Curated Unsplash images for quick selection
+const PRESET_IMAGES = [
+  { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80", name: "Modern Luxury Villa" },
+  { url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80", name: "Coastal Contemporary" },
+  { url: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&q=80", name: "Mediterranean Estate" },
+  { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80", name: "Beachfront Property" },
+  { url: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=1200&q=80", name: "Minimalist Interior" },
+  { url: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80", name: "Garden & Pool" },
+  { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80", name: "Luxury Living Room" },
+  { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80", name: "Modern Architecture" },
+];
+
 export function HeroImageManager({ 
   imageUrl, 
   onChange, 
@@ -19,16 +31,23 @@ export function HeroImageManager({
   required = false 
 }: HeroImageManagerProps) {
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [showPresets, setShowPresets] = useState(false);
 
   const updateImage = () => {
     if (newImageUrl.trim()) {
       onChange(newImageUrl.trim());
       setNewImageUrl("");
+      setShowPresets(false);
     }
   };
 
   const removeImage = () => {
     onChange("");
+  };
+
+  const selectPresetImage = (url: string) => {
+    onChange(url);
+    setShowPresets(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -99,26 +118,75 @@ export function HeroImageManager({
       )}
 
       {/* Add/Update image */}
-      <div className="flex gap-3">
-        <input
-          type="url"
-          value={newImageUrl}
-          onChange={(e) => setNewImageUrl(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="https://example.com/hero-image.jpg"
-          className="flex-1 rounded-lg border border-border/50 bg-background px-4 py-2.5 text-sm placeholder:text-muted-foreground/50 focus:border-foreground/50 focus:outline-none"
-        />
+      <div className="space-y-3">
+        <div className="flex gap-3">
+          <input
+            type="url"
+            value={newImageUrl}
+            onChange={(e) => setNewImageUrl(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="https://images.unsplash.com/photo-xxxxx..."
+            className="flex-1 rounded-lg border border-border/50 bg-background px-4 py-2.5 text-sm placeholder:text-muted-foreground/50 focus:border-foreground/50 focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={updateImage}
+            disabled={!newImageUrl.trim()}
+            className="flex items-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {imageUrl ? "Update" : "Add"}
+          </button>
+        </div>
+
+        {/* Quick Select Toggle */}
         <button
           type="button"
-          onClick={updateImage}
-          disabled={!newImageUrl.trim()}
-          className="flex items-center gap-2 rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
+          onClick={() => setShowPresets(!showPresets)}
+          className="flex items-center gap-2 text-xs font-medium text-muted-foreground/60 transition hover:text-foreground"
         >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <svg className={cn("h-3 w-3 transition-transform", showPresets && "rotate-90")} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
-          {imageUrl ? "Update Image" : "Add Image"}
+          {showPresets ? "Hide" : "Show"} quick select images
         </button>
+
+        {/* Preset Images Grid */}
+        {showPresets && (
+          <div className="rounded-lg border border-border/30 bg-muted/10 p-4">
+            <p className="mb-3 text-xs font-medium text-foreground/70">Click any image to use it:</p>
+            <div className="grid grid-cols-4 gap-2">
+              {PRESET_IMAGES.map((preset, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => selectPresetImage(preset.url)}
+                  className="group relative overflow-hidden rounded-lg border-2 border-transparent transition-all hover:border-foreground/30 hover:shadow-md"
+                  title={preset.name}
+                >
+                  <div className="relative h-20">
+                    <img
+                      src={preset.url}
+                      alt={preset.name}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20" />
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="rounded-full bg-white/90 p-1.5">
+                      <svg className="h-4 w-4 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="mt-1 truncate px-1 text-[10px] text-muted-foreground/60">{preset.name}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
