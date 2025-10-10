@@ -1,14 +1,13 @@
 import Link from "next/link";
-import { getDb } from "@/lib/db";
+import { desc } from "drizzle-orm";
+import { getDb, posts } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditorialsPage() {
   const db = getDb();
-  const editorials = await db.query.posts.findMany({
-    orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-  });
+  const editorials = await db.select().from(posts).orderBy(desc(posts.createdAt));
 
   return (
     <div className="space-y-8">
