@@ -40,11 +40,11 @@ export default async function InstagramPage() {
       const dbPosts = await response.json();
       instagramPosts = dbPosts.map((post: any) => ({
         id: post.id,
-        mediaUrl: post.mediaUrl,
-        permalink: post.permalink,
-        caption: post.caption,
-        mediaType: post.mediaType,
-        timestamp: post.timestamp
+        mediaUrl: post.payload?.mediaUrl || post.mediaUrl,
+        permalink: post.payload?.permalink || post.permalink,
+        caption: post.payload?.caption || post.caption,
+        mediaType: post.payload?.mediaType || post.mediaType,
+        timestamp: post.payload?.timestamp || post.timestamp
       }));
     }
   } catch (error) {
