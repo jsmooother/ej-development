@@ -203,22 +203,20 @@ export default async function HomePage() {
   let dbProjects: ProjectCard[] = [];
   let dbEditorials: EditorialCard[] = [];
   let dbInstagram: InstagramCard[] = [];
-  let comingSoonProject: any = null;
 
   try {
     // Use direct database access instead of internal API calls
     const { getDb } = await import('@/lib/db/index');
-    const { projects: projectsSchema, posts, instagramCache, comingSoonProjects } = await import('@/lib/db/schema');
-    const { desc, eq } = await import('drizzle-orm');
+    const { projects: projectsSchema, posts, instagramCache } = await import('@/lib/db/schema');
+    const { desc } = await import('drizzle-orm');
     
     const db = getDb();
     
-    // Fetch projects, editorials, Instagram posts, and coming soon project directly from database
-    const [rawProjects, rawEditorials, rawInstagram, rawComingSoon] = await Promise.all([
+    // Fetch projects, editorials, and Instagram posts directly from database
+    const [rawProjects, rawEditorials, rawInstagram] = await Promise.all([
       db.select().from(projectsSchema).orderBy(desc(projectsSchema.createdAt)),
       db.select().from(posts).orderBy(desc(posts.createdAt)),
-      db.select().from(instagramCache).orderBy(desc(instagramCache.fetchedAt)),
-      db.select().from(comingSoonProjects).where(eq(comingSoonProjects.isActive, true))
+      db.select().from(instagramCache).orderBy(desc(instagramCache.fetchedAt))
     ]);
 
     console.log('✅ Fetched from DB:', {
@@ -354,22 +352,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Upcoming Flagship Placeholder */}
-      {comingSoonProject && (
+      {/* Upcoming Flagship */}
+      {rawProjects.find(p => p.isComingSoon) && (
         <section id="upcoming" className="mx-auto max-w-6xl rounded-3xl border border-border bg-card px-6 py-16 md:px-12">
           <div className="grid gap-10 md:grid-cols-[1.4fr,1fr] md:items-center">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Next Release</p>
-              <h2 className="font-serif text-3xl font-light text-foreground md:text-4xl">{comingSoonProject.title}</h2>
+              <h2 className="font-serif text-3xl font-light text-foreground md:text-4xl">{rawProjects.find(p => p.isComingSoon)?.title}</h2>
               <p className="text-sm text-muted-foreground">
-                {comingSoonProject.description}
+                {rawProjects.find(p => p.isComingSoon)?.summary}
               </p>
             </div>
             <div className="flex flex-col gap-4 rounded-3xl border border-dashed border-border p-6 text-sm text-muted-foreground">
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">Brochure Highlights To Come</p>
               <ul className="space-y-2">
-                {comingSoonProject.highlights.map((highlight: string, index: number) => (
-                  <li key={index}>{highlight}</li>
+                {Object.entries(rawProjects.find(p => p.isComingSoon)?.facts || {}).map(([key, value], index) => (
+                  <li key={index}>{value}</li>
                 ))}
               </ul>
             </div>

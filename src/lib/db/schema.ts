@@ -122,6 +122,7 @@ export const projects = pgTable(
     facts: jsonb("facts").$type<Record<string, string | number | null>>(),
     heroImagePath: text("hero_image_path"),
     isHero: boolean("is_hero").notNull().default(false),
+    isComingSoon: boolean("is_coming_soon").notNull().default(false),
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
