@@ -235,8 +235,9 @@ export default async function HomePage() {
     // Map Instagram posts
     dbInstagram = rawInstagram.map((post: any) => ({
       id: post.id,
+      type: "instagram" as const,
       image: post.payload?.mediaUrl || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80',
-      permalink: post.payload?.permalink || '#'
+      alt: post.payload?.caption || 'Instagram post'
     }));
     
   } catch (error) {
