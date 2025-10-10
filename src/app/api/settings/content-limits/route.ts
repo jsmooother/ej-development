@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/index";
 import { siteSettings } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { ContentLimits, isContentLimits } from "@/lib/types/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -14,14 +15,16 @@ export async function GET() {
       where: eq(siteSettings.keyName, "content_limits")
     });
 
+    const defaultLimits: ContentLimits = {
+      frontpage: {
+        projects: 3,
+        editorials: 10,
+        instagram: 3
+      }
+    };
+
     if (!settings) {
-      return NextResponse.json({
-        frontpage: {
-          projects: 3,
-          editorials: 10,
-          instagram: 3
-        }
-      });
+      return NextResponse.json(defaultLimits);
     }
 
     return NextResponse.json(settings.value);
@@ -39,24 +42,12 @@ export async function POST(request: Request) {
     const db = getDb();
     const body = await request.json();
 
-    // Validate input
-    const { frontpage } = body;
-    if (!frontpage || typeof frontpage !== "object") {
+    // Validate input using type guard
+    if (!isContentLimits(body)) {
       return NextResponse.json(
         { error: "Invalid content limits format" },
         { status: 400 }
       );
-    }
-
-    // Ensure all required fields are numbers
-    const requiredFields = ["projects", "editorials", "instagram"];
-    for (const field of requiredFields) {
-      if (typeof frontpage[field] !== "number" || frontpage[field] < 0) {
-        return NextResponse.json(
-          { error: `Invalid ${field} value` },
-          { status: 400 }
-        );
-      }
     }
 
     // Update content limits

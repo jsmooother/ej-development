@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import { ContentLimits, isContentLimits } from "@/lib/types/settings";
 
 type ProjectCard = {
   id: string;
@@ -34,159 +35,6 @@ type InstagramCard = {
   alt: string;
 };
 
-const projects: ProjectCard[] = [
-  {
-    id: "1",
-    type: "project",
-    title: "Sierra Horizon",
-    slug: "sierra-horizon",
-    summary: "Adaptive reuse opening a hillside estate toward the sea with layered courtyards.",
-    location: "La Zagaleta · 2023",
-    sqm: 420,
-    rooms: 6,
-    image: "/placeholder-project.jpg",
-    isPublished: true,
-    isHero: true,
-  },
-  {
-    id: "2",
-    type: "project",
-    title: "Loma Azul",
-    slug: "loma-azul",
-    summary: "Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.",
-    location: "Benahavís · 2022",
-    sqm: 380,
-    rooms: 5,
-    image: "/placeholder-project.jpg",
-    isPublished: true,
-  },
-  {
-    id: "3",
-    type: "project",
-    title: "Casa Palma",
-    slug: "casa-palma",
-    summary: "Palm-framed sanctuary with shaded loggias and a terraced pool axis.",
-    location: "Marbella Club · 2021",
-    sqm: 320,
-    rooms: 4,
-    image: "/placeholder-project.jpg",
-    isPublished: true,
-  },
-  {
-    id: "4",
-    type: "project",
-    title: "Mirador Alto",
-    slug: "mirador-alto",
-    summary: "Art-filled penthouse reimagined with sculptural joinery and panoramic glazing.",
-    location: "Puerto Banús · 2020",
-    sqm: 280,
-    rooms: 3,
-    image: "/placeholder-project.jpg",
-    isPublished: true,
-  },
-  {
-    id: "5",
-    type: "project",
-    title: "Villa Ladera",
-    slug: "villa-ladera",
-    summary: "Split-level home cantilevered over native landscaping and a reflecting pool.",
-    location: "Nueva Andalucía · 2019",
-    sqm: 450,
-    rooms: 7,
-    image: "/placeholder-project.jpg",
-    isPublished: true,
-  },
-  {
-    id: "6",
-    type: "project",
-    title: "Casa Serrana",
-    slug: "casa-serrana",
-    summary: "Our flagship 700 sqm villa in Sierra Blanca is in final detailing. Photography, floorplans, and the full brochure will publish shortly.",
-    location: "Sierra Blanca · 2024",
-    sqm: 700,
-    rooms: 8,
-    image: "/placeholder-project.jpg",
-    isPublished: true,
-    isComingSoon: true,
-    facts: {
-      highlight1: "Double-height great room opening to an 18m infinity pool.",
-      highlight2: "Primary suite with private solarium and Mediterranean views.",
-      highlight3: "Wellness wing featuring spa, gym, and plunge court."
-    }
-  },
-];
-
-const editorials: EditorialCard[] = [
-  {
-    type: "editorial",
-    title: "Marbella Market, Reframed",
-    slug: "marbella-market-reframed",
-    excerpt: "Design-led developments are resetting expectations along the Golden Mile.",
-    category: "Market Insight",
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    type: "editorial",
-    title: "Designing with Andalusian Light",
-    slug: "designing-with-andalusian-light",
-    excerpt: "Glazing, shading, and thermal comfort principles for coastal villas.",
-    category: "Design Journal",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    type: "editorial",
-    title: "Neighbourhood Guide · Golden Mile",
-    slug: "neighbourhood-guide-golden-mile",
-    excerpt: "Our shortlist of dining, wellness, and cultural highlights near Casa Serrana.",
-    category: "Guide",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    type: "editorial",
-    title: "Inside the Atelier",
-    slug: "inside-the-atelier",
-    excerpt: "Material stories and collaborations from our Marbella workshop.",
-    category: "Studio",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    type: "editorial",
-    title: "Sourcing Sustainable Stone",
-    slug: "sourcing-sustainable-stone",
-    excerpt: "Tracing quarry provenance for each terrazzo slab and limestone block.",
-    category: "Process",
-    image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=600&q=80",
-  },
-];
-
-const instagramCards: InstagramCard[] = [
-  {
-    type: "instagram",
-    image: "https://images.unsplash.com/photo-1598928636135-d146006ff4be?auto=format&fit=crop&w=600&q=80",
-    alt: "Coastal living",
-  },
-  {
-    type: "instagram",
-    image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80",
-    alt: "Mediterranean architecture",
-  },
-  {
-    type: "instagram",
-    image: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=600&q=80",
-    alt: "Property showcase",
-  },
-];
-
-const instagramTiles = [
-  "https://images.unsplash.com/photo-1598928636135-d146006ff4be?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1529429617124-aee81872894b?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=600&q=80",
-];
-
 export const metadata: Metadata = {
   title: "Home",
   description:
@@ -194,7 +42,7 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0; // Revalidate every minute for faster updates
+export const revalidate = 0;
 
 // Helper function to shuffle array (for randomizing projects)
 function shuffleArray<T>(array: T[]): T[] {
@@ -207,15 +55,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default async function HomePage() {
-  type ContentLimits = {
-    frontpage: {
-      projects: number;
-      editorials: number;
-      instagram: number;
-    };
-  };
-
-  // Fetch content limits from database
+  // Default content limits
   let contentLimits: ContentLimits = {
     frontpage: {
       projects: 3,
@@ -223,31 +63,6 @@ export default async function HomePage() {
       instagram: 3
     }
   };
-
-  try {
-    const { getDb } = await import('@/lib/db/index');
-    const { siteSettings } = await import('@/lib/db/schema');
-    const { eq } = await import('drizzle-orm');
-    
-    const db = getDb();
-    const settings = await db.query.siteSettings.findFirst({
-      where: eq(siteSettings.keyName, "content_limits")
-    });
-
-    if (settings) {
-      const value = settings.value as ContentLimits;
-      if (value.frontpage) {
-        contentLimits = value;
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching content limits:', error);
-  }
-
-  // Use content limits
-  const maxProjects = contentLimits.frontpage.projects;
-  const maxEditorials = contentLimits.frontpage.editorials;
-  const maxInstagram = contentLimits.frontpage.instagram;
 
   // Fetch live data from database
   let dbProjects: ProjectCard[] = [];
@@ -257,10 +72,19 @@ export default async function HomePage() {
   try {
     // Use direct database access instead of internal API calls
     const { getDb } = await import('@/lib/db/index');
-    const { projects: projectsSchema, posts, instagramCache } = await import('@/lib/db/schema');
-    const { desc } = await import('drizzle-orm');
+    const { projects: projectsSchema, posts, instagramCache, siteSettings } = await import('@/lib/db/schema');
+    const { desc, eq } = await import('drizzle-orm');
     
     const db = getDb();
+
+    // Fetch content limits
+    const settings = await db.query.siteSettings.findFirst({
+      where: eq(siteSettings.keyName, "content_limits")
+    });
+
+    if (settings && isContentLimits(settings.value)) {
+      contentLimits = settings.value;
+    }
     
     // Fetch projects, editorials, and Instagram posts directly from database
     const [rawProjects, rawEditorials, rawInstagram] = await Promise.all([
@@ -316,15 +140,11 @@ export default async function HomePage() {
     
   } catch (error) {
     console.error('❌ Error fetching live data:', error);
-    dbProjects = projects;
-    dbEditorials = editorials;
-    dbInstagram = instagramCards;
   }
 
-  // Use live data if available, otherwise fallback to static data
-  const publishedProjects = dbProjects.length > 0 ? dbProjects : projects;
-  const publishedEditorials = dbEditorials.length > 0 ? dbEditorials : editorials;
-  // Only use static Instagram cards if no database data AND no error occurred
+  // Use live data if available
+  const publishedProjects = dbProjects.length > 0 ? dbProjects : [];
+  const publishedEditorials = dbEditorials.length > 0 ? dbEditorials : [];
   const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : [];
 
   // Find hero project and other projects
@@ -332,9 +152,11 @@ export default async function HomePage() {
   const otherProjects = publishedProjects.filter(p => p.id !== heroProject?.id);
   
   // Select content based on published status
-  const selectedProjects = heroProject ? [heroProject, ...shuffleArray(otherProjects).slice(0, maxProjects - 1)] : shuffleArray(publishedProjects).slice(0, maxProjects);
-  const selectedEditorials = publishedEditorials.slice(0, maxEditorials);
-  const selectedInstagram = publishedInstagram.slice(0, maxInstagram);
+  const selectedProjects = heroProject 
+    ? [heroProject, ...shuffleArray(otherProjects).slice(0, contentLimits.frontpage.projects - 1)] 
+    : shuffleArray(publishedProjects).slice(0, contentLimits.frontpage.projects);
+  const selectedEditorials = publishedEditorials.slice(0, contentLimits.frontpage.editorials);
+  const selectedInstagram = publishedInstagram.slice(0, contentLimits.frontpage.instagram);
 
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
   console.log('Hero project:', heroProject?.title || 'None');
@@ -513,12 +335,10 @@ export default async function HomePage() {
               );
             }
 
-
             return null;
           })}
         </div>
       </section>
-
 
       {/* Studio */}
       <section id="studio" className="mx-auto max-w-4xl px-6">
