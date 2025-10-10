@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Force rebuild */
-
 @layer base {
   :root {
     --background: 48 29% 97%;
