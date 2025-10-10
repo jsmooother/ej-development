@@ -207,8 +207,16 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default async function HomePage() {
+  type ContentLimits = {
+    frontpage: {
+      projects: number;
+      editorials: number;
+      instagram: number;
+    };
+  };
+
   // Fetch content limits from database
-  let contentLimits = {
+  let contentLimits: ContentLimits = {
     frontpage: {
       projects: 3,
       editorials: 10,
@@ -227,7 +235,10 @@ export default async function HomePage() {
     });
 
     if (settings) {
-      contentLimits = settings.value;
+      const value = settings.value as ContentLimits;
+      if (value.frontpage) {
+        contentLimits = value;
+      }
     }
   } catch (error) {
     console.error('Error fetching content limits:', error);
