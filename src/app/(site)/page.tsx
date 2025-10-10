@@ -201,12 +201,8 @@ export default async function HomePage() {
     console.log('✅ Fetched from DB:', {
       projects: rawProjects.length,
       editorials: rawEditorials.length,
-      instagram: rawInstagram.length,
-      comingSoon: rawComingSoon.length
+      instagram: rawInstagram.length
     });
-    
-    // Set coming soon project
-    comingSoonProject = rawComingSoon[0] || null;
     
     // Map and filter published projects
     dbProjects = rawProjects
