@@ -37,14 +37,14 @@ export default async function EditorialsPage() {
     
     // Filter only published editorials
     editorials = dbEditorials
-      .filter((editorial: EditorialCard) => {
+      .filter((editorial: any) => {
         console.log(`Editorial ${editorial.title}: isPublished=${editorial.isPublished}`);
         return editorial.isPublished;
       })
-      .map((editorial: EditorialCard) => ({
+      .map((editorial: any) => ({
         id: editorial.id,
         title: editorial.title,
-        excerpt: editorial.excerpt,
+        excerpt: editorial.excerpt || '',
         coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
         tags: editorial.tags || [],
         publishedAt: editorial.publishedAt,

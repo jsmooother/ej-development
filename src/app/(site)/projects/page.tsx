@@ -38,11 +38,11 @@ export default async function ProjectsPage() {
     
     // Filter only published projects
     projects = dbProjects
-      .filter((project: ProjectCard) => {
+      .filter((project: any) => {
         console.log(`Project ${project.title}: isPublished=${project.isPublished}`);
         return project.isPublished;
       })
-      .map((project: ProjectCard) => ({
+      .map((project: any) => ({
         id: project.id,
         title: project.title,
         summary: project.summary,
