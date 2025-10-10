@@ -8,7 +8,27 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const db = getDb();
-    const allProjects = await db.select().from(projects).orderBy(desc(projects.createdAt));
+    
+    // Fetch all projects using proper query builder
+    const allProjects = await db.query.projects.findMany({
+      columns: {
+        id: true,
+        slug: true,
+        title: true,
+        summary: true,
+        content: true,
+        year: true,
+        facts: true,
+        heroImagePath: true,
+        isHero: true,
+        isComingSoon: true,
+        isPublished: true,
+        publishedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: (projects, { desc }) => [desc(projects.createdAt)],
+    });
     
     console.log('📊 Projects API:', {
       count: allProjects.length,
