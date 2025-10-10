@@ -38,7 +38,10 @@ export default async function ProjectsPage() {
     
     // Filter only published projects
     projects = dbProjects
-      .filter((project: any) => project.isPublished)
+      .filter((project: any) => {
+        console.log(`Project ${project.title}: isPublished=${project.isPublished}, data=`, project);
+        return project.isPublished;
+      })
       .map((project: any) => ({
         id: project.id,
         title: project.title,
@@ -48,7 +51,7 @@ export default async function ProjectsPage() {
           sqm: project.sqm,
           bedrooms: project.rooms
         },
-        heroImagePath: project.image || '/placeholder-project.jpg',
+        heroImagePath: project.heroImagePath || '/placeholder-project.jpg',
         isPublished: project.isPublished
       }));
     

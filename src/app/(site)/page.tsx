@@ -250,7 +250,10 @@ export default async function HomePage() {
         location: project.location || 'Andalusia',
         sqm: project.facts?.sqm || 0,
         rooms: project.facts?.bedrooms || 0,
-        image: project.heroImagePath || '/placeholder-project.jpg'
+        image: project.heroImagePath || '/placeholder-project.jpg',
+        isHero: project.isHero || false,
+        isComingSoon: project.isComingSoon || false,
+        isPublished: project.isPublished
       }));
     
     // Map and filter published editorials
