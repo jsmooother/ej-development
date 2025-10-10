@@ -510,10 +510,6 @@ export default async function HomePage() {
               Coastal moments, daily
             </h2>
           </div>
-          <p className="max-w-sm text-sm text-muted-foreground">
-            The live feed will pull from Supabase-cached Instagram data. Until then, enjoy a fresco of textures,
-            botanicals, and glimpses from recent sites.
-          </p>
         </div>
         <div className="mt-10 overflow-hidden">
           <div className="flex gap-4 overflow-x-auto px-6 pb-2 pt-2 md:justify-center">
