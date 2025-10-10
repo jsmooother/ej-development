@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 
 type ProjectCard = {
+  id: string;
   type: "project";
   title: string;
   slug: string;
@@ -12,6 +13,9 @@ type ProjectCard = {
   image: string;
   sqm: number;
   rooms: number;
+  isHero?: boolean;
+  isComingSoon?: boolean;
+  isPublished?: boolean;
 };
 
 type EditorialCard = {
@@ -31,6 +35,7 @@ type InstagramCard = {
 
 const projects: ProjectCard[] = [
   {
+    id: "1",
     type: "project",
     title: "Sierra Horizon",
     slug: "sierra-horizon",
@@ -38,9 +43,12 @@ const projects: ProjectCard[] = [
     location: "La Zagaleta · 2023",
     sqm: 420,
     rooms: 6,
-    image: "https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80",
+    image: "/placeholder-project.jpg",
+    isPublished: true,
+    isHero: true,
   },
   {
+    id: "2",
     type: "project",
     title: "Loma Azul",
     slug: "loma-azul",
@@ -48,9 +56,11 @@ const projects: ProjectCard[] = [
     location: "Benahavís · 2022",
     sqm: 380,
     rooms: 5,
-    image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
+    image: "/placeholder-project.jpg",
+    isPublished: true,
   },
   {
+    id: "3",
     type: "project",
     title: "Casa Palma",
     slug: "casa-palma",
@@ -58,9 +68,11 @@ const projects: ProjectCard[] = [
     location: "Marbella Club · 2021",
     sqm: 320,
     rooms: 4,
-    image: "https://images.unsplash.com/photo-1521783988139-8930bd045bfa?auto=format&fit=crop&w=1400&q=80",
+    image: "/placeholder-project.jpg",
+    isPublished: true,
   },
   {
+    id: "4",
     type: "project",
     title: "Mirador Alto",
     slug: "mirador-alto",
@@ -68,9 +80,11 @@ const projects: ProjectCard[] = [
     location: "Puerto Banús · 2020",
     sqm: 280,
     rooms: 3,
-    image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1400&q=80",
+    image: "/placeholder-project.jpg",
+    isPublished: true,
   },
   {
+    id: "5",
     type: "project",
     title: "Villa Ladera",
     slug: "villa-ladera",
@@ -78,7 +92,8 @@ const projects: ProjectCard[] = [
     location: "Nueva Andalucía · 2019",
     sqm: 450,
     rooms: 7,
-    image: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1400&q=80",
+    image: "/placeholder-project.jpg",
+    isPublished: true,
   },
 ];
 
