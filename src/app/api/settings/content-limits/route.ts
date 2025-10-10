@@ -55,17 +55,17 @@ export async function POST(request: Request) {
       .insert(siteSettings)
       .values({
         keyName: "content_limits",
-        value: { frontpage },
+        value: body,
       })
       .onConflictDoUpdate({
         target: siteSettings.keyName,
         set: {
-          value: { frontpage },
+          value: body,
           updatedAt: new Date(),
         },
       });
 
-    return NextResponse.json({ frontpage });
+    return NextResponse.json(body);
   } catch (error) {
     console.error("Error updating content limits:", error);
     return NextResponse.json(
