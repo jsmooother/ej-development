@@ -209,9 +209,11 @@ export default async function HomePage() {
       .filter((project: any) => project.isPublished)
       .map((project: any) => ({
         id: project.id,
+        type: "project" as const,
         slug: project.slug || `project-${project.id}`,
         title: project.title,
         summary: project.summary,
+        location: project.location || 'Andalusia',
         sqm: project.facts?.sqm || 0,
         rooms: project.facts?.bedrooms || 0,
         image: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80'
@@ -222,9 +224,11 @@ export default async function HomePage() {
       .filter((editorial: any) => editorial.isPublished)
       .map((editorial: any) => ({
         id: editorial.id,
+        type: "editorial" as const,
         slug: editorial.slug || `editorial-${editorial.id}`,
         title: editorial.title,
-        excerpt: editorial.excerpt,
+        excerpt: editorial.excerpt || '',
+        category: editorial.category || 'Editorial',
         image: editorial.coverImagePath || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80'
       }));
     
