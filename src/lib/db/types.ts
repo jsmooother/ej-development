@@ -9,11 +9,8 @@ import {
   profiles,
   projectImages,
   projects,
-  siteSettings,
 } from "./schema";
 
-export type SiteSettings = InferSelectModel<typeof siteSettings>;
-export type InsertSiteSettings = InferInsertModel<typeof siteSettings>;
 
 export type Listing = InferSelectModel<typeof listings>;
 export type InsertListing = InferInsertModel<typeof listings>;

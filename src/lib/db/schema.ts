@@ -192,8 +192,6 @@ export const profiles = pgTable("profiles", {
 });
 
 // Schema types
-export type SiteSettings = typeof siteSettings.$inferSelect;
-export type NewSiteSettings = typeof siteSettings.$inferInsert;
 
 export type Listing = typeof listings.$inferSelect;
 export type NewListing = typeof listings.$inferInsert;

@@ -16,6 +16,7 @@ type ProjectCard = {
   isHero?: boolean;
   isComingSoon?: boolean;
   isPublished?: boolean;
+  facts?: Record<string, string>;
 };
 
 type EditorialCard = {
