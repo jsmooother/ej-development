@@ -170,6 +170,18 @@ export const posts = pgTable(
   }),
 );
 
+export const siteSettings = pgTable(
+  "site_settings",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    key: text("key").notNull().unique(),
+    value: text("value").notNull(),
+    description: text("description"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+);
+
 export const enquiries = pgTable(
   "enquiries",
   {

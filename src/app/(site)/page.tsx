@@ -173,10 +173,31 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default async function HomePage() {
-  // Limit content for consistent homepage size - always in multiples of 3 columns
-  const MAX_PROJECTS = 3; // Show 3 random projects
-  const MAX_EDITORIALS = 10; // Show all editorials
-  const MAX_INSTAGRAM = 3; // Show 3 Instagram posts
+  // Fetch settings from database
+  let maxProjects = 3;
+  let maxEditorials = 10;
+  let maxInstagram = 3;
+  
+  try {
+    const { getDb } = await import('@/lib/db/index');
+    const { siteSettings } = await import('@/lib/db/schema');
+    const { eq } = await import('drizzle-orm');
+    
+    const db = getDb();
+    const settings = await db.select().from(siteSettings);
+    
+    // Parse settings
+    const settingsObj = settings.reduce((acc, setting) => {
+      acc[setting.key] = setting.value;
+      return acc;
+    }, {} as Record<string, string>);
+    
+    maxProjects = parseInt(settingsObj.maxProjects || '3');
+    maxEditorials = parseInt(settingsObj.maxEditorials || '10');
+    maxInstagram = parseInt(settingsObj.maxInstagram || '3');
+  } catch (error) {
+    console.error('Error fetching settings, using defaults:', error);
+  }
 
   // Fetch live data from database
   let dbProjects: ProjectCard[] = [];
@@ -254,9 +275,9 @@ export default async function HomePage() {
   const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : [];
 
   // Select content based on published status
-  const selectedProjects = shuffleArray(publishedProjects).slice(0, MAX_PROJECTS);
-  const selectedEditorials = publishedEditorials.slice(0, MAX_EDITORIALS);
-  const selectedInstagram = publishedInstagram.slice(0, MAX_INSTAGRAM);
+  const selectedProjects = shuffleArray(publishedProjects).slice(0, maxProjects);
+  const selectedEditorials = publishedEditorials.slice(0, maxEditorials);
+  const selectedInstagram = publishedInstagram.slice(0, maxInstagram);
 
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
   console.log('Published editorials:', publishedEditorials.length, 'Selected:', selectedEditorials.length);
