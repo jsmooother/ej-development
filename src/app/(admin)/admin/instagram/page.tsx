@@ -1,14 +1,18 @@
+import { desc } from "drizzle-orm";
 import { getDb } from "@/lib/db";
+import { instagramCache, siteSettings } from "@/lib/db/schema";
 import { InstagramSettingsForm } from "./instagram-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function InstagramPage() {
   const db = getDb();
-  const settings = await db.query.siteSettings.findFirst();
-  const cacheEntry = await db.query.instagramCache.findFirst({
-    orderBy: (instagramCache, { desc }) => [desc(instagramCache.fetchedAt)],
-  });
+  const [settings] = await db.select().from(siteSettings).limit(1);
+  const [cacheEntry] = await db
+    .select()
+    .from(instagramCache)
+    .orderBy(desc(instagramCache.fetchedAt))
+    .limit(1);
 
   return (
     <div className="space-y-10">
