@@ -3,12 +3,14 @@ import { getDb } from '@/lib/db/index';
 import { posts } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const db = await getDb();
+    const db = getDb();
     const editorialId = params.id;
 
     // Fetch editorial by ID
@@ -38,7 +40,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const db = await getDb();
+    const db = getDb();
     const editorialId = params.id;
     const body = await request.json();
 
@@ -53,8 +55,8 @@ export async function PUT(
         coverImagePath: body.coverImagePath,
         tags: body.tags,
         isPublished: body.isPublished,
-        publishedAt: body.isPublished ? new Date().toISOString() : null,
-        updatedAt: new Date().toISOString(),
+        publishedAt: body.isPublished ? new Date() : null,
+        updatedAt: new Date(),
       })
       .where(eq(posts.id, editorialId))
       .returning();
@@ -81,7 +83,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const db = await getDb();
+    const db = getDb();
     const editorialId = params.id;
 
     // Delete editorial

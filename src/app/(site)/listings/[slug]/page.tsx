@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getDb } from "@/lib/db";
+import { getDb } from "@/lib/db/index";
 import { listings } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 

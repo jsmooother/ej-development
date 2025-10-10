@@ -3,18 +3,23 @@ import { getDb } from '@/lib/db/index';
 import { projects, posts } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
-    const db = await getDb();
+    const db = getDb();
     
     // Fetch projects status
     const projects = await db.query.projects.findMany({
       columns: { slug: true, isPublished: true }
     });
+    console.log('📊 Content Status API - Projects:', projects);
+    
     const projectsStatus = projects.reduce((acc, project) => {
       acc[project.slug] = project.isPublished;
       return acc;
     }, {} as Record<string, boolean>);
+    console.log('📊 Content Status API - Projects Status:', projectsStatus);
     
     // Fetch editorials status
     const editorials = await db.query.posts.findMany({
@@ -42,7 +47,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const { type, id, isPublished } = await request.json();
-    const db = await getDb();
+    const db = getDb();
     
     if (type === 'project') {
       // Update project in database
@@ -50,8 +55,8 @@ export async function POST(request: NextRequest) {
         .update(projects)
         .set({ 
           isPublished,
-          publishedAt: isPublished ? new Date().toISOString() : null,
-          updatedAt: new Date().toISOString()
+          publishedAt: isPublished ? new Date() : null,
+          updatedAt: new Date()
         })
         .where(eq(projects.slug, id));
         
@@ -62,8 +67,8 @@ export async function POST(request: NextRequest) {
         .update(posts)
         .set({ 
           isPublished,
-          publishedAt: isPublished ? new Date().toISOString() : null,
-          updatedAt: new Date().toISOString()
+          publishedAt: isPublished ? new Date() : null,
+          updatedAt: new Date()
         })
         .where(eq(posts.slug, id));
         

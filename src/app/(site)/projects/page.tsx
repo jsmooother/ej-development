@@ -25,27 +25,37 @@ export default async function ProjectsPage() {
   let projects: ProjectCard[] = [];
   
   try {
-    // Use localhost for development, or environment variable for production
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const response = await fetch(`${baseUrl}/api/projects`, {
-      cache: 'no-store' // Ensure fresh data
-    });
+    // Use direct database access instead of internal API call
+    const { getDb } = await import('@/lib/db/index');
+    const { projects: projectsSchema } = await import('@/lib/db/schema');
+    const { desc } = await import('drizzle-orm');
     
-    if (response.ok) {
-      const dbProjects = await response.json();
-      // Filter only published projects
-      projects = dbProjects
-        .filter((project: ProjectCard) => project.isPublished)
-        .map((project: ProjectCard) => ({
-          id: project.id,
-          title: project.title,
-          summary: project.summary,
-          year: project.year,
-          facts: project.facts || {},
-          heroImagePath: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
-          isPublished: project.isPublished
-        }));
-    }
+    const db = getDb();
+    const dbProjects = await db.select().from(projectsSchema).orderBy(desc(projectsSchema.createdAt));
+    
+    console.log('📊 Database returned projects:', dbProjects.length);
+    console.log('📊 Projects data:', JSON.stringify(dbProjects, null, 2));
+    
+    // Filter only published projects
+    projects = dbProjects
+      .filter((project: any) => {
+        console.log(`Project ${project.title}: isPublished=${project.isPublished}, data=`, project);
+        return project.isPublished;
+      })
+      .map((project: any) => ({
+        id: project.id,
+        title: project.title,
+        summary: project.summary,
+        year: project.year,
+        facts: {
+          sqm: project.sqm,
+          bedrooms: project.rooms
+        },
+        heroImagePath: project.heroImagePath || '/placeholder-project.jpg',
+        isPublished: project.isPublished
+      }));
+    
+    console.log('📊 After filtering:', projects.length, 'published projects');
   } catch (error) {
     console.error('Error fetching projects:', error);
     projects = [];

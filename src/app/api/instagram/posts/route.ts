@@ -12,9 +12,11 @@ export async function GET() {
     const posts = await db.select().from(instagramCache);
     
     // Sort in JavaScript instead of SQL to avoid reserved word issue
-    const sortedPosts = posts.sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    ).slice(0, 12);
+    const sortedPosts = posts.sort((a, b) => {
+      const dateA = a.fetchedAt ? new Date(a.fetchedAt).getTime() : 0;
+      const dateB = b.fetchedAt ? new Date(b.fetchedAt).getTime() : 0;
+      return dateB - dateA;
+    }).slice(0, 12);
     
     return NextResponse.json(sortedPosts);
   } catch (error) {
@@ -43,12 +45,8 @@ export async function POST(request: NextRequest) {
       .insert(instagramCache)
       .values(
         newPosts.map((post: any) => ({
-          id: post.id,
-          mediaUrl: post.mediaUrl,
-          permalink: post.permalink,
-          caption: post.caption || '',
-          mediaType: post.mediaType || 'IMAGE',
-          timestamp: post.timestamp || new Date().toISOString(),
+          payload: post,
+          fetchedAt: new Date(),
         }))
       )
       .returning();

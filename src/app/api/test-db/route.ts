@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { getDb } from "@/lib/db/index";
 import { env } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
+
+export const dynamic = 'force-dynamic';
+
 
 export async function GET() {
   const results = {
@@ -32,7 +35,8 @@ export async function GET() {
   // 2. Test Drizzle ORM connection
   try {
     const db = getDb();
-    const result = await db.execute("SELECT NOW() as current_time");
+    const { sql } = await import("drizzle-orm");
+    const result = await db.execute(sql`SELECT NOW() as current_time`);
     results.checks.push({
       name: "Drizzle ORM Connection",
       status: "✅ PASS",
@@ -69,7 +73,8 @@ export async function GET() {
   // 4. Test database schema - check if tables exist
   try {
     const db = getDb();
-    const tablesQuery = await db.execute(`
+    const { sql } = await import("drizzle-orm");
+    const tablesQuery = await db.execute(sql`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
@@ -94,7 +99,7 @@ export async function GET() {
     const db = getDb();
     // Try to count records in listings table
     const { sql } = await import("drizzle-orm");
-    const { listings } = await import("@/lib/db");
+    const { listings } = await import("@/lib/db/schema");
     
     const [{ count }] = await db.select({ count: sql<number>`count(*)::int` }).from(listings);
     

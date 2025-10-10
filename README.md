@@ -37,13 +37,17 @@ Duplicate `.env.example` → `.env.local` and populate:
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
-SUPABASE_DB_URL=postgres://postgres:password@db.supabase.co:5432/postgres
+SUPABASE_DB_POOL_URL=postgres://postgres:password@db.supabase.co:6543/postgres?pgbouncer=true&connection_limit=1
+SUPABASE_DB_URL=postgres://postgres:password@db.supabase.co:5432/postgres # optional direct connection
+DIRECT_URL=postgres://postgres:password@db.supabase.co:5432/postgres # optional, preferred for migrations/scripts
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 INSTAGRAM_ACCESS_TOKEN= # optional, admin will ultimately manage this
 RESEND_API_KEY=
 MAPBOX_TOKEN=
 NEXT_PUBLIC_MAPBOX_TOKEN=
 ```
+
+Runtime database connections prefer `SUPABASE_DB_POOL_URL` (Supabase → **Connection Pooling** tab). Keep `SUPABASE_DB_URL`/`DIRECT_URL` on hand for migrations, Drizzle Studio, and seed scripts so long-running transactions bypass PgBouncer.
 
 ### 4. Run Drizzle migrations
 
@@ -90,7 +94,7 @@ Visit http://localhost:3000. The single-page experience blends the flagship list
 | `npm run format` | Format repository with Prettier |
 | `npm run db:generate` | Generate SQL migrations from Drizzle schema |
 | `npm run db:push` | Push migrations to Supabase Postgres |
-| `npm run db:studio` | Launch Drizzle Studio (needs SUPABASE_DB_URL) |
+| `npm run db:studio` | Launch Drizzle Studio (needs DIRECT_URL or SUPABASE_DB_URL) |
 | `npm run seed` | Seed content into Supabase |
 
 ## Directory Structure (current snapshot)

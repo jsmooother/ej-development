@@ -41,6 +41,7 @@ export default function NewProjectPage() {
         year: formData.get('year') ? parseInt(formData.get('year') as string) : new Date().getFullYear(),
         facts,
         heroImagePath: heroImageUrl || '',
+        isHero: formData.get('isHero') === 'on',
         isPublished: formData.get('isPublished') === 'on',
       };
       
@@ -267,6 +268,14 @@ export default function NewProjectPage() {
               label="Publish to Site"
               description="When enabled, this project will be visible on the public site"
               defaultChecked={true}
+            />
+
+            <Toggle
+              id="isHero"
+              name="isHero"
+              label="Hero Project"
+              description="When enabled, this project will be featured prominently on the homepage. Only one project can be the hero at a time."
+              defaultChecked={false}
             />
 
             <div className="rounded-lg border border-border/30 bg-muted/10 p-4">

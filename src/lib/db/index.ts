@@ -7,40 +7,74 @@ const globalForDb = globalThis as unknown as {
   connection?: ReturnType<typeof postgres>;
 };
 
-const createConnection = () => {
-  if (!env.SUPABASE_DB_URL) {
-    throw new Error("SUPABASE_DB_URL is not configured. Set it in your .env file to use database features.");
+const getPooledConnectionString = () => {
+  const pooledConnectionString = env.SUPABASE_DB_POOL_URL ?? env.SUPABASE_DB_URL ?? env.DIRECT_URL;
+  if (!pooledConnectionString) {
+    throw new Error(
+      "Missing database configuration. Provide SUPABASE_DB_POOL_URL (preferred), SUPABASE_DB_URL, or DIRECT_URL.",
+    );
   }
-  
-  // Use connection pooling mode for better performance
-  // Supabase connection pooler settings
-  return postgres(env.SUPABASE_DB_URL, {
+  return pooledConnectionString;
+};
+
+const getDirectConnectionString = () => {
+  const directConnectionString = env.DIRECT_URL ?? env.SUPABASE_DB_URL ?? env.SUPABASE_DB_POOL_URL;
+  if (!directConnectionString) {
+    throw new Error(
+      "Missing database configuration. Provide DIRECT_URL, SUPABASE_DB_URL, or SUPABASE_DB_POOL_URL.",
+    );
+  }
+  return directConnectionString;
+};
+
+const looksLikePooledUrl = (value?: string | null) =>
+  Boolean(value && /pgbouncer=true|pooler\.supabase/i.test(value));
+
+const createSupabaseConnection = (connectionString: string, { forcePooling = false }: { forcePooling?: boolean }) => {
+  const usePool =
+    forcePooling ||
+    connectionString === env.SUPABASE_DB_POOL_URL ||
+    looksLikePooledUrl(connectionString);
+
+  return postgres(connectionString, {
     ssl: "require",
-    max: 10, // Increased from 1 for better concurrency
+    max: usePool ? 10 : 1,
     idle_timeout: 20,
     connect_timeout: 10,
-    prepare: false, // Required for Supabase connection pooler in transaction mode
+    ...(usePool ? { prepare: false } : {}),
   });
 };
 
 const getOrCreateConnection = () => {
   if (!globalForDb.connection) {
-    globalForDb.connection = createConnection();
+    const pooledConnectionString = getPooledConnectionString();
+    const shouldPool = pooledConnectionString === env.SUPABASE_DB_POOL_URL || looksLikePooledUrl(pooledConnectionString);
+    globalForDb.connection = createSupabaseConnection(pooledConnectionString, { forcePooling: shouldPool });
   }
   return globalForDb.connection;
 };
 
-// For use in Next.js server components
-let db: ReturnType<typeof drizzle<typeof schema>> | null = null;
+// For use in Next.js server components and API routes
+let dbInstance: ReturnType<typeof drizzle<typeof schema>> | null = null;
 export const getDb = () => {
-  if (!db) {
-    db = drizzle(getOrCreateConnection(), { schema });
+  if (!dbInstance) {
+    dbInstance = drizzle(getOrCreateConnection(), { schema });
   }
-  return db;
+  return dbInstance;
 };
 
 // For use in scripts and API routes
-export const createDbClient = () => drizzle(createConnection(), { schema });
+export const createDbClient = () => {
+  const directConnectionString = getDirectConnectionString();
+  return drizzle(
+    createSupabaseConnection(directConnectionString, {
+      forcePooling:
+        (directConnectionString === env.SUPABASE_DB_POOL_URL || looksLikePooledUrl(directConnectionString)) &&
+        !env.DIRECT_URL,
+    }),
+    { schema },
+  );
+};
 
 export type Database = ReturnType<typeof getDb>;
 export * from "./schema";

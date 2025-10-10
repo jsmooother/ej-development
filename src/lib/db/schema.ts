@@ -22,19 +22,6 @@ export const listingDocumentTypeEnum = pgEnum("listing_document_type", [
   "document",
 ]);
 
-export const siteSettings = pgTable("site_settings", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  brandName: text("brand_name").notNull(),
-  primaryInstagramUsername: text("primary_instagram_username").notNull(),
-  instagramAccessToken: text("instagram_access_token"),
-  contactEmail: text("contact_email"),
-  contactPhone: text("contact_phone"),
-  address: text("address"),
-  heroVideoUrl: text("hero_video_url"),
-  mapboxToken: text("mapbox_token"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
 
 export const listings = pgTable(
   "listings",
@@ -121,6 +108,8 @@ export const projects = pgTable(
     year: integer("year"),
     facts: jsonb("facts").$type<Record<string, string | number | null>>(),
     heroImagePath: text("hero_image_path"),
+    isHero: boolean("is_hero").notNull().default(false),
+    isComingSoon: boolean("is_coming_soon").notNull().default(false),
     isPublished: boolean("is_published").notNull().default(true),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
@@ -170,6 +159,8 @@ export const posts = pgTable(
   }),
 );
 
+
+
 export const enquiries = pgTable(
   "enquiries",
   {
@@ -193,6 +184,14 @@ export const instagramCache = pgTable("instagram_cache", {
   payload: jsonb("payload").$type<unknown>().notNull(),
 });
 
+export const siteSettings = pgTable("site_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  keyName: text("key_name").notNull().unique(),
+  value: jsonb("value").$type<Record<string, any>>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const profiles = pgTable("profiles", {
   userId: uuid("user_id").primaryKey(),
   role: profileRoleEnum("role").notNull().default("editor"),
@@ -201,8 +200,6 @@ export const profiles = pgTable("profiles", {
 });
 
 // Schema types
-export type SiteSettings = typeof siteSettings.$inferSelect;
-export type NewSiteSettings = typeof siteSettings.$inferInsert;
 
 export type Listing = typeof listings.$inferSelect;
 export type NewListing = typeof listings.$inferInsert;

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Privacy Policy | EJ Properties",
   description: "Learn about how EJ Properties collects, uses, and protects your personal information.",

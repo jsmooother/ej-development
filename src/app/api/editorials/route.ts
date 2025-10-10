@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/index';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
-    const db = await getDb();
+    const db = getDb();
     
     // Fetch all editorials (posts) from the database
     const editorials = await db.query.posts.findMany({

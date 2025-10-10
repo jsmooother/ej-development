@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 interface FormFieldProps {
   label: string;
-  id: string;
+  id?: string;
   required?: boolean;
   description?: string;
   error?: string;

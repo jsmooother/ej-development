@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Admin Dashboard | EJ Properties",
   robots: { index: false, follow: false },

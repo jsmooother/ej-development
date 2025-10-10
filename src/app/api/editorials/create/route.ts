@@ -1,7 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/index';
 import { posts } from '@/lib/db/schema';
-import { nanoid } from 'nanoid';
+
+export const dynamic = 'force-dynamic';
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +23,7 @@ export async function POST(request: NextRequest) {
     const newEditorial = await db
       .insert(posts)
       .values({
-        id: nanoid(),
+        id: randomUUID(),
         title: body.title,
         slug: body.slug,
         excerpt: body.excerpt || '',
@@ -28,9 +31,9 @@ export async function POST(request: NextRequest) {
         coverImagePath: body.coverImagePath || '',
         tags: body.tags || [],
         isPublished: body.isPublished || false,
-        publishedAt: body.isPublished ? new Date().toISOString() : null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        publishedAt: body.isPublished ? new Date() : null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning();
     
@@ -43,4 +46,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

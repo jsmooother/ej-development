@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 type Editorial = {
@@ -35,8 +36,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 async function getEditorial(slug: string): Promise<Editorial | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const response = await fetch(`${baseUrl}/api/editorials`, {
+    const headerList = headers();
+    const protocol = headerList.get("x-forwarded-proto") ?? "http";
+    const host =
+      headerList.get("x-forwarded-host") ??
+      headerList.get("host") ??
+      `localhost:${process.env.PORT || 3000}`;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
+    const response = await fetch(new URL("/api/editorials", baseUrl).toString(), {
       next: { revalidate: 60 }
     });
 

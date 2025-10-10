@@ -24,27 +24,34 @@ export default async function EditorialsPage() {
   let editorials: EditorialCard[] = [];
   
   try {
-    // Use localhost for development, or environment variable for production
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const response = await fetch(`${baseUrl}/api/editorials`, {
-      cache: 'no-store' // Ensure fresh data
-    });
+    // Use direct database access instead of internal API call
+    const { getDb } = await import('@/lib/db/index');
+    const { posts } = await import('@/lib/db/schema');
+    const { desc } = await import('drizzle-orm');
     
-    if (response.ok) {
-      const dbEditorials = await response.json();
-      // Filter only published editorials
-      editorials = dbEditorials
-        .filter((editorial: EditorialCard) => editorial.isPublished)
-        .map((editorial: EditorialCard) => ({
-          id: editorial.id,
-          title: editorial.title,
-          excerpt: editorial.excerpt,
-          coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
-          tags: editorial.tags || [],
-          publishedAt: editorial.publishedAt,
-          isPublished: editorial.isPublished
-        }));
-    }
+    const db = getDb();
+    const dbEditorials = await db.select().from(posts).orderBy(desc(posts.createdAt));
+    
+    console.log('📊 Database returned editorials:', dbEditorials.length);
+    console.log('📊 Editorials data:', JSON.stringify(dbEditorials, null, 2));
+    
+    // Filter only published editorials
+    editorials = dbEditorials
+      .filter((editorial: any) => {
+        console.log(`Editorial ${editorial.title}: isPublished=${editorial.isPublished}`);
+        return editorial.isPublished;
+      })
+      .map((editorial: any) => ({
+        id: editorial.id,
+        title: editorial.title,
+        excerpt: editorial.excerpt || '',
+        coverImagePath: editorial.coverImagePath || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80',
+        tags: editorial.tags || [],
+        publishedAt: editorial.publishedAt,
+        isPublished: editorial.isPublished
+      }));
+    
+    console.log('📊 After filtering:', editorials.length, 'published editorials');
   } catch (error) {
     console.error('Error fetching editorials:', error);
     editorials = [];

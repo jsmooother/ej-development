@@ -1,7 +1,11 @@
+import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/index';
 import { projects } from '@/lib/db/schema';
-import { nanoid } from 'nanoid';
+import { eq } from 'drizzle-orm';
+
+export const dynamic = 'force-dynamic';
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,11 +20,19 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // If setting as hero, first remove hero status from all other projects
+    if (body.isHero) {
+      await db
+        .update(projects)
+        .set({ isHero: false, updatedAt: new Date() })
+        .where(eq(projects.isHero, true));
+    }
+    
     // Create new project
     const newProject = await db
       .insert(projects)
       .values({
-        id: nanoid(),
+        id: randomUUID(),
         title: body.title,
         slug: body.slug,
         summary: body.summary || '',
@@ -28,10 +40,11 @@ export async function POST(request: NextRequest) {
         year: body.year || new Date().getFullYear(),
         facts: body.facts || {},
         heroImagePath: body.heroImagePath || '',
+        isHero: body.isHero || false,
         isPublished: body.isPublished || false,
-        publishedAt: body.isPublished ? new Date().toISOString() : null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        publishedAt: body.isPublished ? new Date() : null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning();
     
@@ -44,4 +57,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

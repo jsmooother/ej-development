@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 
 type InstagramPost = {
   id: string;
@@ -10,7 +11,7 @@ type InstagramPost = {
   timestamp: string;
 };
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
@@ -23,8 +24,15 @@ export default async function InstagramPage() {
   let instagramPosts: InstagramPost[] = [];
   
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
-    const response = await fetch(`${baseUrl}/api/instagram/posts`, {
+    const headerList = headers();
+    const protocol = headerList.get("x-forwarded-proto") ?? "http";
+    const host =
+      headerList.get("x-forwarded-host") ??
+      headerList.get("host") ??
+      `localhost:${process.env.PORT || 3000}`;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
+    const response = await fetch(new URL("/api/instagram/posts", baseUrl).toString(), {
       next: { revalidate: 60 }
     });
     

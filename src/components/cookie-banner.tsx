@@ -1,6 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
 import Link from "next/link";
 
 export function CookieBanner() {

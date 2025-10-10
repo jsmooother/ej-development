@@ -29,17 +29,36 @@ export default function ProjectsListPage() {
     const fetchProjects = async () => {
       try {
         setIsLoading(true);
+        console.log('📊 Admin Projects - Fetching projects');
         const response = await fetch('/api/projects');
+        
+        console.log('📊 Admin Projects - Response:', {
+          status: response.status,
+          ok: response.ok,
+          statusText: response.statusText
+        });
         
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }
         
         const data = await response.json();
+        console.log('📊 Admin Projects - Data:', {
+          count: data.length,
+          data
+        });
+        console.log('📊 Projects API response:', {
+          status: response.status,
+          data
+        });
         
         // Fetch status from content API
         const statusResponse = await fetch('/api/content/status');
         const statusData = await statusResponse.json();
+        console.log('📊 Content Status API response:', {
+          status: statusResponse.status,
+          data: statusData
+        });
         
         // Merge projects with their publish status
         const projectsWithStatus = data.map((project: Project) => ({
