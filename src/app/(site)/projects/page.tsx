@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 type ProjectCard = {
   id: string;
+  slug: string;
   title: string;
   summary: string;
   year: number | null;
@@ -44,13 +45,11 @@ export default async function ProjectsPage() {
       })
       .map((project: any) => ({
         id: project.id,
+        slug: project.slug,
         title: project.title,
         summary: project.summary,
         year: project.year,
-        facts: {
-          sqm: project.sqm,
-          bedrooms: project.rooms
-        },
+        facts: project.facts || {},
         heroImagePath: project.heroImagePath || '/placeholder-project.jpg',
         isPublished: project.isPublished
       }));
@@ -98,8 +97,9 @@ export default async function ProjectsPage() {
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
-              <article
+              <Link
                 key={project.id}
+                href={`/projects/${project.slug}`}
                 className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative h-64 w-full">
@@ -132,10 +132,10 @@ export default async function ProjectsPage() {
                   </div>
                   <div className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
                     <span>{project.year ? `${project.year}` : 'Coming soon'}</span>
-                    <span>View case study soon →</span>
+                    <span>View case study →</span>
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}
