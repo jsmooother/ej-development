@@ -24,14 +24,9 @@ export const listingDocumentTypeEnum = pgEnum("listing_document_type", [
 
 export const siteSettings = pgTable("site_settings", {
   id: uuid("id").defaultRandom().primaryKey(),
-  brandName: text("brand_name").notNull(),
-  primaryInstagramUsername: text("primary_instagram_username").notNull(),
-  instagramAccessToken: text("instagram_access_token"),
-  contactEmail: text("contact_email"),
-  contactPhone: text("contact_phone"),
-  address: text("address"),
-  heroVideoUrl: text("hero_video_url"),
-  mapboxToken: text("mapbox_token"),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -172,30 +167,7 @@ export const posts = pgTable(
   }),
 );
 
-export const siteSettings = pgTable(
-  "site_settings",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    key: text("key").notNull().unique(),
-    value: text("value").notNull(),
-    description: text("description"),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-);
 
-export const comingSoonProjects = pgTable(
-  "coming_soon_projects",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    title: text("title").notNull(),
-    description: text("description").notNull(),
-    highlights: text("highlights").array().notNull(),
-    isActive: boolean("is_active").notNull().default(false),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-);
 
 export const enquiries = pgTable(
   "enquiries",
