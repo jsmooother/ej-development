@@ -305,12 +305,9 @@ export default async function HomePage() {
     selectedProjects[0], // Main hero project - full width, double height
     selectedEditorials[0], // Editorial - single column, double height
     selectedProjects[1], // Project - double width, single height
-    selectedInstagram[0], // Instagram - single, standard
     selectedEditorials[1], // Editorial - single, standard
     selectedProjects[2], // Project - single, double height
     selectedEditorials[2], // Editorial - single, standard
-    selectedInstagram[1], // Instagram - single, standard
-    selectedInstagram[2], // Instagram - single, standard
   ].filter(Boolean); // Remove undefined items
 
   // Layout pattern with varied heights for newspaper aesthetic (like Lagerlings)
@@ -318,12 +315,9 @@ export default async function HomePage() {
     { className: "md:col-span-3 md:row-span-2", tall: true }, // Hero project: full width, double height
     { className: "md:col-span-1 md:row-span-2", tall: true }, // Editorial: single col, double height
     { className: "md:col-span-2" }, // Project: double width, single height
-    { className: "md:col-span-1" }, // Instagram: single, standard
     { className: "md:col-span-1" }, // Editorial: single, standard
     { className: "md:col-span-1 md:row-span-2", tall: true }, // Project: single col, double height
     { className: "md:col-span-1" }, // Editorial: single, standard
-    { className: "md:col-span-1" }, // Instagram: single, standard
-    { className: "md:col-span-1" }, // Instagram: single, standard
   ];
 
   return (

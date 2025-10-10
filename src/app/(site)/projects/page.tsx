@@ -38,17 +38,17 @@ export default async function ProjectsPage() {
     
     // Filter only published projects
     projects = dbProjects
-      .filter((project: any) => {
-        console.log(`Project ${project.title}: isPublished=${project.isPublished}`);
-        return project.isPublished;
-      })
+      .filter((project: any) => project.isPublished)
       .map((project: any) => ({
         id: project.id,
         title: project.title,
         summary: project.summary,
         year: project.year,
-        facts: project.facts || {},
-        heroImagePath: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
+        facts: {
+          sqm: project.sqm,
+          bedrooms: project.rooms
+        },
+        heroImagePath: project.image || '/placeholder-project.jpg',
         isPublished: project.isPublished
       }));
     
