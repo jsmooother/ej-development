@@ -38,8 +38,10 @@ export default async function AdminDashboardPage() {
     console.log('📊 Admin Dashboard:', {
       projectsResponse: projectsResponse.status,
       editorialsResponse: editorialsResponse.status,
-      projectsData,
-      editorialsData
+      projectsData: projectsData?.length || 0,
+      editorialsData: editorialsData?.length || 0,
+      projectsUrl: `${baseUrl}/api/projects`,
+      editorialsUrl: `${baseUrl}/api/editorials`
     });
     
     // Set counts
