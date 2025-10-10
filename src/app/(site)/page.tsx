@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { cn } from "@/lib/utils";
 
 type ProjectCard = {
@@ -185,90 +184,57 @@ export default async function HomePage() {
   let dbInstagram: InstagramCard[] = [];
 
   try {
-    const headerList = headers();
-    const protocol = headerList.get("x-forwarded-proto") ?? "http";
-    const host =
-      headerList.get("x-forwarded-host") ??
-      headerList.get("host") ??
-      `localhost:${process.env.PORT || 3000}`;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
+    // Use direct database access instead of internal API calls
+    const { getDb } = await import('@/lib/db/index');
+    const { projects: projectsSchema, posts, instagramCache } = await import('@/lib/db/schema');
+    const { desc } = await import('drizzle-orm');
+    
+    const db = getDb();
+    
+    // Fetch projects, editorials, and Instagram posts directly from database
+    const [rawProjects, rawEditorials, rawInstagram] = await Promise.all([
+      db.select().from(projectsSchema).orderBy(desc(projectsSchema.createdAt)),
+      db.select().from(posts).orderBy(desc(posts.createdAt)),
+      db.select().from(instagramCache).orderBy(desc(instagramCache.fetchedAt))
+    ]);
 
-    console.log('Fetching data from:', baseUrl);
-
-    // Fetch projects from database with 60s cache
-    const projectsResponse = await fetch(new URL("/api/projects", baseUrl).toString(), {
-      next: { revalidate: 60 }
+    console.log('✅ Fetched from DB:', {
+      projects: rawProjects.length,
+      editorials: rawEditorials.length,
+      instagram: rawInstagram.length
     });
-
-    // Fetch editorials from database with 60s cache
-    const editorialsResponse = await fetch(new URL("/api/editorials", baseUrl).toString(), {
-      next: { revalidate: 60 }
-    });
-
-    // Fetch Instagram posts from database with 60s cache
-    const instagramResponse = await fetch(new URL("/api/instagram/posts", baseUrl).toString(), {
-      next: { revalidate: 60 }
-    });
-
-    console.log('API Response Status:', {
-      projects: projectsResponse.status,
-      editorials: editorialsResponse.status,
-      instagram: instagramResponse.status
-    });
-
-    if (projectsResponse.ok && editorialsResponse.ok && instagramResponse.ok) {
-      const rawProjects = await projectsResponse.json();
-      const rawEditorials = await editorialsResponse.json();
-      const rawInstagram = await instagramResponse.json();
-
-      console.log('✅ Fetched from DB:', {
-        projects: rawProjects.length,
-        editorials: rawEditorials.length,
-        instagram: rawInstagram.length
-      });
-      
-      // Map and filter published projects
-      dbProjects = rawProjects
-        .filter((project: any) => project.isPublished)
-        .map((project: any) => ({
-          id: project.id,
-          slug: project.slug,
-          title: project.title,
-          summary: project.summary,
-          sqm: project.facts?.sqm || 0,
-          rooms: project.facts?.bedrooms || 0,
-          image: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80'
-        }));
-      
-      // Map and filter published editorials
-      dbEditorials = rawEditorials
-        .filter((editorial: any) => editorial.isPublished)
-        .map((editorial: any) => ({
-          id: editorial.id,
-          slug: editorial.slug,
-          title: editorial.title,
-          excerpt: editorial.excerpt,
-          image: editorial.coverImagePath || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80'
-        }));
-      
-      // Map Instagram posts
-      dbInstagram = rawInstagram.map((post: any) => ({
-        id: post.id,
-        image: post.mediaUrl,
-        permalink: post.permalink
+    
+    // Map and filter published projects
+    dbProjects = rawProjects
+      .filter((project: any) => project.isPublished)
+      .map((project: any) => ({
+        id: project.id,
+        slug: project.slug || `project-${project.id}`,
+        title: project.title,
+        summary: project.summary,
+        sqm: project.facts?.sqm || 0,
+        rooms: project.facts?.bedrooms || 0,
+        image: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80'
       }));
-    } else {
-      console.log('❌ Failed to fetch from database, using fallback data');
-      console.log('Response details:', {
-        projects: projectsResponse.status,
-        editorials: editorialsResponse.status,
-        instagram: instagramResponse.status
-      });
-      dbProjects = projects;
-      dbEditorials = editorials;
-      dbInstagram = instagramCards;
-    }
+    
+    // Map and filter published editorials
+    dbEditorials = rawEditorials
+      .filter((editorial: any) => editorial.isPublished)
+      .map((editorial: any) => ({
+        id: editorial.id,
+        slug: editorial.slug || `editorial-${editorial.id}`,
+        title: editorial.title,
+        excerpt: editorial.excerpt,
+        image: editorial.coverImagePath || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80'
+      }));
+    
+    // Map Instagram posts
+    dbInstagram = rawInstagram.map((post: any) => ({
+      id: post.id,
+      image: post.payload?.mediaUrl || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80',
+      permalink: post.payload?.permalink || '#'
+    }));
+    
   } catch (error) {
     console.error('❌ Error fetching live data:', error);
     dbProjects = projects;
