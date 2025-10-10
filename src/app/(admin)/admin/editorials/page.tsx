@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { desc } from "drizzle-orm";
 import { getDb, posts } from "@/lib/db";
@@ -62,7 +63,7 @@ export default async function EditorialsPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">Edit coming soon</span>
                         <Link
-                          href={`/editorial/${editorial.slug}`}
+                          href={`/editorial/${editorial.slug}` as Route}
                           className="text-xs text-primary hover:underline"
                           target="_blank"
                         >
