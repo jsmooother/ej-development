@@ -39,13 +39,41 @@
 }
 
 @layer base {
+  :root {
+    --background: 48 29% 97%;
+    --foreground: 210 11% 12%;
+    --muted: 210 8% 85%;
+    --muted-foreground: 210 7% 40%;
+    --accent: 35 38% 60%;
+    --accent-foreground: 210 11% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 11% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 11% 12%;
+    --primary: 210 11% 12%;
+    --primary-foreground: 48 29% 97%;
+    --secondary: 210 10% 92%;
+    --secondary-foreground: 210 11% 12%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 12% 82%;
+    --input: 30 12% 82%;
+    --ring: 35 38% 60%;
+    --radius: 1.25rem;
+  }
+}
+
+@layer base {
   * {
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground antialiased;
+  html {
     font-family: var(--font-sans);
+  }
+
+  body {
+    @apply min-h-screen bg-background text-foreground antialiased;
   }
 
   a {
