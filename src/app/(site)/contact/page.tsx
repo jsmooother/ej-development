@@ -1,11 +1,53 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch with EJ Properties to discuss your vision for precision-crafted living spaces along the Costa del Sol.",
-};
+import { useState } from "react";
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      
+      const enquiryData = {
+        name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        message: formData.get('message'),
+        projectType: formData.get('projectType'),
+        budget: formData.get('budget'),
+        source: 'contact_page'
+      };
+
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(enquiryData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to submit');
+      }
+
+      setSubmitSuccess(true);
+      e.currentTarget.reset();
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setSubmitSuccess(false), 5000);
+    } catch (error) {
+      console.error('Error submitting enquiry:', error);
+      alert(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <main className="space-y-24 pb-24">
       {/* Hero */}
@@ -36,7 +78,22 @@ export default function ContactPage() {
               </p>
             </div>
             
-            <form className="space-y-6">
+            {/* Success Message */}
+            {submitSuccess && (
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                <div className="flex items-start gap-3">
+                  <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-green-900">Message sent successfully!</p>
+                    <p className="mt-1 text-xs text-green-700">We'll get back to you within 24 hours.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
@@ -46,6 +103,7 @@ export default function ContactPage() {
                     type="text"
                     id="firstName"
                     name="firstName"
+                    required
                     className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none"
                     placeholder="Your first name"
                   />
@@ -72,6 +130,7 @@ export default function ContactPage() {
                   type="email"
                   id="email"
                   name="email"
+                  required
                   className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none"
                   placeholder="your.email@example.com"
                 />
@@ -134,6 +193,7 @@ export default function ContactPage() {
                   id="message"
                   name="message"
                   rows={6}
+                  required
                   className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm focus:border-primary focus:outline-none resize-none"
                   placeholder="Tell us about your vision, timeline, and any specific requirements..."
                 />
@@ -141,9 +201,10 @@ export default function ContactPage() {
               
               <button
                 type="submit"
-                className="w-full rounded-full border border-foreground bg-foreground px-8 py-3 text-sm font-medium text-background transition hover:bg-foreground/90"
+                disabled={isSubmitting}
+                className="w-full rounded-full border border-foreground bg-foreground px-8 py-3 text-sm font-medium text-background transition hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
