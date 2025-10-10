@@ -175,7 +175,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export default async function HomePage() {
   // Limit content for consistent homepage size - always in multiples of 3 columns
   const MAX_PROJECTS = 3; // Show 3 random projects
-  const MAX_EDITORIALS = 3; // Show 3 latest editorials
+  const MAX_EDITORIALS = 10; // Show all editorials
   const MAX_INSTAGRAM = 3; // Show 3 Instagram posts
 
   // Fetch live data from database
@@ -354,10 +354,6 @@ export default async function HomePage() {
               Projects in dialogue with stories
             </h2>
           </div>
-          <p className="max-w-md text-sm text-muted-foreground">
-            Five completed developments flow beside current research and journal entries. Every card will become
-            fully interactive once Supabase content is wired in.
-          </p>
         </div>
 
         <div className="mt-12 grid auto-rows-[minmax(240px,auto)] gap-6 md:grid-cols-3">
