@@ -173,31 +173,10 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default async function HomePage() {
-  // Fetch settings from database
-  let maxProjects = 3;
-  let maxEditorials = 10;
-  let maxInstagram = 3;
-  
-  try {
-    const { getDb } = await import('@/lib/db/index');
-    const { siteSettings } = await import('@/lib/db/schema');
-    const { eq } = await import('drizzle-orm');
-    
-    const db = getDb();
-    const settings = await db.select().from(siteSettings);
-    
-    // Parse settings
-    const settingsObj = settings.reduce((acc, setting) => {
-      acc[setting.key] = setting.value;
-      return acc;
-    }, {} as Record<string, string>);
-    
-    maxProjects = parseInt(settingsObj.maxProjects || '3');
-    maxEditorials = parseInt(settingsObj.maxEditorials || '10');
-    maxInstagram = parseInt(settingsObj.maxInstagram || '3');
-  } catch (error) {
-    console.error('Error fetching settings, using defaults:', error);
-  }
+  // Content limits
+  const maxProjects = 3;
+  const maxEditorials = 10;
+  const maxInstagram = 3;
 
   // Fetch live data from database
   let dbProjects: ProjectCard[] = [];

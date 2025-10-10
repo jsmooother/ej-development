@@ -22,14 +22,6 @@ export const listingDocumentTypeEnum = pgEnum("listing_document_type", [
   "document",
 ]);
 
-export const siteConfig = pgTable("site_config", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  key: text("key").notNull().unique(),
-  value: text("value").notNull(),
-  description: text("description"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
 
 export const listings = pgTable(
   "listings",
