@@ -216,7 +216,7 @@ export default async function HomePage() {
         location: project.location || 'Andalusia',
         sqm: project.facts?.sqm || 0,
         rooms: project.facts?.bedrooms || 0,
-        image: project.heroImagePath || 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80'
+        image: project.heroImagePath || '/placeholder-project.jpg'
       }));
     
     // Map and filter published editorials
@@ -229,14 +229,14 @@ export default async function HomePage() {
         title: editorial.title,
         excerpt: editorial.excerpt || '',
         category: editorial.category || 'Editorial',
-        image: editorial.coverImagePath || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80'
+        image: editorial.coverImagePath || '/placeholder-editorial.jpg'
       }));
     
     // Map Instagram posts
     dbInstagram = rawInstagram.map((post: any) => ({
       id: post.id,
       type: "instagram" as const,
-      image: post.payload?.mediaUrl || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80',
+      image: post.payload?.mediaUrl || '/placeholder-instagram.jpg',
       alt: post.payload?.caption || 'Instagram post'
     }));
     
@@ -250,7 +250,8 @@ export default async function HomePage() {
   // Use live data if available, otherwise fallback to static data
   const publishedProjects = dbProjects.length > 0 ? dbProjects : projects;
   const publishedEditorials = dbEditorials.length > 0 ? dbEditorials : editorials;
-  const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : instagramCards;
+  // Only use static Instagram cards if no database data AND no error occurred
+  const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : [];
 
   // Select content based on published status
   const selectedProjects = shuffleArray(publishedProjects).slice(0, MAX_PROJECTS);
