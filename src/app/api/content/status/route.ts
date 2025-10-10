@@ -13,10 +13,13 @@ export async function GET() {
     const projects = await db.query.projects.findMany({
       columns: { slug: true, isPublished: true }
     });
+    console.log('📊 Content Status API - Projects:', projects);
+    
     const projectsStatus = projects.reduce((acc, project) => {
       acc[project.slug] = project.isPublished;
       return acc;
     }, {} as Record<string, boolean>);
+    console.log('📊 Content Status API - Projects Status:', projectsStatus);
     
     // Fetch editorials status
     const editorials = await db.query.posts.findMany({

@@ -36,10 +36,18 @@ export default function ProjectsListPage() {
         }
         
         const data = await response.json();
+        console.log('📊 Projects API response:', {
+          status: response.status,
+          data
+        });
         
         // Fetch status from content API
         const statusResponse = await fetch('/api/content/status');
         const statusData = await statusResponse.json();
+        console.log('📊 Content Status API response:', {
+          status: statusResponse.status,
+          data: statusData
+        });
         
         // Merge projects with their publish status
         const projectsWithStatus = data.map((project: Project) => ({
