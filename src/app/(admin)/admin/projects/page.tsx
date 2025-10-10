@@ -1,14 +1,17 @@
 import Link from "next/link";
+import { desc } from "drizzle-orm";
 import { getDb } from "@/lib/db";
+import { projects as projectsTable } from "@/lib/db/schema";
 import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
   const db = getDb();
-  const projects = await db.query.projects.findMany({
-    orderBy: (projects, { desc }) => [desc(projects.createdAt)],
-  });
+  const projects = await db
+    .select()
+    .from(projectsTable)
+    .orderBy(desc(projectsTable.createdAt));
 
   return (
     <div className="space-y-8">

@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { desc } from "drizzle-orm";
 import { getDb } from "@/lib/db";
+import { listings as listingsTable } from "@/lib/db/schema";
 import { formatDate } from "@/lib/utils";
 
 export default async function ListingsPage() {
   const db = getDb();
-  const listings = await db.query.listings.findMany({
-    orderBy: (listings, { desc }) => [desc(listings.createdAt)],
-  });
+  const listings = await db
+    .select()
+    .from(listingsTable)
+    .orderBy(desc(listingsTable.createdAt));
 
   return (
     <div className="space-y-8">

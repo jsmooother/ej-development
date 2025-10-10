@@ -1,8 +1,9 @@
 import { getDb } from "@/lib/db";
+import { siteSettings } from "@/lib/db/schema";
 
 export default async function HomePage() {
   const db = getDb();
-  const settings = await db.query.siteSettings.findFirst();
+  const [settings] = await db.select().from(siteSettings).limit(1);
   
   return (
     <div className="p-8">
