@@ -144,6 +144,34 @@ export default function ProjectsListPage() {
         }}
       />
 
+      {/* Batch Import Banner */}
+      <div className="border-b border-border/20 bg-blue-50/50 px-8 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-start gap-3">
+            <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium text-blue-900">Import Multiple Projects with Images</p>
+              <p className="mt-0.5 text-xs text-blue-700">
+                Have many projects to add? Use our batch import tool to upload entire project folders at once.
+              </p>
+            </div>
+          </div>
+          <a
+            href="/admin/batch-import"
+            className="flex-shrink-0 rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-blue-700"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              Batch Import Guide
+            </div>
+          </a>
+        </div>
+      </div>
+
       <div className="p-8">
         {isLoading ? (
           <div className="rounded-2xl border border-dashed border-border/50 bg-card p-16 text-center">
