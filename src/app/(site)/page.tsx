@@ -95,6 +95,24 @@ const projects: ProjectCard[] = [
     image: "/placeholder-project.jpg",
     isPublished: true,
   },
+  {
+    id: "6",
+    type: "project",
+    title: "Casa Serrana",
+    slug: "casa-serrana",
+    summary: "Our flagship 700 sqm villa in Sierra Blanca is in final detailing. Photography, floorplans, and the full brochure will publish shortly.",
+    location: "Sierra Blanca · 2024",
+    sqm: 700,
+    rooms: 8,
+    image: "/placeholder-project.jpg",
+    isPublished: true,
+    isComingSoon: true,
+    facts: {
+      highlight1: "Double-height great room opening to an 18m infinity pool.",
+      highlight2: "Primary suite with private solarium and Mediterranean views.",
+      highlight3: "Wellness wing featuring spa, gym, and plunge court."
+    }
+  },
 ];
 
 const editorials: EditorialCard[] = [
@@ -343,20 +361,20 @@ export default async function HomePage() {
       </section>
 
       {/* Upcoming Flagship */}
-      {rawProjects.find(p => p.isComingSoon) && (
+      {publishedProjects.find(p => p.isComingSoon) && (
         <section id="upcoming" className="mx-auto max-w-6xl rounded-3xl border border-border bg-card px-6 py-16 md:px-12">
           <div className="grid gap-10 md:grid-cols-[1.4fr,1fr] md:items-center">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Next Release</p>
-              <h2 className="font-serif text-3xl font-light text-foreground md:text-4xl">{rawProjects.find(p => p.isComingSoon)?.title}</h2>
+              <h2 className="font-serif text-3xl font-light text-foreground md:text-4xl">{publishedProjects.find(p => p.isComingSoon)?.title}</h2>
               <p className="text-sm text-muted-foreground">
-                {rawProjects.find(p => p.isComingSoon)?.summary}
+                {publishedProjects.find(p => p.isComingSoon)?.summary}
               </p>
             </div>
             <div className="flex flex-col gap-4 rounded-3xl border border-dashed border-border p-6 text-sm text-muted-foreground">
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">Brochure Highlights To Come</p>
               <ul className="space-y-2">
-                {Object.entries(rawProjects.find(p => p.isComingSoon)?.facts || {}).map(([key, value], index) => (
+                {Object.entries(publishedProjects.find(p => p.isComingSoon)?.facts || {}).map(([key, value], index) => (
                   <li key={index}>{value}</li>
                 ))}
               </ul>
