@@ -8,6 +8,14 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const db = getDb();
+    console.log('📊 Projects API - Getting DB connection');
+    
+    // Log the query we're about to run
+    console.log('📊 Projects API - Running query:', {
+      table: 'projects',
+      action: 'findMany',
+      columns: ['id', 'slug', 'title', 'summary', 'content', 'year', 'facts', 'heroImagePath', 'isHero', 'isComingSoon', 'isPublished']
+    });
     
     // Fetch all projects using proper query builder
     const allProjects = await db.query.projects.findMany({
@@ -44,7 +52,11 @@ export async function GET() {
     // Return array directly for frontend compatibility
     return NextResponse.json(allProjects);
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('📊 Projects API - Error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: error instanceof Error ? error.constructor.name : typeof error
+    });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
