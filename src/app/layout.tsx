@@ -37,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background font-sans text-foreground", sans.variable, serif.variable)}>
+    <html lang="en" className={cn(sans.variable, serif.variable)} suppressHydrationWarning>
+      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         {children}
         <Analytics />
       </body>
