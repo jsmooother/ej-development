@@ -22,7 +22,7 @@ export const listingDocumentTypeEnum = pgEnum("listing_document_type", [
   "document",
 ]);
 
-export const siteSettings = pgTable("site_settings", {
+export const siteConfig = pgTable("site_config", {
   id: uuid("id").defaultRandom().primaryKey(),
   key: text("key").notNull().unique(),
   value: text("value").notNull(),
