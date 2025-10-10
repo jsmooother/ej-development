@@ -207,10 +207,36 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default async function HomePage() {
-  // Content limits
-  const maxProjects = 3;
-  const maxEditorials = 10;
-  const maxInstagram = 3;
+  // Fetch content limits from database
+  let contentLimits = {
+    frontpage: {
+      projects: 3,
+      editorials: 10,
+      instagram: 3
+    }
+  };
+
+  try {
+    const { getDb } = await import('@/lib/db/index');
+    const { siteSettings } = await import('@/lib/db/schema');
+    const { eq } = await import('drizzle-orm');
+    
+    const db = getDb();
+    const settings = await db.query.siteSettings.findFirst({
+      where: eq(siteSettings.key, "content_limits")
+    });
+
+    if (settings) {
+      contentLimits = settings.value;
+    }
+  } catch (error) {
+    console.error('Error fetching content limits:', error);
+  }
+
+  // Use content limits
+  const maxProjects = contentLimits.frontpage.projects;
+  const maxEditorials = contentLimits.frontpage.editorials;
+  const maxInstagram = contentLimits.frontpage.instagram;
 
   // Fetch live data from database
   let dbProjects: ProjectCard[] = [];

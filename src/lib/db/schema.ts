@@ -184,6 +184,14 @@ export const instagramCache = pgTable("instagram_cache", {
   payload: jsonb("payload").$type<unknown>().notNull(),
 });
 
+export const siteSettings = pgTable("site_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  key: text("key").notNull().unique(),
+  value: jsonb("value").$type<Record<string, any>>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const profiles = pgTable("profiles", {
   userId: uuid("user_id").primaryKey(),
   role: profileRoleEnum("role").notNull().default("editor"),
