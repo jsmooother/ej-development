@@ -214,7 +214,7 @@ export function TaggedImageUpload({
                         }`}
                         title={`Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag`}
                       >
-                        {getTagIcon(tag)} {tag}
+                        {tag}
                         {image.tags.includes(tag) && <span className="ml-1">✓</span>}
                       </button>
                     ))}
