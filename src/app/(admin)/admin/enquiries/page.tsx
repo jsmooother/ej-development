@@ -136,28 +136,20 @@ export default function EnquiriesPage() {
             {/* Enquiry Detail */}
             <div className="rounded-2xl border border-border/50 bg-card">
               {selectedEnquiry ? (
-                <div className="divide-y divide-border/30">
-                  {/* Header */}
-                  <div className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h2 className="font-sans text-2xl font-medium text-foreground">
-                          {selectedEnquiry.name}
-                        </h2>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          Received {formatDate(selectedEnquiry.createdAt)}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <a
-                          href={`mailto:${selectedEnquiry.email}`}
-                          className="rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background transition hover:bg-foreground/90"
-                        >
-                          Reply via Email
-                        </a>
+                  <div className="divide-y divide-border/30">
+                    {/* Header */}
+                    <div className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h2 className="font-sans text-2xl font-medium text-foreground">
+                            {selectedEnquiry.name}
+                          </h2>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            Received {formatDate(selectedEnquiry.createdAt)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
                   {/* Contact Details */}
                   <div className="p-6 space-y-4">
