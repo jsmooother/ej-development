@@ -47,15 +47,23 @@ export default function IntegrationsPage() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    // Load settings from API or localStorage
-    const savedSettings = localStorage.getItem("integrations");
-    if (savedSettings) {
+    // Load settings from database
+    async function loadSettings() {
       try {
-        setSettings(JSON.parse(savedSettings));
+        const response = await fetch("/api/admin/integrations", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSettings(data);
+        }
       } catch (error) {
         console.error("Error loading saved settings:", error);
       }
     }
+
+    loadSettings();
   }, []);
 
   const handleSave = async () => {
@@ -63,11 +71,22 @@ export default function IntegrationsPage() {
     setMessage(null);
 
     try {
-      // Save to localStorage (later this can be saved to database)
-      localStorage.setItem("integrations", JSON.stringify(settings));
-      
+      // Save to database via API
+      const response = await fetch("/api/admin/integrations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(settings),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save settings");
+      }
+
       setMessage({ type: "success", text: "Integration settings saved successfully!" });
-      
+
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Error saving settings:", error);
