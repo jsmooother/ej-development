@@ -1,66 +1,96 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { uploadImage } from '@/lib/supabase-storage';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { requireAdminOrEditor } from "@/lib/auth";
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-// Maximum file size: 10MB
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
-// Allowed file types
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+// Initialize Supabase client for file uploads
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role for uploads
+);
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    await requireAdminOrEditor();
+
     const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const folder = formData.get('folder') as string || '';
+    const file = formData.get("file") as File;
+    const folder = formData.get("folder") as string || "uploads";
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json(
-        { error: 'Invalid file type. Allowed: JPEG, PNG, WebP, GIF' },
-        { status: 400 }
-      );
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json({ 
+        error: "Invalid file type. Please upload JPEG, PNG, WebP, or AVIF images." 
+      }, { status: 400 });
     }
 
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { error: 'File too large. Maximum size: 10MB' },
-        { status: 400 }
-      );
+    // Validate file size (10MB max)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      return NextResponse.json({ 
+        error: "File size must be less than 10MB" 
+      }, { status: 400 });
     }
 
-    // Generate path
+    // Generate unique filename
     const timestamp = Date.now();
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const path = folder 
-      ? `${folder}/${timestamp}-${sanitizedName}`
-      : `${timestamp}-${sanitizedName}`;
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const extension = file.name.split('.').pop();
+    const fileName = `${timestamp}-${randomString}.${extension}`;
+    const filePath = `${folder}/${fileName}`;
+
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
 
     // Upload to Supabase Storage
-    const result = await uploadImage(file, 'project-images', path);
+    const { data, error } = await supabase.storage
+      .from("images") // Bucket name
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        cacheControl: "3600", // Cache for 1 hour
+        upsert: false
+      });
+
+    if (error) {
+      console.error("Supabase upload error:", error);
+      return NextResponse.json({ 
+        error: "Failed to upload file" 
+      }, { status: 500 });
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from("images")
+      .getPublicUrl(filePath);
 
     return NextResponse.json({
       success: true,
-      url: result.url,
-      path: result.path
+      url: urlData.publicUrl,
+      path: filePath,
+      size: file.size,
+      type: file.type
     });
 
   } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Upload failed' },
-      { status: 500 }
-    );
+    console.error("Upload error:", error);
+    
+    if (error instanceof Error && error.message === "Not authenticated") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error instanceof Error && error.message === "Forbidden") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    return NextResponse.json({ 
+      error: "Upload failed" 
+    }, { status: 500 });
   }
 }
-

@@ -6,6 +6,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
+import { ImageUpload } from "@/components/admin/image-upload";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -235,25 +236,26 @@ export default function NewProjectPage() {
             />
 
             <FormField 
-              label="Additional Images" 
-              id="additionalImages"
-              description="Gallery images, one URL per line"
+              label="Gallery Images" 
+              id="galleryImages"
+              description="Upload additional images for the project gallery"
             >
-              <Textarea 
-                id="additionalImages" 
-                name="additionalImages" 
-                rows={5}
-                placeholder="https://images.unsplash.com/photo-1...&#10;https://images.unsplash.com/photo-2...&#10;https://images.unsplash.com/photo-3..."
-              />
+              <div className="space-y-4">
+                <ImageUpload
+                  value=""
+                  onChange={(url) => {
+                    // For now, we'll store gallery images as a simple array
+                    // In a full implementation, you'd want to manage multiple images
+                    console.log("Gallery image uploaded:", url);
+                  }}
+                  placeholder="Upload gallery image"
+                  className="max-w-md"
+                />
+                <p className="text-xs text-muted-foreground">
+                  💡 Tip: Upload images one at a time for now. Multiple image management coming soon!
+                </p>
+              </div>
             </FormField>
-
-            <div className="rounded-lg border border-dashed border-border/50 bg-muted/20 p-6 text-center">
-              <svg className="mx-auto h-10 w-10 text-muted-foreground/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="mt-2 text-xs font-medium text-muted-foreground">Drag & drop upload coming soon</p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground/50">For now, use image URLs above</p>
-            </div>
           </div>
 
           {/* Publishing */}

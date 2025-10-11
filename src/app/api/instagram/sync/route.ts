@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/index";
 import { instagramSettings, instagramCache } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { cacheInstagramPosts, getCachedInstagramPosts, clearInstagramCache } from "@/lib/cache/redis";
 
 interface InstagramMedia {
   id: string;
@@ -28,11 +29,24 @@ interface InstagramMediaResponse {
  * Instagram Media Sync API
  * 
  * Fetches recent media from Instagram Basic Display API and stores in database.
+ * Uses Redis caching to reduce API calls and improve performance.
  * Requires active Instagram connection with valid access token.
  */
 export async function POST() {
   try {
     const db = getDb();
+
+    // Check cache first
+    const cachedPosts = await getCachedInstagramPosts();
+    if (cachedPosts && cachedPosts.length > 0) {
+      console.log(`📦 Returning ${cachedPosts.length} cached Instagram posts`);
+      return NextResponse.json({ 
+        success: true, 
+        posts: cachedPosts,
+        cached: true,
+        count: cachedPosts.length 
+      });
+    }
 
     // Get Instagram settings
     const settings = await db.select().from(instagramSettings).limit(1);
@@ -138,14 +152,38 @@ async function syncMedia(accessToken: string) {
 
     console.log(`✅ Successfully synced ${posts.length} Instagram posts`);
 
+    // Cache the posts for faster future requests
+    await cacheInstagramPosts(posts);
+
     return NextResponse.json({
       message: "Successfully synced Instagram posts",
       count: posts.length,
       posts: posts.slice(0, 6), // Return first 6 for preview
+      cached: false,
     });
   } catch (error) {
     console.error("❌ Sync media error:", error);
     throw error;
+  }
+}
+
+/**
+ * Clear Instagram cache
+ * Useful for forcing a fresh sync
+ */
+export async function DELETE() {
+  try {
+    await clearInstagramCache();
+    
+    return NextResponse.json({
+      message: "Instagram cache cleared successfully",
+    });
+  } catch (error) {
+    console.error("❌ Clear cache error:", error);
+    return NextResponse.json(
+      { error: "Failed to clear cache" },
+      { status: 500 }
+    );
   }
 }
 

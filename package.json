@@ -13,7 +13,10 @@
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
     "seed": "tsx scripts/seed.ts",
-    "import-projects": "tsx scripts/import-projects-from-folders.ts"
+    "import-projects": "tsx scripts/import-projects-from-folders.ts",
+    "setup-storage": "tsx scripts/setup-storage.ts",
+    "redis:dev": "docker run -d --name ej-redis -p 6379:6379 redis:7-alpine",
+    "redis:stop": "docker stop ej-redis && docker rm ej-redis"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -35,6 +38,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.53.0",
+    "redis": "^5.8.3",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
@@ -44,6 +48,7 @@
     "@types/node": "^20.16.11",
     "@types/react": "^18.3.7",
     "@types/react-dom": "^18.3.0",
+    "@types/redis": "^4.0.10",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "0.20.14",
     "eslint": "^8.57.1",
