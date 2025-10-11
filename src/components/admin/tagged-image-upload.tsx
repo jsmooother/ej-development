@@ -233,7 +233,7 @@ export function TaggedImageUpload({
                       key={tag}
                       className={`rounded-full px-2 py-1 text-xs font-medium border ${getTagColor(tag)}`}
                     >
-                      {getTagIcon(tag)}
+                      {tag}
                     </span>
                   ))}
                 </div>
