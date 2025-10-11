@@ -6,14 +6,32 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
-import { TaggedImageUpload } from "@/components/admin/tagged-image-upload";
+import { ProjectImagesManager } from "@/components/admin/project-images-manager";
+
+type ImageTag = "before" | "after" | "gallery";
+
+interface ProjectImage {
+  id: string;
+  url: string;
+  tags: ImageTag[];
+  caption?: string;
+  pairId?: string;
+}
+
+interface ImagePair {
+  id: string;
+  label: string;
+  beforeImageId?: string;
+  afterImageId?: string;
+}
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState("");
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [taggedImages, setTaggedImages] = useState<any[]>([]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]); // Legacy
+  const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
+  const [imagePairs, setImagePairs] = useState<ImagePair[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,7 +63,8 @@ export default function NewProjectPage() {
         facts,
         heroImagePath: heroImageUrl || '',
         additionalImages: galleryImages, // Legacy
-        taggedImages: taggedImages, // New system
+        projectImages: projectImages, // New system
+        imagePairs: imagePairs, // New system
         isHero: formData.get('isHero') === 'on',
         isPublished: formData.get('isPublished') === 'on',
       };
@@ -239,12 +258,15 @@ export default function NewProjectPage() {
               required
             />
 
-            <TaggedImageUpload
-              images={taggedImages}
-              onChange={setTaggedImages}
+            <ProjectImagesManager
+              images={projectImages}
+              pairs={imagePairs}
+              onImagesChange={setProjectImages}
+              onPairsChange={setImagePairs}
               label="Project Images"
-              description="Upload images and tag them as Before, After, or Gallery. Hover over images to add/remove tags."
-              maxImages={20}
+              description="Upload, organize, and create before/after pairs for your project images."
+              maxImages={30}
+              maxPairs={10}
             />
           </div>
 

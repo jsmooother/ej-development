@@ -5,25 +5,24 @@ import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
-import { TaggedImageUpload } from "@/components/admin/tagged-image-upload";
-import { PairedImageUpload } from "@/components/admin/paired-image-upload";
+import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 
 type ImageTag = "before" | "after" | "gallery";
 
-interface TaggedImage {
+interface ProjectImage {
   id: string;
   url: string;
   tags: ImageTag[];
   caption?: string;
+  pairId?: string;
 }
 
-interface PairedImage {
+interface ImagePair {
   id: string;
-  beforeUrl?: string;
-  afterUrl?: string;
-  label?: string;
-  caption?: string;
+  label: string;
+  beforeImageId?: string;
+  afterImageId?: string;
 }
 
 interface Project {
@@ -36,8 +35,8 @@ interface Project {
   facts: Record<string, string | number | null>;
   heroImagePath: string;
   additionalImages: string[]; // Legacy - will be migrated
-  taggedImages: TaggedImage[]; // Gallery images with tags
-  pairedImages: PairedImage[]; // Before/after pairs
+  projectImages: ProjectImage[]; // All project images with tags
+  imagePairs: ImagePair[]; // Before/after pairs
   isPublished: boolean;
   createdAt: Date;
 }
@@ -70,8 +69,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             facts: data.project.facts || {},
             heroImagePath: data.project.heroImagePath || '',
             additionalImages: data.project.additionalImages || [], // Legacy
-            taggedImages: data.project.taggedImages || [], // Gallery images with tags
-            pairedImages: data.project.pairedImages || [], // Before/after pairs
+            projectImages: data.project.projectImages || [], // All project images with tags
+            imagePairs: data.project.imagePairs || [], // Before/after pairs
             isPublished: data.project.isPublished,
             createdAt: new Date(data.project.createdAt),
           };
@@ -108,8 +107,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           facts: project.facts,
           heroImagePath: project.heroImagePath,
           additionalImages: project.additionalImages, // Legacy
-          taggedImages: project.taggedImages, // Gallery images with tags
-          pairedImages: project.pairedImages, // Before/after pairs
+          projectImages: project.projectImages, // All project images with tags
+          imagePairs: project.imagePairs, // Before/after pairs
           isPublished: project.isPublished,
         }),
       });
@@ -314,20 +313,15 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 required
               />
 
-              <PairedImageUpload
-                pairs={project.pairedImages}
-                onChange={(pairs) => setProject({ ...project, pairedImages: pairs })}
-                label="Before & After Pairs"
-                description="Create side-by-side comparisons by pairing before and after images of the same view."
-                maxPairs={8}
-              />
-
-              <TaggedImageUpload
-                images={project.taggedImages}
-                onChange={(images) => setProject({ ...project, taggedImages: images })}
-                label="Additional Gallery Images"
-                description="Upload additional images and tag them as Gallery for the image carousel."
-                maxImages={15}
+              <ProjectImagesManager
+                images={project.projectImages}
+                pairs={project.imagePairs}
+                onImagesChange={(images) => setProject({ ...project, projectImages: images })}
+                onPairsChange={(pairs) => setProject({ ...project, imagePairs: pairs })}
+                label="Project Images"
+                description="Upload, organize, and create before/after pairs for your project images."
+                maxImages={30}
+                maxPairs={10}
               />
             </div>
           </div>
