@@ -1,17 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData(e.currentTarget);
+      const form = formRef.current;
+      if (!form) return;
+      
+      const formData = new FormData(form);
       
       const enquiryData = {
         name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
@@ -37,13 +41,17 @@ export default function ContactPage() {
       }
 
       setSubmitSuccess(true);
-      e.currentTarget.reset();
+      // Reset form after successful submission
+      if (form) {
+        form.reset();
+      }
       
       // Reset success message after 5 seconds
       setTimeout(() => setSubmitSuccess(false), 5000);
     } catch (error) {
       console.error('Error submitting enquiry:', error);
-      alert(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send message. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -93,7 +101,7 @@ export default function ContactPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
