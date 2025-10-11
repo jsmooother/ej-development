@@ -6,12 +6,13 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
-import { ImageUpload } from "@/components/admin/image-upload";
+import { MultiImageUpload } from "@/components/admin/multi-image-upload";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -235,27 +236,13 @@ export default function NewProjectPage() {
               required
             />
 
-            <FormField 
-              label="Gallery Images" 
-              id="galleryImages"
+            <MultiImageUpload
+              images={galleryImages}
+              onChange={setGalleryImages}
+              label="Gallery Images"
               description="Upload additional images for the project gallery"
-            >
-              <div className="space-y-4">
-                <ImageUpload
-                  value=""
-                  onChange={(url) => {
-                    // For now, we'll store gallery images as a simple array
-                    // In a full implementation, you'd want to manage multiple images
-                    console.log("Gallery image uploaded:", url);
-                  }}
-                  placeholder="Upload gallery image"
-                  className="max-w-md"
-                />
-                <p className="text-xs text-muted-foreground">
-                  💡 Tip: Upload images one at a time for now. Multiple image management coming soon!
-                </p>
-              </div>
-            </FormField>
+              maxImages={12}
+            />
           </div>
 
           {/* Publishing */}

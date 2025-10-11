@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
-import { ImageManager } from "@/components/admin/image-manager";
+import { MultiImageUpload } from "@/components/admin/multi-image-upload";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 
 interface Project {
@@ -289,11 +289,12 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 required
               />
 
-              <ImageManager
+              <MultiImageUpload
                 images={project.additionalImages}
                 onChange={(images) => setProject({ ...project, additionalImages: images })}
                 label="Additional Images"
                 description="Gallery images for the project detail page"
+                maxImages={12}
               />
             </div>
           </div>
