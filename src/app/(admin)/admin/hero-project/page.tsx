@@ -56,6 +56,7 @@ export default function HeroProjectPage() {
       const response = await fetch('/api/admin/hero-project', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ projectId }),
       });
 

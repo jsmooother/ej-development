@@ -8,13 +8,13 @@ export const createSupabaseServerClient = () => {
 
   return createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: {
-      get(name) {
+      get(name: string) {
         return cookieStore.get(name)?.value;
       },
-      set(name, value, options) {
+      set(name: string, value: string, options: any) {
         cookieStore.set({ name, value, ...options });
       },
-      remove(name) {
+      remove(name: string) {
         cookieStore.delete(name);
       },
     },

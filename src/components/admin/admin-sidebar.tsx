@@ -1,10 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useState } from "react";
+import { useUserRole } from "@/hooks/useUserRole";
 
-const navigation = [
+type NavigationItem = {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  adminOnly?: boolean; // Only show for admins
+};
+
+const navigation: NavigationItem[] = [
   { 
     name: "Dashboard", 
     href: "/admin", 
@@ -44,6 +54,7 @@ const navigation = [
   { 
     name: "Instagram", 
     href: "/admin/instagram", 
+    adminOnly: true, // Admin only
     icon: (
       <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -52,7 +63,8 @@ const navigation = [
   },
   { 
     name: "Analytics", 
-    href: "/admin/analytics", 
+    href: "/admin/analytics",
+    adminOnly: true, // Admin only
     icon: (
       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -61,7 +73,8 @@ const navigation = [
   },
   { 
     name: "Enquiries", 
-    href: "/admin/enquiries", 
+    href: "/admin/enquiries",
+    // Editors can see enquiries too
     icon: (
       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -69,8 +82,19 @@ const navigation = [
     )
   },
   { 
+    name: "Users", 
+    href: "/admin/users",
+    adminOnly: true, // Admin only
+    icon: (
+      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    )
+  },
+  { 
     name: "Settings", 
-    href: "/admin/settings", 
+    href: "/admin/settings",
+    adminOnly: true, // Admin only
     icon: (
       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -82,6 +106,36 @@ const navigation = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { role: userRole, email: userEmail, isLoading } = useUserRole();
+
+  const handleLogout = async () => {
+    if (!confirm("Are you sure you want to log out?")) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.auth.signOut();
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("Failed to log out. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Filter navigation based on user role
+  const visibleNavigation = navigation.filter(item => {
+    if (item.adminOnly) {
+      return userRole === "admin";
+    }
+    return true;
+  });
 
   return (
     <div className="flex h-full w-64 flex-col border-r border-border/30 bg-white/50 backdrop-blur-xl">
@@ -97,7 +151,7 @@ export function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-2">
-        {navigation.map((item) => {
+        {visibleNavigation.map((item) => {
           const isActive = pathname === item.href;
           
           return (
@@ -122,12 +176,29 @@ export function AdminSidebar() {
       <div className="border-t border-border/30 px-4 py-4">
         <div className="flex items-center gap-3 rounded-lg px-2 py-2 transition hover:bg-foreground/[0.02]">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10 text-xs font-semibold text-foreground">
-            JK
+            {userEmail ? userEmail.substring(0, 2).toUpperCase() : "??"}
           </div>
           <div className="flex-1 text-xs">
-            <p className="font-medium text-foreground">Jesper Kreuger</p>
-            <p className="text-[10px] text-muted-foreground/50">Admin</p>
+            <p className="font-medium text-foreground truncate">
+              {userEmail ? userEmail.split("@")[0] : "Loading..."}
+            </p>
+            <p className={cn(
+              "text-[10px] capitalize",
+              userRole === "admin" ? "text-purple-600" : "text-blue-600"
+            )}>
+              {userRole || "..."}
+            </p>
           </div>
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+            title="Log out"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>

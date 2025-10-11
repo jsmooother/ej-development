@@ -41,7 +41,14 @@ SUPABASE_DB_POOL_URL=postgres://postgres:password@db.supabase.co:6543/postgres?p
 SUPABASE_DB_URL=postgres://postgres:password@db.supabase.co:5432/postgres # optional direct connection
 DIRECT_URL=postgres://postgres:password@db.supabase.co:5432/postgres # optional, preferred for migrations/scripts
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-INSTAGRAM_ACCESS_TOKEN= # optional, admin will ultimately manage this
+
+# Instagram Basic Display API (optional - see docs/INSTAGRAM_INTEGRATION.md)
+INSTAGRAM_APP_ID=
+INSTAGRAM_APP_SECRET=
+INSTAGRAM_REDIRECT_URI=http://localhost:3000/api/instagram/callback
+NEXT_PUBLIC_INSTAGRAM_APP_ID=
+
+# Optional email & maps
 RESEND_API_KEY=
 MAPBOX_TOKEN=
 NEXT_PUBLIC_MAPBOX_TOKEN=
@@ -124,17 +131,26 @@ scripts/
 - `projects` + `project_images` – case studies with hero/fact metadata
 - `posts` – editorial content with Markdown payload + tag array
 - `enquiries` – unified enquiry submissions with JSON context metadata
-- `instagram_cache` – cached Basic Display API payloads for graceful fallback
+- `instagram_cache` – cached Instagram posts from Basic Display API
+- `instagram_settings` – OAuth tokens, sync settings, connection status
 - `profiles` – Supabase Auth user roles (`admin`, `editor`)
 
 Row-level security policies restrict write access to authenticated editors/admins while preserving public read access to published content. Enquiries remain publicly writable but only admin/editor roles can read them.
 
-## Next Milestones
+## Features
 
-1. **Design System & UI Build** – shadcn/ui primitives, typographic scale, hero layouts, galleries, and motion.
-2. **Villa Experience** – Supabase data fetchers, gallery lightbox, facts grid, brochure PDF generation, enquiry form.
-3. **Projects & Journal** – dynamic data hydration within the blended homepage, MDX rendering, related content modules.
-4. **Admin Workspace** – Supabase Auth gating, CRUD dashboards, media uploads, Instagram token management, PDF triggers.
-5. **Instagram Automation** – API route caching, admin override, and graceful front-end fallbacks.
+### ✅ Completed
+- **Instagram Integration** – Full OAuth 2.0 flow, automatic post syncing, token refresh, admin management UI
+- **Content Management** – Projects, editorials, listings, and Instagram posts with admin CRUD interfaces
+- **Database & Auth** – Supabase Postgres with Drizzle ORM, row-level security, role-based access
+- **Admin Dashboard** – Content overview, status management, hero project selection
+
+### 🚧 Next Milestones
+
+1. **Enhanced UI/UX** – Gallery lightbox, image optimization, motion animations
+2. **Villa Brochures** – PDF generation with `@react-pdf/renderer`
+3. **Contact Forms** – Enquiry workflow with email notifications via Resend
+4. **SEO Enhancement** – OG image generation, structured data, analytics
+5. **Scheduled Syncs** – Automatic Instagram sync via cron jobs
 
 Contributions, questions, or deployment pairing? Ping the EJ Development team or open an issue.

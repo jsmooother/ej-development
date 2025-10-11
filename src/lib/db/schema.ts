@@ -184,6 +184,21 @@ export const instagramCache = pgTable("instagram_cache", {
   payload: jsonb("payload").$type<unknown>().notNull(),
 });
 
+export const instagramSettings = pgTable("instagram_settings", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  username: text("username"),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  tokenExpiresAt: timestamp("token_expires_at", { withTimezone: true }),
+  userId: text("user_id"),
+  isConnected: boolean("is_connected").notNull().default(false),
+  autoSync: boolean("auto_sync").notNull().default(true),
+  syncInterval: integer("sync_interval").notNull().default(24), // hours
+  lastSync: timestamp("last_sync", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const siteSettings = pgTable("site_settings", {
   id: uuid("id").defaultRandom().primaryKey(),
   keyName: text("key_name").notNull().unique(),
@@ -224,6 +239,9 @@ export type NewEnquiry = typeof enquiries.$inferInsert;
 
 export type InstagramCache = typeof instagramCache.$inferSelect;
 export type NewInstagramCache = typeof instagramCache.$inferInsert;
+
+export type InstagramSettings = typeof instagramSettings.$inferSelect;
+export type NewInstagramSettings = typeof instagramSettings.$inferInsert;
 
 export type Profile = typeof profiles.$inferSelect;
 export type NewProfile = typeof profiles.$inferInsert;
