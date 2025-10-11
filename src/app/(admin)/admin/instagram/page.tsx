@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Toggle } from "@/components/admin/toggle";
 
@@ -69,6 +69,7 @@ export default function InstagramPage() {
       // Clean URL
       window.history.replaceState({}, '', '/admin/instagram');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSettings = async () => {
@@ -134,7 +135,7 @@ export default function InstagramPage() {
     window.location.href = authUrl.toString();
   };
 
-  const handleSync = async () => {
+  const handleSync = useCallback(async () => {
     if (!settings.isConnected) {
       setError('Please connect Instagram first');
       return;
@@ -168,7 +169,7 @@ export default function InstagramPage() {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [settings.isConnected]);
 
   const handleDisconnect = async () => {
     if (!confirm("Are you sure you want to disconnect Instagram? This will stop automatic syncing and remove your access token.")) {
@@ -337,16 +338,20 @@ export default function InstagramPage() {
               <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Settings</h2>
               
               <div className="grid gap-6">
-                <FormField
-                  label="Instagram Username"
-                  description="Your Instagram handle (without @)"
-                >
-                  <Input
-                    value={settings.username}
+                <div className="space-y-2">
+                  <label htmlFor="username" className="text-sm font-medium text-foreground">
+                    Instagram Username
+                  </label>
+                  <p className="text-sm text-muted-foreground">Your Instagram handle (without @)</p>
+                  <input
+                    id="username"
+                    type="text"
+                    value={settings.username || ''}
                     onChange={(e) => setSettings({ ...settings, username: e.target.value })}
                     placeholder="ejproperties"
+                    className="w-full rounded-lg border border-border/50 bg-background px-3 py-2 text-sm focus:border-foreground/50 focus:outline-none"
                   />
-                </FormField>
+                </div>
 
                 <div className="space-y-4">
                   <Toggle
@@ -360,11 +365,13 @@ export default function InstagramPage() {
                 </div>
 
                 {settings.autoSync && (
-                  <FormField
-                    label="Sync Interval"
-                    description="How often to sync posts (in hours)"
-                  >
+                  <div className="space-y-2">
+                    <label htmlFor="syncInterval" className="text-sm font-medium text-foreground">
+                      Sync Interval
+                    </label>
+                    <p className="text-sm text-muted-foreground">How often to sync posts (in hours)</p>
                     <select
+                      id="syncInterval"
                       value={settings.syncInterval}
                       onChange={(e) => setSettings({ ...settings, syncInterval: parseInt(e.target.value) })}
                       className="w-full rounded-lg border border-border/50 bg-background px-3 py-2 text-sm focus:border-foreground/50 focus:outline-none"
@@ -375,7 +382,7 @@ export default function InstagramPage() {
                       <option value={24}>Every 24 hours</option>
                       <option value={168}>Every week</option>
                     </select>
-                  </FormField>
+                  </div>
                 )}
               </div>
             </div>

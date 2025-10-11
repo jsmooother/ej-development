@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { getDb } from "@/lib/db/index";
 import { instagramSettings } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
