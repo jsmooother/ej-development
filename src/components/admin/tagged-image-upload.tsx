@@ -75,19 +75,19 @@ export function TaggedImageUpload({
 
   const getTagColor = (tag: ImageTag) => {
     switch (tag) {
-      case "before": return "bg-amber-100 text-amber-800 border-amber-200";
-      case "after": return "bg-green-100 text-green-800 border-green-200";
-      case "gallery": return "bg-blue-100 text-blue-800 border-blue-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "before": return "bg-orange-50 text-orange-700 border-orange-200";
+      case "after": return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "gallery": return "bg-blue-50 text-blue-700 border-blue-200";
+      default: return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
-  const getTagIcon = (tag: ImageTag) => {
+  const getTagLabel = (tag: ImageTag) => {
     switch (tag) {
-      case "before": return "🔧";
-      case "after": return "✨";
-      case "gallery": return "🖼️";
-      default: return "📷";
+      case "before": return "Before";
+      case "after": return "After";
+      case "gallery": return "Gallery";
+      default: return tag;
     }
   };
 
@@ -104,11 +104,11 @@ export function TaggedImageUpload({
         {description && (
           <p className="mt-1 text-xs text-muted-foreground">{description}</p>
         )}
-        <div className="mt-2 flex gap-4 text-xs text-muted-foreground">
-          <span>🔧 Before: {beforeImages.length}</span>
-          <span>✨ After: {afterImages.length}</span>
-          <span>🖼️ Gallery: {galleryImages.length}</span>
-          <span>Total: {images.length}/{maxImages}</span>
+        <div className="mt-3 flex gap-6 text-sm text-gray-600">
+          <span className="font-medium">Before: <span className="font-normal">{beforeImages.length}</span></span>
+          <span className="font-medium">After: <span className="font-normal">{afterImages.length}</span></span>
+          <span className="font-medium">Gallery: <span className="font-normal">{galleryImages.length}</span></span>
+          <span className="font-medium text-gray-500">Total: {images.length}/{maxImages}</span>
         </div>
       </div>
 
@@ -116,23 +116,26 @@ export function TaggedImageUpload({
       {images.length < maxImages && (
         <div className="space-y-3">
           {/* File Upload */}
-          <ImageUpload
-            value=""
-            onChange={addImage}
-            placeholder="Upload new image"
-            className="max-w-md"
-            maxSize={10}
-            acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-900">Add Image</label>
+            <ImageUpload
+              value=""
+              onChange={addImage}
+              placeholder="Choose image or drag and drop"
+              className="max-w-md"
+              maxSize={10}
+              acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
+            />
+          </div>
 
           {/* URL Input Option */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Or add via URL:</span>
+              <span className="text-sm text-gray-600">Or add via URL:</span>
               {!isAddingUrl && (
                 <button
                   onClick={() => setIsAddingUrl(true)}
-                  className="text-xs text-blue-600 hover:text-blue-800"
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Add URL
                 </button>
@@ -140,19 +143,19 @@ export function TaggedImageUpload({
             </div>
 
             {isAddingUrl && (
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <input
                   type="url"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   onKeyPress={handleUrlKeyPress}
                   placeholder="https://example.com/image.jpg"
-                  className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-foreground/50 focus:outline-none"
+                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
                 <button
                   onClick={() => addImage(urlInput)}
                   disabled={!urlInput.trim()}
-                  className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Add
                 </button>
@@ -161,7 +164,7 @@ export function TaggedImageUpload({
                     setIsAddingUrl(false);
                     setUrlInput("");
                   }}
-                  className="rounded-lg border border-border px-3 py-2 text-sm text-foreground hover:bg-muted"
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>

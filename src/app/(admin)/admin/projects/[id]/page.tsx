@@ -6,6 +6,7 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { TaggedImageUpload } from "@/components/admin/tagged-image-upload";
+import { PairedImageUpload } from "@/components/admin/paired-image-upload";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 
 type ImageTag = "before" | "after" | "gallery";
@@ -14,6 +15,14 @@ interface TaggedImage {
   id: string;
   url: string;
   tags: ImageTag[];
+  caption?: string;
+}
+
+interface PairedImage {
+  id: string;
+  beforeUrl?: string;
+  afterUrl?: string;
+  label?: string;
   caption?: string;
 }
 
@@ -27,7 +36,8 @@ interface Project {
   facts: Record<string, string | number | null>;
   heroImagePath: string;
   additionalImages: string[]; // Legacy - will be migrated
-  taggedImages: TaggedImage[]; // New system
+  taggedImages: TaggedImage[]; // Gallery images with tags
+  pairedImages: PairedImage[]; // Before/after pairs
   isPublished: boolean;
   createdAt: Date;
 }
@@ -60,7 +70,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             facts: data.project.facts || {},
             heroImagePath: data.project.heroImagePath || '',
             additionalImages: data.project.additionalImages || [], // Legacy
-            taggedImages: data.project.taggedImages || [], // New system
+            taggedImages: data.project.taggedImages || [], // Gallery images with tags
+            pairedImages: data.project.pairedImages || [], // Before/after pairs
             isPublished: data.project.isPublished,
             createdAt: new Date(data.project.createdAt),
           };
@@ -97,7 +108,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           facts: project.facts,
           heroImagePath: project.heroImagePath,
           additionalImages: project.additionalImages, // Legacy
-          taggedImages: project.taggedImages, // New system
+          taggedImages: project.taggedImages, // Gallery images with tags
+          pairedImages: project.pairedImages, // Before/after pairs
           isPublished: project.isPublished,
         }),
       });
@@ -302,12 +314,20 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 required
               />
 
+              <PairedImageUpload
+                pairs={project.pairedImages}
+                onChange={(pairs) => setProject({ ...project, pairedImages: pairs })}
+                label="Before & After Pairs"
+                description="Create side-by-side comparisons by pairing before and after images of the same view."
+                maxPairs={8}
+              />
+
               <TaggedImageUpload
                 images={project.taggedImages}
                 onChange={(images) => setProject({ ...project, taggedImages: images })}
-                label="Project Images"
-                description="Upload images and tag them as Before, After, or Gallery. Hover over images to add/remove tags."
-                maxImages={20}
+                label="Additional Gallery Images"
+                description="Upload additional images and tag them as Gallery for the image carousel."
+                maxImages={15}
               />
             </div>
           </div>
