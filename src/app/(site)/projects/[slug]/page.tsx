@@ -1,8 +1,8 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { useState, useEffect } from "react";
 
 type Project = {
   id: string;
@@ -19,49 +19,53 @@ type Project = {
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const project = await getProject(params.slug);
-  
-  if (!project) {
-    return {
-      title: "Project Not Found",
-    };
+export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
+  const [project, setProject] = useState<Project | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    async function fetchProject() {
+      try {
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+          setProject(null);
+          return;
+        }
+        const projects = await response.json();
+        const foundProject = projects.find((p: Project) => p.slug === params.slug && p.isPublished);
+        setProject(foundProject || null);
+      } catch (error) {
+        console.error('Error fetching project:', error);
+        setProject(null);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchProject();
+  }, [params.slug]);
+
+  // Auto-focus the carousel when it opens for immediate keyboard navigation
+  useEffect(() => {
+    if (lightboxOpen) {
+      const carouselElement = document.querySelector('[data-carousel="lightbox"]') as HTMLElement;
+      if (carouselElement) {
+        carouselElement.focus();
+      }
+    }
+  }, [lightboxOpen]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#f5f2ea]">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-foreground border-t-transparent mx-auto"></div>
+          <p className="mt-4 text-sm text-muted-foreground">Loading project...</p>
+        </div>
+      </div>
+    );
   }
-
-  return {
-    title: `${project.title} | Projects`,
-    description: project.summary,
-  };
-}
-
-async function getProject(slug: string): Promise<Project | null> {
-  try {
-    const headerList = headers();
-    const protocol = headerList.get("x-forwarded-proto") ?? "http";
-    const host =
-      headerList.get("x-forwarded-host") ??
-      headerList.get("host") ??
-      `localhost:${process.env.PORT || 3000}`;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
-    const response = await fetch(new URL("/api/projects", baseUrl).toString(), {
-      next: { revalidate: 60 }
-    });
-
-    if (!response.ok) return null;
-
-    const projects = await response.json();
-    const project = projects.find((p: Project) => p.slug === slug && p.isPublished);
-    
-    return project || null;
-  } catch (error) {
-    console.error('Error fetching project:', error);
-    return null;
-  }
-}
-
-export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  const project = await getProject(params.slug);
 
   if (!project) {
     notFound();
@@ -87,6 +91,30 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
     'https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=1200&q=80',
     'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80',
   ];
+
+  // Carousel functions
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const nextImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % galleryImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + galleryImages.length) % galleryImages.length);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+  };
 
   return (
     <main className="min-h-screen bg-[#f5f2ea]">
@@ -355,12 +383,14 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
           {/* Masonry-style gallery */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {galleryImages.map((imageUrl, index) => (
-              <div 
+              <button
                 key={index} 
-                className={`group relative overflow-hidden ${
+                onClick={() => openLightbox(index)}
+                className={`group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-gray-400 transition-all hover:shadow-lg ${
                   index === 0 ? 'md:col-span-2 md:row-span-2' : 
                   index === 3 ? 'md:row-span-2' : ''
                 }`}
+                aria-label={`View full size image ${index + 1} of ${project.title}`}
               >
                 <div className={`relative ${
                   index === 0 ? 'h-[600px]' : 
@@ -373,13 +403,104 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+                  <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <div className="rounded-full bg-white/90 p-3 shadow-lg">
+                        <svg className="h-6 w-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Full-Screen Lightbox Carousel */}
+      {lightboxOpen && (
+        <div 
+          data-carousel="lightbox"
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm"
+          onKeyDown={handleKeyDown}
+          tabIndex={-1}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute right-6 top-6 z-10 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            aria-label="Close gallery"
+          >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Navigation arrows */}
+          <button
+            onClick={prevImage}
+            className="absolute left-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            aria-label="Previous image"
+          >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <button
+            onClick={nextImage}
+            className="absolute right-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            aria-label="Next image"
+          >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* Main image */}
+          <div className="flex h-full items-center justify-center p-12">
+            <div className="relative h-full w-full max-w-6xl">
+              <Image
+                src={galleryImages[currentImageIndex]}
+                alt={`${project.title} - Image ${currentImageIndex + 1}`}
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
+          {/* Image counter */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-white">
+            <span className="text-sm">
+              {currentImageIndex + 1} of {galleryImages.length}
+            </span>
+          </div>
+
+          {/* Thumbnail strip */}
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-full px-4">
+            {galleryImages.map((image, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg transition-all ${
+                  index === currentImageIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-80'
+                }`}
+                aria-label={`Go to image ${index + 1}`}
+              >
+                <Image
+                  src={image}
+                  alt={`Thumbnail ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Project Specifications - Luxury Table Format */}
       <section className="mx-auto max-w-6xl px-6 py-24">

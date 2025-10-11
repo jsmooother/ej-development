@@ -236,19 +236,57 @@ export default async function HomePage() {
     }
   }
 
-  // Dynamic layout pattern generator
-  const layoutPatterns = [
-    { className: "md:col-span-3 md:row-span-2", tall: true }, // Hero/featured item
-    { className: "md:col-span-1 md:row-span-2", tall: true }, // Tall single column
-    { className: "md:col-span-2" }, // Double width
-    { className: "md:col-span-1" }, // Standard single
-    { className: "md:col-span-1 md:row-span-2", tall: true }, // Tall single
-    { className: "md:col-span-1" }, // Standard single
-  ];
+  // Dynamic layout pattern generator - ensures rows are filled before creating new ones
+  // Strategy: Use a row-based approach where we track column usage per row
+  const layoutPattern: { className: string; tall?: boolean }[] = [];
+  let currentRow = 0;
+  let columnsUsed = 0; // Track columns used in current row (out of 3 total)
   
-  const layoutPattern = featureStream.map((_, index) => 
-    layoutPatterns[index % layoutPatterns.length]
-  );
+  featureStream.forEach((_, index) => {
+    // First item is always the hero (3 columns, 2 rows)
+    if (index === 0) {
+      layoutPattern.push({ className: "md:col-span-3 md:row-span-2", tall: true });
+      currentRow += 2; // Hero takes 2 rows
+      columnsUsed = 0; // Reset for next row
+      return;
+    }
+    
+    // For remaining items, fill rows systematically
+    // Check available space in current row (3 columns total)
+    const remainingColumns = 3 - columnsUsed;
+    
+    // If we have a full row available (3 columns), alternate patterns for variety
+    if (remainingColumns === 3) {
+      // Pattern: 1 tall (1 col, 2 rows) + 2 standard (1 col each)
+      if (index % 6 === 1 || index % 6 === 4) {
+        layoutPattern.push({ className: "md:col-span-1 md:row-span-2", tall: true });
+        columnsUsed = 1;
+      } else {
+        layoutPattern.push({ className: "md:col-span-1" });
+        columnsUsed = 1;
+      }
+    } else if (remainingColumns === 2) {
+      // Fill with 2-column or 2x 1-column items
+      if (index % 3 === 0) {
+        layoutPattern.push({ className: "md:col-span-2" });
+        columnsUsed = 3; // Row complete
+      } else {
+        layoutPattern.push({ className: "md:col-span-1" });
+        columnsUsed += 1;
+      }
+    } else if (remainingColumns === 1) {
+      // Only 1 column left, fill it
+      layoutPattern.push({ className: "md:col-span-1" });
+      columnsUsed = 0; // Row complete, reset
+      currentRow += 1;
+    }
+    
+    // If row is complete (3 columns used), move to next row
+    if (columnsUsed >= 3) {
+      columnsUsed = 0;
+      currentRow += 1;
+    }
+  });
 
   return (
     <main id="top" className="space-y-24 pb-24">
