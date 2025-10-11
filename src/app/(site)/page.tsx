@@ -30,6 +30,21 @@ type EditorialCard = {
   image?: string;
 };
 
+type ListingCard = {
+  id: string;
+  type: "listing";
+  title: string;
+  slug: string;
+  subtitle: string;
+  location: string;
+  image: string;
+  bedrooms: number;
+  bathrooms: number;
+  builtAreaSqm: number;
+  status: string;
+  isPublished?: boolean;
+};
+
 type InstagramCard = {
   type: "instagram";
   image: string;
@@ -62,19 +77,21 @@ export default async function HomePage() {
     frontpage: {
       projects: 3,
       editorials: 10,
-      instagram: 3
+      instagram: 3,
+      listings: 3
     }
   };
 
   // Fetch live data from database
   let dbProjects: ProjectCard[] = [];
   let dbEditorials: EditorialCard[] = [];
+  let dbListings: ListingCard[] = [];
   let dbInstagram: InstagramCard[] = [];
 
   try {
     // Use direct database access instead of internal API calls
     const { getDb } = await import('@/lib/db/index');
-    const { projects: projectsSchema, posts, instagramCache, siteSettings } = await import('@/lib/db/schema');
+    const { projects: projectsSchema, posts, listings: listingsSchema, instagramCache, siteSettings } = await import('@/lib/db/schema');
     const { desc, eq } = await import('drizzle-orm');
     
     const db = getDb();
@@ -88,16 +105,18 @@ export default async function HomePage() {
       contentLimits = settings.value;
     }
     
-    // Fetch projects, editorials, and Instagram posts directly from database
-    const [rawProjects, rawEditorials, rawInstagram] = await Promise.all([
+    // Fetch projects, editorials, listings, and Instagram posts directly from database
+    const [rawProjects, rawEditorials, rawListings, rawInstagram] = await Promise.all([
       db.select().from(projectsSchema).orderBy(desc(projectsSchema.createdAt)),
       db.select().from(posts).orderBy(desc(posts.createdAt)),
+      db.select().from(listingsSchema).orderBy(desc(listingsSchema.createdAt)),
       db.select().from(instagramCache).orderBy(desc(instagramCache.fetchedAt))
     ]);
 
     console.log('✅ Fetched from DB:', {
       projects: rawProjects.length,
       editorials: rawEditorials.length,
+      listings: rawListings.length,
       instagram: rawInstagram.length
     });
     
@@ -132,6 +151,24 @@ export default async function HomePage() {
         image: editorial.coverImagePath || '/placeholder-editorial.jpg'
       }));
     
+    // Map and filter published listings
+    dbListings = rawListings
+      .filter((listing: any) => listing.isPublished)
+      .map((listing: any) => ({
+        id: listing.id,
+        type: "listing" as const,
+        slug: listing.slug || `listing-${listing.id}`,
+        title: listing.title,
+        subtitle: listing.subtitle || '',
+        location: listing.location?.address || listing.location?.locality || 'Marbella',
+        image: listing.heroImagePath || '/placeholder-project.jpg',
+        bedrooms: listing.facts?.bedrooms || 0,
+        bathrooms: listing.facts?.bathrooms || 0,
+        builtAreaSqm: listing.facts?.builtAreaSqm || 0,
+        status: listing.status || 'for_sale',
+        isPublished: listing.isPublished
+      }));
+    
     // Map Instagram posts
     dbInstagram = rawInstagram.map((post: any) => ({
       id: post.id,
@@ -147,6 +184,7 @@ export default async function HomePage() {
   // Use live data if available
   const publishedProjects = dbProjects.length > 0 ? dbProjects : [];
   const publishedEditorials = dbEditorials.length > 0 ? dbEditorials : [];
+  const publishedListings = dbListings.length > 0 ? dbListings : [];
   const publishedInstagram = dbInstagram.length > 0 ? dbInstagram : [];
 
   // Find hero project and other projects
@@ -158,6 +196,7 @@ export default async function HomePage() {
     ? [heroProject, ...shuffleArray(otherProjects).slice(0, contentLimits.frontpage.projects - 1)] 
     : shuffleArray(publishedProjects).slice(0, contentLimits.frontpage.projects);
   const selectedEditorials = publishedEditorials.slice(0, contentLimits.frontpage.editorials);
+  const selectedListings = publishedListings.slice(0, contentLimits.frontpage.listings || 3);
   const selectedInstagram = publishedInstagram.slice(0, contentLimits.frontpage.instagram);
 
   console.log('Published projects:', publishedProjects.length, 'Selected:', selectedProjects.length);
@@ -166,9 +205,10 @@ export default async function HomePage() {
   console.log('Content limits:', contentLimits);
 
   // Create a dynamic mixed stream based on content limits
-  const featureStream: (ProjectCard | EditorialCard)[] = [];
+  const featureStream: (ProjectCard | EditorialCard | ListingCard)[] = [];
   let projectIndex = 0;
   let editorialIndex = 0;
+  let listingIndex = 0;
   
   // Start with hero project if available
   if (selectedProjects[projectIndex]) {
@@ -176,13 +216,18 @@ export default async function HomePage() {
     projectIndex++;
   }
   
-  // Alternate between editorials and projects to fill the stream
-  const totalItems = selectedProjects.length + selectedEditorials.length;
+  // Alternate between editorials, listings, and projects to fill the stream
+  const totalItems = selectedProjects.length + selectedEditorials.length + selectedListings.length;
   for (let i = featureStream.length; i < totalItems; i++) {
     // Prioritize editorials if we have them and haven't reached the limit
     if (editorialIndex < selectedEditorials.length) {
       featureStream.push(selectedEditorials[editorialIndex]);
       editorialIndex++;
+    }
+    // Then add listings
+    if (listingIndex < selectedListings.length) {
+      featureStream.push(selectedListings[listingIndex]);
+      listingIndex++;
     }
     // Then add projects
     if (projectIndex < selectedProjects.length) {
@@ -316,6 +361,55 @@ export default async function HomePage() {
                     <div className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
                       <span>{item.location}</span>
                       <span>View project →</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            }
+
+            if (item.type === "listing") {
+              return (
+                <Link
+                  key={`${item.title}-${index}`}
+                  href={`/listings/${item.slug}`}
+                  className={cn(
+                    "group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition hover:-translate-y-1 hover:shadow-lg",
+                    layout.className,
+                    layout.tall && "md:row-span-2",
+                  )}
+                >
+                  <div className="relative h-56 w-full md:h-64">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {/* Status badge */}
+                    <div className="absolute top-4 left-4">
+                      <span className="rounded-full bg-green-500/90 px-3 py-1 text-sm font-semibold text-white shadow-sm">
+                        {item.status === 'for_sale' ? 'For Sale' : item.status === 'sold' ? 'Sold' : 'Coming Soon'}
+                      </span>
+                    </div>
+                    {/* Area overlay */}
+                    <div className="absolute bottom-4 right-4">
+                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                        {item.builtAreaSqm} m²
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-4 p-6">
+                    <div className="space-y-2">
+                      <h3 className="font-serif text-2xl font-light text-foreground">{item.title}</h3>
+                      {item.subtitle && <p className="text-sm text-muted-foreground">{item.subtitle}</p>}
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        {item.bedrooms > 0 && <span>{item.bedrooms} beds</span>}
+                        {item.bathrooms > 0 && <span>{item.bathrooms} baths</span>}
+                      </div>
+                    </div>
+                    <div className="mt-auto flex items-center justify-between text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
+                      <span>{item.location}</span>
+                      <span>View listing →</span>
                     </div>
                   </div>
                 </Link>

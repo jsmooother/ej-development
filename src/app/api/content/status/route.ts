@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/index';
-import { projects, posts } from '@/lib/db/schema';
+import { projects, posts, listings } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -10,12 +10,12 @@ export async function GET() {
     const db = getDb();
     
     // Fetch projects status
-    const projects = await db.query.projects.findMany({
+    const allProjects = await db.query.projects.findMany({
       columns: { slug: true, isPublished: true }
     });
-    console.log('📊 Content Status API - Projects:', projects);
+    console.log('📊 Content Status API - Projects:', allProjects);
     
-    const projectsStatus = projects.reduce((acc, project) => {
+    const projectsStatus = allProjects.reduce((acc, project) => {
       acc[project.slug] = project.isPublished;
       return acc;
     }, {} as Record<string, boolean>);
@@ -30,16 +30,32 @@ export async function GET() {
       return acc;
     }, {} as Record<string, boolean>);
     
+    // Fetch listings status
+    const allListings = await db.query.listings.findMany({
+      columns: { slug: true, isPublished: true }
+    });
+    const listingsStatus = allListings.reduce((acc, listing) => {
+      acc[listing.slug] = listing.isPublished;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    // Check if there are any published listings
+    const hasListings = allListings.some(listing => listing.isPublished);
+    
     return NextResponse.json({
       projects: projectsStatus,
-      editorials: editorialsStatus
+      editorials: editorialsStatus,
+      listings: listingsStatus,
+      hasListings
     });
   } catch (error) {
     console.error('Error fetching content status:', error);
     // Return empty status if DB fails
     return NextResponse.json({
       projects: {},
-      editorials: {}
+      editorials: {},
+      listings: {},
+      hasListings: false
     });
   }
 }

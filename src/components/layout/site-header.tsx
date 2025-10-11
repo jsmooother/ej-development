@@ -5,10 +5,13 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS: Array<{ href: string; label: string }> = [
+type NavItem = { href: string; label: string; condition?: boolean };
+
+const BASE_NAV_ITEMS: Array<{ href: string; label: string; requiresListings?: boolean }> = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/editorials", label: "Editorials" },
+  { href: "/listings", label: "Listings", requiresListings: true },
   { href: "/instagram", label: "Instagram" },
   { href: "/studio", label: "Studio" },
   { href: "/contact", label: "Contact" },
@@ -17,6 +20,7 @@ const NAV_ITEMS: Array<{ href: string; label: string }> = [
 export function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasListings, setHasListings] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -28,6 +32,32 @@ export function SiteHeader() {
 
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    // Check if there are any published listings
+    async function checkListings() {
+      try {
+        const response = await fetch('/api/content/status', {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setHasListings(data.hasListings || false);
+        }
+      } catch (error) {
+        console.error('Error checking listings:', error);
+      }
+    }
+    checkListings();
+  }, []);
+
+  // Filter nav items based on conditions
+  const navItems = BASE_NAV_ITEMS.filter(item => {
+    if (item.requiresListings) {
+      return hasListings;
+    }
+    return true;
+  });
 
   return (
     <header
@@ -42,7 +72,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm uppercase tracking-[0.3em] text-muted-foreground md:flex">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -67,7 +97,7 @@ export function SiteHeader() {
       {isMobileMenuOpen && (
         <div className="border-t border-border bg-background md:hidden">
           <nav className="flex flex-col gap-1 px-6 py-4 text-sm uppercase tracking-[0.3em] text-muted-foreground">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

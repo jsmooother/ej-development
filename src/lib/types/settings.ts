@@ -4,6 +4,7 @@ export type ContentLimits = {
     projects: number;
     editorials: number;
     instagram: number;
+    listings?: number;
   };
 };
 
