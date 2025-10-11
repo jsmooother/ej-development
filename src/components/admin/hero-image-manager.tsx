@@ -10,6 +10,7 @@ interface HeroImageManagerProps {
   label?: string;
   description?: string;
   required?: boolean;
+  placeholder?: string;
 }
 
 // Curated Unsplash images for quick selection
@@ -29,7 +30,8 @@ export function HeroImageManager({
   onChange, 
   label = "Hero Image", 
   description,
-  required = false 
+  required = false,
+  placeholder = "Upload hero image"
 }: HeroImageManagerProps) {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [showPresets, setShowPresets] = useState(false);
@@ -60,7 +62,7 @@ export function HeroImageManager({
       <ImageUpload
         value={imageUrl}
         onChange={onChange}
-        placeholder={placeholder || "Upload hero image"}
+        placeholder={placeholder}
         className="max-w-lg"
         maxSize={10}
         acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
