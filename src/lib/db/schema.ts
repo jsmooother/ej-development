@@ -209,6 +209,7 @@ export const siteSettings = pgTable("site_settings", {
 
 export const profiles = pgTable("profiles", {
   userId: uuid("user_id").primaryKey(),
+  email: text("email"),
   role: profileRoleEnum("role").notNull().default("editor"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
