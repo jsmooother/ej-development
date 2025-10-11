@@ -157,7 +157,11 @@ export function ProjectImagesManager({
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
-            onClick={() => setCurrentStep("upload")}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setCurrentStep("upload");
+            }}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               currentStep === "upload"
                 ? "border-blue-500 text-blue-600"
@@ -170,7 +174,11 @@ export function ProjectImagesManager({
             </div>
           </button>
           <button
-            onClick={() => setCurrentStep("organize")}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setCurrentStep("organize");
+            }}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               currentStep === "organize"
                 ? "border-blue-500 text-blue-600"
@@ -183,7 +191,11 @@ export function ProjectImagesManager({
             </div>
           </button>
           <button
-            onClick={() => setCurrentStep("pairs")}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setCurrentStep("pairs");
+            }}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               currentStep === "pairs"
                 ? "border-blue-500 text-blue-600"
@@ -225,7 +237,11 @@ export function ProjectImagesManager({
               <span className="text-sm text-gray-600">Or add via URL:</span>
               {!isAddingUrl && (
                 <button
-                  onClick={() => setIsAddingUrl(true)}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsAddingUrl(true);
+                  }}
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Add URL
@@ -245,14 +261,20 @@ export function ProjectImagesManager({
                   autoFocus
                 />
                 <button
-                  onClick={() => addImage(urlInput)}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addImage(urlInput);
+                  }}
                   disabled={!urlInput.trim()}
                   className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Add
                 </button>
                 <button
-                  onClick={() => {
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
                     setIsAddingUrl(false);
                     setUrlInput("");
                   }}
@@ -278,7 +300,11 @@ export function ProjectImagesManager({
                       className="object-cover"
                     />
                     <button
-                      onClick={() => removeImage(image.id)}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        removeImage(image.id);
+                      }}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 hover:opacity-100 transition-opacity"
                     >
                       <X className="h-3 w-3" />
@@ -287,7 +313,11 @@ export function ProjectImagesManager({
                 ))}
               </div>
               <button
-                onClick={() => setCurrentStep("organize")}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentStep("organize");
+                }}
                 className="mt-4 rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
                 Continue to Tag & Organize →
@@ -309,7 +339,11 @@ export function ProjectImagesManager({
             <div className="text-center py-8">
               <p className="text-gray-500 mb-4">No images uploaded yet.</p>
               <button
-                onClick={() => setCurrentStep("upload")}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentStep("upload");
+                }}
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
                 ← Go back to upload images
@@ -344,7 +378,11 @@ export function ProjectImagesManager({
                       {(["before", "after", "gallery"] as ImageTag[]).map((tag) => (
                         <button
                           key={tag}
-                          onClick={() => toggleTag(image.id, tag)}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleTag(image.id, tag);
+                          }}
                           className={`rounded-full px-2 py-1 text-xs font-medium border transition-colors ${
                             image.tags.includes(tag)
                               ? getTagColor(tag)
@@ -363,13 +401,21 @@ export function ProjectImagesManager({
 
           <div className="flex justify-between">
             <button
-              onClick={() => setCurrentStep("upload")}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentStep("upload");
+              }}
               className="text-gray-600 hover:text-gray-800 font-medium"
             >
               ← Back to Upload
             </button>
             <button
-              onClick={() => setCurrentStep("pairs")}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentStep("pairs");
+              }}
               className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
             >
               Continue to Create Pairs →
@@ -398,7 +444,9 @@ export function ProjectImagesManager({
                     {beforeImages.map((image) => (
                       <button
                         key={image.id}
-                        onClick={() => {
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
                           if (selectedImages.length === 0) {
                             setSelectedImages([image.id]);
                           } else if (selectedImages[0] === image.id) {
@@ -429,7 +477,9 @@ export function ProjectImagesManager({
                     {afterImages.map((image) => (
                       <button
                         key={image.id}
-                        onClick={() => {
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
                           if (selectedImages.length === 1) {
                             setSelectedImages([selectedImages[0], image.id]);
                           } else if (selectedImages[1] === image.id) {
@@ -462,7 +512,9 @@ export function ProjectImagesManager({
                     className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                   <button
-                    onClick={() => {
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
                       if (selectedImages.length === 2) {
                         createPair(selectedImages[0], selectedImages[1]);
                       }
@@ -495,7 +547,11 @@ export function ProjectImagesManager({
                           className="text-sm font-medium text-gray-900 bg-transparent border-none outline-none focus:bg-gray-50 rounded px-2 py-1"
                         />
                         <button
-                          onClick={() => removePair(pair.id)}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            removePair(pair.id);
+                          }}
                           className="text-gray-400 hover:text-red-600 transition-colors"
                         >
                           <X className="h-4 w-4" />
@@ -543,7 +599,11 @@ export function ProjectImagesManager({
 
           <div className="flex justify-between">
             <button
-              onClick={() => setCurrentStep("organize")}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentStep("organize");
+              }}
               className="text-gray-600 hover:text-gray-800 font-medium"
             >
               ← Back to Tag & Organize
