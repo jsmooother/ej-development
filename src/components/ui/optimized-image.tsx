@@ -71,21 +71,14 @@ export function OptimizedImage({
     onError?.();
   };
 
-  // Generate a simple blur placeholder
-  const generateBlurDataURL = (w: number, h: number) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = '#f3f4f6';
-      ctx.fillRect(0, 0, w, h);
-    }
-    return canvas.toDataURL();
+  // Generate a simple blur placeholder (static SVG-based)
+  const generateBlurDataURL = () => {
+    // Simple gray SVG as placeholder - works in SSR
+    return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23f3f4f6'/%3E%3C/svg%3E";
   };
 
   const optimizedSrc = getOptimizedSrc(src);
-  const defaultBlurDataURL = blurDataURL || (width && height ? generateBlurDataURL(width, height) : undefined);
+  const defaultBlurDataURL = blurDataURL || (placeholder === "blur" ? generateBlurDataURL() : undefined);
 
   if (hasError) {
     return (
@@ -103,25 +96,37 @@ export function OptimizedImage({
     );
   }
 
+  // Build image props conditionally
+  const imageProps: any = {
+    src: optimizedSrc,
+    alt,
+    className: `transition-opacity duration-300 ${
+      isLoading ? 'opacity-0' : 'opacity-100'
+    }`,
+    priority,
+    sizes,
+    quality,
+    onLoad: handleLoad,
+    onError: handleError,
+  };
+
+  // Add width/height or fill
+  if (fill) {
+    imageProps.fill = true;
+  } else {
+    imageProps.width = width;
+    imageProps.height = height;
+  }
+
+  // Add placeholder only if blur is specified
+  if (placeholder === "blur" && defaultBlurDataURL) {
+    imageProps.placeholder = "blur";
+    imageProps.blurDataURL = defaultBlurDataURL;
+  }
+
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      <Image
-        src={optimizedSrc}
-        alt={alt}
-        width={fill ? undefined : width}
-        height={fill ? undefined : height}
-        fill={fill}
-        className={`transition-opacity duration-300 ${
-          isLoading ? 'opacity-0' : 'opacity-100'
-        }`}
-        priority={priority}
-        sizes={sizes}
-        quality={quality}
-        placeholder={placeholder}
-        blurDataURL={defaultBlurDataURL}
-        onLoad={handleLoad}
-        onError={handleError}
-      />
+      <Image {...imageProps} />
       
       {/* Loading skeleton */}
       {isLoading && (
