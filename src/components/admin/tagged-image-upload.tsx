@@ -209,11 +209,18 @@ export function TaggedImageUpload({
                             ? getTagColor(tag)
                             : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-100"
                         }`}
+                        title={`Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag`}
                       >
                         {getTagIcon(tag)} {tag}
+                        {image.tags.includes(tag) && <span className="ml-1">✓</span>}
                       </button>
                     ))}
                   </div>
+                  {image.tags.length > 1 && (
+                    <div className="mt-1 text-xs text-white bg-black/50 rounded px-2 py-1">
+                      {image.tags.length} tags active
+                    </div>
+                  )}
                 </div>
                 
                 {/* Active Tags Overlay */}
@@ -246,15 +253,17 @@ export function TaggedImageUpload({
 
       {/* Usage Instructions */}
       <div className="rounded-lg bg-blue-50 p-4">
-        <h4 className="text-sm font-medium text-blue-900 mb-2">💡 How to use:</h4>
+        <h4 className="text-sm font-medium text-blue-900 mb-2">💡 How to use multiple tags:</h4>
         <ul className="text-xs text-blue-800 space-y-1">
-          <li>• Upload images and they default to "After" tag</li>
+          <li>• Upload images and they default to "After" ✨ tag</li>
           <li>• <strong>Hover over images</strong> to see tag buttons</li>
-          <li>• <strong>Click tags</strong> to add/remove them (images can have multiple tags)</li>
+          <li>• <strong>Click tags</strong> to add/remove them - <strong>images can have multiple tags!</strong></li>
           <li>• <strong>🔧 Before:</strong> Pre-renovation photos</li>
           <li>• <strong>✨ After:</strong> Post-renovation photos (shown in carousel)</li>
           <li>• <strong>🖼️ Gallery:</strong> Additional photos (shown in carousel)</li>
-          <li>• The frontend will show Before/After comparisons and use After+Gallery for carousel</li>
+          <li>• <strong>Multiple tags example:</strong> Tag as "After + Gallery" to show in both comparison AND carousel</li>
+          <li>• <strong>Tag as "Before + After"</strong> to show in before/after comparison</li>
+          <li>• <strong>Tag as "After + Gallery"</strong> to show in carousel with other after photos</li>
         </ul>
       </div>
     </div>
