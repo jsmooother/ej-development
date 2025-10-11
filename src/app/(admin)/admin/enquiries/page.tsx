@@ -24,6 +24,7 @@ export default function EnquiriesPage() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchEnquiries();
@@ -32,7 +33,9 @@ export default function EnquiriesPage() {
   const fetchEnquiries = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/enquiries');
+      const response = await fetch('/api/enquiries', {
+        credentials: 'include',
+      });
       
       if (!response.ok) {
         throw new Error('Failed to fetch enquiries');
@@ -45,6 +48,39 @@ export default function EnquiriesPage() {
       setEnquiries([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteEnquiry = async (enquiryId: string) => {
+    if (!confirm('Are you sure you want to delete this enquiry? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/enquiries/${enquiryId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete enquiry');
+      }
+
+      // Remove from local state
+      setEnquiries(prev => prev.filter(enquiry => enquiry.id !== enquiryId));
+      
+      // Clear selection if deleted enquiry was selected
+      if (selectedEnquiry?.id === enquiryId) {
+        setSelectedEnquiry(null);
+      }
+
+      console.log('Enquiry deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete enquiry:', error);
+      alert('Failed to delete enquiry. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -239,6 +275,18 @@ export default function EnquiriesPage() {
                         </div>
                       </a>
                     )}
+                    <button
+                      onClick={() => handleDeleteEnquiry(selectedEnquiry.id)}
+                      disabled={isDeleting}
+                      className="rounded-lg border border-red-200 bg-red-50 px-4 py-2.5 text-center text-sm font-medium text-red-600 transition hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                      </div>
+                    </button>
                   </div>
                 </div>
               ) : (

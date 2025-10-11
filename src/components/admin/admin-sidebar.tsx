@@ -12,6 +12,7 @@ type NavigationItem = {
   href: string;
   icon: React.ReactNode;
   adminOnly?: boolean; // Only show for admins
+  disabled?: boolean; // Disabled until implementation
 };
 
 const navigation: NavigationItem[] = [
@@ -65,6 +66,7 @@ const navigation: NavigationItem[] = [
     name: "Analytics", 
     href: "/admin/analytics",
     adminOnly: true, // Admin only
+    disabled: true, // Disabled until implementation
     icon: (
       <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -153,21 +155,35 @@ export function AdminSidebar() {
       <nav className="flex-1 space-y-1 px-3 py-2">
         {visibleNavigation.map((item) => {
           const isActive = pathname === item.href;
+          const isDisabled = item.disabled;
           
           return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal transition-all duration-200",
-                isActive
-                  ? "bg-foreground/[0.08] text-foreground"
-                  : "text-muted-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground"
+            <div key={item.name}>
+              {isDisabled ? (
+                <div
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal cursor-not-allowed opacity-50"
+                  )}
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                  <span className="ml-auto text-xs text-muted-foreground/50">Soon</span>
+                </div>
+              ) : (
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal transition-all duration-200",
+                    isActive
+                      ? "bg-foreground/[0.08] text-foreground"
+                      : "text-muted-foreground/70 hover:bg-foreground/[0.04] hover:text-foreground"
+                  )}
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                </Link>
               )}
-            >
-              {item.icon}
-              <span>{item.name}</span>
-            </Link>
+            </div>
           );
         })}
       </nav>
