@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
-import { CategorizedImageUpload } from "@/components/admin/categorized-image-upload";
+import { TaggedImageUpload } from "@/components/admin/tagged-image-upload";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 
-type ImageCategory = "before" | "after" | "gallery";
+type ImageTag = "before" | "after" | "gallery";
 
-interface CategorizedImage {
+interface TaggedImage {
   id: string;
   url: string;
-  category: ImageCategory;
+  tags: ImageTag[];
   caption?: string;
 }
 
@@ -27,7 +27,7 @@ interface Project {
   facts: Record<string, string | number | null>;
   heroImagePath: string;
   additionalImages: string[]; // Legacy - will be migrated
-  categorizedImages: CategorizedImage[]; // New system
+  taggedImages: TaggedImage[]; // New system
   isPublished: boolean;
   createdAt: Date;
 }
@@ -60,7 +60,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             facts: data.project.facts || {},
             heroImagePath: data.project.heroImagePath || '',
             additionalImages: data.project.additionalImages || [], // Legacy
-            categorizedImages: data.project.categorizedImages || [], // New system
+            taggedImages: data.project.taggedImages || [], // New system
             isPublished: data.project.isPublished,
             createdAt: new Date(data.project.createdAt),
           };
@@ -97,7 +97,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           facts: project.facts,
           heroImagePath: project.heroImagePath,
           additionalImages: project.additionalImages, // Legacy
-          categorizedImages: project.categorizedImages, // New system
+          taggedImages: project.taggedImages, // New system
           isPublished: project.isPublished,
         }),
       });
@@ -302,13 +302,12 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 required
               />
 
-              <CategorizedImageUpload
-                images={project.categorizedImages}
-                onChange={(images) => setProject({ ...project, categorizedImages: images })}
+              <TaggedImageUpload
+                images={project.taggedImages}
+                onChange={(images) => setProject({ ...project, taggedImages: images })}
                 label="Project Images"
-                description="Categorize images as Before, After, or Gallery. Before/After show in comparison, Gallery shows in carousel."
+                description="Upload images and tag them as Before, After, or Gallery. Hover over images to add/remove tags."
                 maxImages={20}
-                showBeforeAfter={true}
               />
             </div>
           </div>

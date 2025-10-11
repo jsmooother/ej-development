@@ -6,14 +6,14 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
-import { CategorizedImageUpload } from "@/components/admin/categorized-image-upload";
+import { TaggedImageUpload } from "@/components/admin/tagged-image-upload";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
-  const [categorizedImages, setCategorizedImages] = useState<any[]>([]);
+  const [taggedImages, setTaggedImages] = useState<any[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,7 +45,7 @@ export default function NewProjectPage() {
         facts,
         heroImagePath: heroImageUrl || '',
         additionalImages: galleryImages, // Legacy
-        categorizedImages: categorizedImages, // New system
+        taggedImages: taggedImages, // New system
         isHero: formData.get('isHero') === 'on',
         isPublished: formData.get('isPublished') === 'on',
       };
@@ -239,13 +239,12 @@ export default function NewProjectPage() {
               required
             />
 
-            <CategorizedImageUpload
-              images={categorizedImages}
-              onChange={setCategorizedImages}
+            <TaggedImageUpload
+              images={taggedImages}
+              onChange={setTaggedImages}
               label="Project Images"
-              description="Categorize images as Before, After, or Gallery. Before/After show in comparison, Gallery shows in carousel."
+              description="Upload images and tag them as Before, After, or Gallery. Hover over images to add/remove tags."
               maxImages={20}
-              showBeforeAfter={true}
             />
           </div>
 
