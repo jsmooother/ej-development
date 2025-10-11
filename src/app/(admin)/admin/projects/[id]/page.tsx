@@ -5,8 +5,17 @@ import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
-import { MultiImageUpload } from "@/components/admin/multi-image-upload";
+import { CategorizedImageUpload } from "@/components/admin/categorized-image-upload";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
+
+type ImageCategory = "before" | "after" | "gallery";
+
+interface CategorizedImage {
+  id: string;
+  url: string;
+  category: ImageCategory;
+  caption?: string;
+}
 
 interface Project {
   id: string;
@@ -17,7 +26,8 @@ interface Project {
   year: number | null;
   facts: Record<string, string | number | null>;
   heroImagePath: string;
-  additionalImages: string[];
+  additionalImages: string[]; // Legacy - will be migrated
+  categorizedImages: CategorizedImage[]; // New system
   isPublished: boolean;
   createdAt: Date;
 }
@@ -49,7 +59,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             year: data.project.year,
             facts: data.project.facts || {},
             heroImagePath: data.project.heroImagePath || '',
-            additionalImages: [], // Will be handled when we add image relations
+            additionalImages: data.project.additionalImages || [], // Legacy
+            categorizedImages: data.project.categorizedImages || [], // New system
             isPublished: data.project.isPublished,
             createdAt: new Date(data.project.createdAt),
           };
@@ -85,6 +96,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           year: project.year,
           facts: project.facts,
           heroImagePath: project.heroImagePath,
+          additionalImages: project.additionalImages, // Legacy
+          categorizedImages: project.categorizedImages, // New system
           isPublished: project.isPublished,
         }),
       });
@@ -289,12 +302,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 required
               />
 
-              <MultiImageUpload
-                images={project.additionalImages}
-                onChange={(images) => setProject({ ...project, additionalImages: images })}
-                label="Additional Images"
-                description="Gallery images for the project detail page"
-                maxImages={12}
+              <CategorizedImageUpload
+                images={project.categorizedImages}
+                onChange={(images) => setProject({ ...project, categorizedImages: images })}
+                label="Project Images"
+                description="Categorize images as Before, After, or Gallery. Before/After show in comparison, Gallery shows in carousel."
+                maxImages={20}
+                showBeforeAfter={true}
               />
             </div>
           </div>

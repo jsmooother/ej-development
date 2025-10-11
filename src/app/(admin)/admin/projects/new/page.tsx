@@ -6,13 +6,14 @@ import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
-import { MultiImageUpload } from "@/components/admin/multi-image-upload";
+import { CategorizedImageUpload } from "@/components/admin/categorized-image-upload";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [categorizedImages, setCategorizedImages] = useState<any[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +44,8 @@ export default function NewProjectPage() {
         year: formData.get('year') ? parseInt(formData.get('year') as string) : new Date().getFullYear(),
         facts,
         heroImagePath: heroImageUrl || '',
+        additionalImages: galleryImages, // Legacy
+        categorizedImages: categorizedImages, // New system
         isHero: formData.get('isHero') === 'on',
         isPublished: formData.get('isPublished') === 'on',
       };
@@ -236,12 +239,13 @@ export default function NewProjectPage() {
               required
             />
 
-            <MultiImageUpload
-              images={galleryImages}
-              onChange={setGalleryImages}
-              label="Gallery Images"
-              description="Upload additional images for the project gallery"
-              maxImages={12}
+            <CategorizedImageUpload
+              images={categorizedImages}
+              onChange={setCategorizedImages}
+              label="Project Images"
+              description="Categorize images as Before, After, or Gallery. Before/After show in comparison, Gallery shows in carousel."
+              maxImages={20}
+              showBeforeAfter={true}
             />
           </div>
 
