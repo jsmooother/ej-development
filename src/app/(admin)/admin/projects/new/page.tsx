@@ -7,6 +7,7 @@ import { FormField, Input, Textarea, Select } from "@/components/admin/form-fiel
 import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
+import { FactsEditor } from "@/components/admin/facts-editor";
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -32,6 +33,7 @@ export default function NewProjectPage() {
   const [galleryImages, setGalleryImages] = useState<string[]>([]); // Legacy
   const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
   const [imagePairs, setImagePairs] = useState<ImagePair[]>([]);
+  const [projectFacts, setProjectFacts] = useState<Record<string, string | number | null>>({});
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,19 +42,6 @@ export default function NewProjectPage() {
     try {
       const formData = new FormData(e.currentTarget);
       
-      // Parse facts from JSON input
-      let facts = {};
-      const factsInput = formData.get('facts') as string;
-      if (factsInput) {
-        try {
-          facts = JSON.parse(factsInput);
-        } catch (error) {
-          alert('Invalid JSON in facts field');
-          setIsSaving(false);
-          return;
-        }
-      }
-      
       // Create project object
       const projectData = {
         title: formData.get('title') as string,
@@ -60,7 +49,7 @@ export default function NewProjectPage() {
         summary: formData.get('summary') as string || '',
         content: formData.get('content') as string || '',
         year: formData.get('year') ? parseInt(formData.get('year') as string) : new Date().getFullYear(),
-        facts,
+        facts: projectFacts,
         heroImagePath: heroImageUrl || '',
         additionalImages: galleryImages, // Legacy
         projectImages: projectImages, // New system
@@ -192,56 +181,12 @@ export default function NewProjectPage() {
               Project Details
             </h2>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <FormField 
-                label="Square Meters" 
-                id="sqm"
-                description="Total built area"
-              >
-                <Input 
-                  id="sqm" 
-                  name="sqm" 
-                  type="number"
-                  placeholder="420"
-                />
-              </FormField>
-
-              <FormField 
-                label="Bedrooms" 
-                id="bedrooms"
-              >
-                <Input 
-                  id="bedrooms" 
-                  name="bedrooms" 
-                  type="number"
-                  placeholder="6"
-                />
-              </FormField>
-
-              <FormField 
-                label="Bathrooms" 
-                id="bathrooms"
-              >
-                <Input 
-                  id="bathrooms" 
-                  name="bathrooms" 
-                  type="number"
-                  placeholder="5"
-                />
-              </FormField>
-
-              <FormField 
-                label="Plot Size (m²)" 
-                id="plotSqm"
-              >
-                <Input 
-                  id="plotSqm" 
-                  name="plotSqm" 
-                  type="number"
-                  placeholder="1200"
-                />
-              </FormField>
-            </div>
+            <FactsEditor
+              facts={projectFacts}
+              onChange={setProjectFacts}
+              label="Project Facts"
+              description="Add key details about the project (e.g., location, size, features)"
+            />
           </div>
 
           {/* Images */}

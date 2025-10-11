@@ -7,6 +7,7 @@ import { FormField, Input, Textarea, Select } from "@/components/admin/form-fiel
 import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
+import { FactsEditor } from "@/components/admin/facts-editor";
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -259,46 +260,14 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
           {/* Project Details */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Project Facts (JSON)</h2>
+            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Project Details</h2>
             
-            <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <div className="flex items-start gap-3">
-                <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div className="text-xs text-blue-800">
-                  <p className="font-medium">About Project Facts (JSON)</p>
-                  <p className="mt-1">This field stores flexible project details in JSON format. You can add any properties like location, size, role, features, etc. The data will be displayed on the website where project details are shown.</p>
-                  <p className="mt-1 font-medium">Example properties:</p>
-                  <ul className="mt-1 list-disc list-inside space-y-0.5">
-                    <li><code>location</code> - Project location (e.g., "La Zagaleta")</li>
-                    <li><code>sizeSqm</code> - Total area in square meters</li>
-                    <li><code>role</code> - Your role (e.g., "Design & Development")</li>
-                    <li><code>features</code> - Array of features</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <FormField
-              label="Facts"
-              description="Project details as JSON (e.g., location, size, role, etc.)"
-            >
-              <Textarea
-                value={JSON.stringify(project.facts, null, 2)}
-                onChange={(e) => {
-                  try {
-                    const parsed = JSON.parse(e.target.value);
-                    setProject({ ...project, facts: parsed });
-                  } catch (err) {
-                    // Invalid JSON, don't update
-                  }
-                }}
-                placeholder='{\n  "location": "La Zagaleta",\n  "sizeSqm": 1200,\n  "role": "Design & Development",\n  "features": ["Private Pool", "Garden", "Sea Views"]\n}'
-                rows={10}
-                className="font-mono text-xs resize-y min-h-[150px]"
-              />
-            </FormField>
+            <FactsEditor
+              facts={project.facts}
+              onChange={(facts) => setProject({ ...project, facts })}
+              label="Project Facts"
+              description="Add key details about the project (e.g., location, size, features)"
+            />
           </div>
 
           {/* Images */}
