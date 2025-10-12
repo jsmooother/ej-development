@@ -4,10 +4,12 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { Upload, X, Plus } from "lucide-react";
 
+type ImageTag = "before" | "after" | "gallery";
+
 interface ProjectImage {
   id: string;
   url: string;
-  tags: string[];
+  tags: ImageTag[];
 }
 
 interface MultiFileImageUploadProps {
