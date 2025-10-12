@@ -83,7 +83,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         }
       } catch (err) {
         console.error('Error fetching project:', err);
-        showError('Failed to load project. Please try refreshing the page.');
+        // Project loading failed - user can try refreshing the page
       } finally {
         setIsLoading(false);
       }
