@@ -40,6 +40,8 @@ export async function POST(request: NextRequest) {
         year: body.year || new Date().getFullYear(),
         facts: body.facts || {},
         heroImagePath: body.heroImagePath || '',
+        projectImages: body.projectImages || [],
+        imagePairs: body.imagePairs || [],
         isHero: body.isHero || false,
         isPublished: body.isPublished || false,
         publishedAt: body.isPublished ? new Date() : null,

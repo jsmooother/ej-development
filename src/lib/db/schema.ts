@@ -108,6 +108,19 @@ export const projects = pgTable(
     year: integer("year"),
     facts: jsonb("facts").$type<Record<string, string | number | null>>(),
     heroImagePath: text("hero_image_path"),
+    projectImages: jsonb("project_images").$type<Array<{
+      id: string;
+      url: string;
+      tags: string[];
+      caption?: string;
+      pairId?: string;
+    }>>(),
+    imagePairs: jsonb("image_pairs").$type<Array<{
+      id: string;
+      label: string;
+      beforeImageId?: string;
+      afterImageId?: string;
+    }>>(),
     isHero: boolean("is_hero").notNull().default(false),
     isComingSoon: boolean("is_coming_soon").notNull().default(false),
     isPublished: boolean("is_published").notNull().default(true),

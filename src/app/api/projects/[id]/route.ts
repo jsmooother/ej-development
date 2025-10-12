@@ -52,6 +52,8 @@ export async function PUT(
         year: body.year,
         facts: body.facts,
         heroImagePath: body.heroImagePath,
+        projectImages: body.projectImages || [],
+        imagePairs: body.imagePairs || [],
         isPublished: body.isPublished,
         updatedAt: new Date(),
       })
