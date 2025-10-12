@@ -80,8 +80,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           
           setProject(fetchedProject);
         }
-      } catch (error) {
-        console.error('Error fetching project:', error);
+      } catch (err) {
+        console.error('Error fetching project:', err);
         alert('Failed to load project');
       } finally {
         setIsLoading(false);
@@ -126,8 +126,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         // Auto-redirect after showing success message
         setTimeout(() => router.push('/admin/projects'), 1500);
       }
-    } catch (error) {
-      console.error('Failed to save project:', error);
+    } catch (err) {
+      console.error('Failed to save project:', err);
       error('Failed to save project', 'Please try again.');
     } finally {
       setIsSaving(false);
@@ -152,8 +152,8 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         // Auto-redirect after showing success message
         setTimeout(() => router.push('/admin/projects'), 1500);
       }
-    } catch (error) {
-      console.error('Failed to delete project:', error);
+    } catch (err) {
+      console.error('Failed to delete project:', err);
       error('Failed to delete project', 'Please try again.');
     }
   };

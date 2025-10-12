@@ -78,9 +78,9 @@ export default function NewProjectPage() {
       // Show success and redirect
       success('Project created successfully!');
       setTimeout(() => router.push('/admin/projects'), 1500);
-    } catch (error) {
-      console.error('Error creating project:', error);
-      error('Failed to create project', error instanceof Error ? error.message : 'Please try again.');
+    } catch (err) {
+      console.error('Error creating project:', err);
+      error('Failed to create project', err instanceof Error ? err.message : 'Please try again.');
       setIsSaving(false);
     }
   };
