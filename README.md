@@ -154,3 +154,4 @@ Row-level security policies restrict write access to authenticated editors/admin
 5. **Scheduled Syncs** – Automatic Instagram sync via cron jobs
 
 Contributions, questions, or deployment pairing? Ping the EJ Development team or open an issue.
+# Force Vercel deployment update
