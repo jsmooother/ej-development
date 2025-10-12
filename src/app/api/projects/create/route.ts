@@ -12,6 +12,14 @@ export async function POST(request: NextRequest) {
     const db = getDb();
     const body = await request.json();
     
+    console.log('📊 Creating project with data:', {
+      title: body.title,
+      projectImagesCount: body.projectImages?.length || 0,
+      imagePairsCount: body.imagePairs?.length || 0,
+      hasProjectImages: Array.isArray(body.projectImages),
+      hasImagePairs: Array.isArray(body.imagePairs),
+    });
+    
     // Validate required fields
     if (!body.title || !body.slug) {
       return NextResponse.json(
@@ -49,6 +57,13 @@ export async function POST(request: NextRequest) {
         updatedAt: new Date(),
       })
       .returning();
+    
+    console.log('✅ Project created successfully:', {
+      id: newProject[0].id,
+      title: newProject[0].title,
+      projectImagesStored: newProject[0].projectImages?.length || 0,
+      imagePairsStored: newProject[0].imagePairs?.length || 0,
+    });
     
     return NextResponse.json(newProject[0]);
   } catch (error) {

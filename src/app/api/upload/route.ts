@@ -71,6 +71,13 @@ export async function POST(request: NextRequest) {
       .from("images")
       .getPublicUrl(filePath);
 
+    console.log('✅ File uploaded successfully:', {
+      filename: file.name,
+      path: filePath,
+      size: `${(file.size / 1024).toFixed(2)}KB`,
+      url: urlData.publicUrl
+    });
+
     return NextResponse.json({
       success: true,
       url: urlData.publicUrl,

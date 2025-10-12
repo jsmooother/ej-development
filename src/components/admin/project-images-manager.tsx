@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { ImageUpload } from "./image-upload";
 import { MultiFileImageUpload } from "./multi-file-image-upload";
-import { X, Plus, ArrowRight, Tag, Grid3X3, Link } from "lucide-react";
+import { X, Plus, ArrowRight, Tag, Grid3X3, Link, Star } from "lucide-react";
 import Image from "next/image";
 
 type ImageTag = "before" | "after" | "gallery";
-type WorkflowStep = "upload" | "organize" | "pairs";
+type WorkflowStep = "upload" | "hero" | "organize" | "pairs";
 
 interface ProjectImage {
   id: string;
@@ -97,7 +97,7 @@ export function ProjectImagesManager({
     onImagesChange(newImages);
   };
 
-  // Step 3: Create Pairs
+  // Step 4: Create Pairs
   const createPair = (beforeImageId: string, afterImageId: string) => {
     if (pairs.length < maxPairs) {
       const newPair: ImagePair = {
@@ -147,18 +147,11 @@ export function ProjectImagesManager({
         {description && (
           <p className="mt-1 text-sm text-gray-600">{description}</p>
         )}
-        <div className="mt-4 flex gap-6 text-sm text-gray-600">
-          <span className="font-medium">Before: <span className="font-normal">{beforeImages.length}</span></span>
-          <span className="font-medium">After: <span className="font-normal">{afterImages.length}</span></span>
-          <span className="font-medium">Gallery: <span className="font-normal">{galleryImages.length}</span></span>
-          <span className="font-medium">Pairs: <span className="font-normal">{pairs.length}</span></span>
-          <span className="font-medium text-gray-500">Total: {images.length}/{maxImages}</span>
-        </div>
       </div>
 
       {/* Workflow Steps */}
       <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+        <nav className="-mb-px flex space-x-6">
           <button
             type="button"
             onClick={(e) => {
@@ -180,6 +173,23 @@ export function ProjectImagesManager({
             type="button"
             onClick={(e) => {
               e.preventDefault();
+              setCurrentStep("hero");
+            }}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              currentStep === "hero"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              2. Select Hero
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
               setCurrentStep("organize");
             }}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -190,7 +200,7 @@ export function ProjectImagesManager({
           >
             <div className="flex items-center gap-2">
               <Tag className="h-4 w-4" />
-              2. Tag & Organize
+              3. Tag & Organize
             </div>
           </button>
           <button
@@ -207,7 +217,7 @@ export function ProjectImagesManager({
           >
             <div className="flex items-center gap-2">
               <Link className="h-4 w-4" />
-              3. Create Pairs
+              4. Create Pairs
             </div>
           </button>
         </nav>
@@ -224,7 +234,7 @@ export function ProjectImagesManager({
           {/* Multi-File Upload */}
           <MultiFileImageUpload
             images={images}
-            onChange={setImages}
+            onChange={onImagesChange}
             placeholder="Choose multiple images or drag and drop"
             maxImages={maxImages}
             maxSize={10}
@@ -238,11 +248,11 @@ export function ProjectImagesManager({
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
-                  setCurrentStep("organize");
+                  setCurrentStep("hero");
                 }}
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
-                Continue to Tag & Organize
+                Continue to Select Hero
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -250,7 +260,117 @@ export function ProjectImagesManager({
         </div>
       )}
 
-      {/* Step 2: Tag & Organize */}
+      {/* Step 2: Select Hero Image */}
+      {currentStep === "hero" && (
+        <div className="space-y-6">
+          <div className="bg-yellow-50 rounded-lg p-4">
+            <h4 className="text-lg font-medium text-yellow-900 mb-2">Select Hero Image</h4>
+            <p className="text-sm text-yellow-800">Choose which image will be the main hero image displayed on project cards and detail pages.</p>
+          </div>
+
+          {images.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-4">No images uploaded yet.</p>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentStep("upload");
+                }}
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                ← Go back to upload images
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Image Summary - moved here */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h5 className="text-sm font-medium text-gray-900 mb-2">Image Summary</h5>
+                <div className="flex gap-6 text-sm text-gray-600">
+                  <span className="font-medium">Total: <span className="font-normal">{images.length}/{maxImages}</span></span>
+                  <span className="font-medium">Before: <span className="font-normal">{beforeImages.length}</span></span>
+                  <span className="font-medium">After: <span className="font-normal">{afterImages.length}</span></span>
+                  <span className="font-medium">Gallery: <span className="font-normal">{galleryImages.length}</span></span>
+                  <span className="font-medium">Pairs: <span className="font-normal">{pairs.length}</span></span>
+                </div>
+              </div>
+
+              {/* Hero Image Selection Grid */}
+              <div className="space-y-4">
+                <p className="text-sm font-medium text-gray-700">Click an image to select it as your hero image:</p>
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {images.map((image) => (
+                    <button
+                      key={image.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        // This will be handled by the parent component's hero image selector
+                        // For now, we'll just move to the next step
+                        setCurrentStep("organize");
+                      }}
+                      className="relative aspect-square overflow-hidden rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all"
+                    >
+                      <Image
+                        src={image.url}
+                        alt="Project image"
+                        fill
+                        className="object-cover"
+                      />
+                      
+                      {/* Tags indicator */}
+                      <div className="absolute top-1 right-1 flex gap-1">
+                        {image.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className={`text-xs px-1 py-0.5 rounded ${
+                              tag === "before" 
+                                ? "bg-orange-500 text-white" 
+                                : tag === "after"
+                                ? "bg-green-500 text-white"
+                                : "bg-blue-500 text-white"
+                            }`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentStep("upload");
+                  }}
+                  className="text-gray-600 hover:text-gray-800 font-medium"
+                >
+                  ← Back to Upload
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentStep("organize");
+                  }}
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                >
+                  Continue to Tag & Organize
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Step 3: Tag & Organize */}
       {currentStep === "organize" && (
         <div className="space-y-6">
           <div className="bg-green-50 rounded-lg p-4">
@@ -353,7 +473,7 @@ export function ProjectImagesManager({
         </div>
       )}
 
-      {/* Step 3: Create Pairs */}
+      {/* Step 4: Create Pairs */}
       {currentStep === "pairs" && (
         <div className="space-y-6">
           <div className="bg-purple-50 rounded-lg p-4">

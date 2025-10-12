@@ -80,7 +80,10 @@ export function ImageUpload({
     }
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Upload area clicked, opening file dialog...');
     fileInputRef.current?.click();
   };
 
@@ -106,11 +109,19 @@ export function ImageUpload({
 
       {/* Upload Area */}
       <div
-        onClick={handleClick}
+        onClick={isUploading ? undefined : handleClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!isUploading) handleClick(e as any);
+          }
+        }}
         className={`
-          relative border-2 border-dashed rounded-lg p-6 cursor-pointer transition-all
+          relative border-2 border-dashed rounded-lg p-6 transition-all
+          ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-gray-50"}
           ${preview ? "border-green-300 bg-green-50" : "border-gray-300 hover:border-gray-400"}
-          ${isUploading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"}
         `}
       >
         {preview ? (

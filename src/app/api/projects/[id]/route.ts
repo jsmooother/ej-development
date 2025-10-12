@@ -20,6 +20,14 @@ export async function GET(
       }, { status: 404 });
     }
     
+    console.log('📊 Fetched project:', {
+      id: project[0].id,
+      title: project[0].title,
+      projectImagesCount: project[0].projectImages?.length || 0,
+      imagePairsCount: project[0].imagePairs?.length || 0,
+      hasProjectImagesData: !!project[0].projectImages,
+    });
+    
     return NextResponse.json({
       success: true,
       project: project[0]

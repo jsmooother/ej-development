@@ -32,6 +32,7 @@ export function MultiFileImageUpload({
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadingCount, setUploadingCount] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlInput, setUrlInput] = useState("");
   const [isAddingUrl, setIsAddingUrl] = useState(false);
@@ -129,6 +130,122 @@ export function MultiFileImageUpload({
     fileInputRef.current?.click();
   };
 
+  // Drag and drop handlers
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (canAddMore && !isUploading) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (!canAddMore || isUploading) return;
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length === 0) return;
+
+    // Check if adding these files would exceed max
+    if (images.length + files.length > maxImages) {
+      setError(`Cannot add ${files.length} images. Maximum ${maxImages} images allowed. You currently have ${images.length} images.`);
+      return;
+    }
+
+    setError(null);
+    setIsUploading(true);
+    setUploadingCount(files.length);
+
+    const newImages: ProjectImage[] = [];
+    let successCount = 0;
+    let errorCount = 0;
+
+    // Process files in parallel
+    const uploadPromises = files.map(async (file, index) => {
+      try {
+        // Validate file type
+        if (!acceptedTypes.includes(file.type)) {
+          throw new Error(`File ${index + 1}: Invalid file type. Please upload ${acceptedTypes.map(type => type.split('/')[1].toUpperCase()).join(", ")} files.`);
+        }
+
+        // Validate file size
+        if (file.size > maxSize * 1024 * 1024) {
+          throw new Error(`File ${index + 1}: File size must be less than ${maxSize}MB`);
+        }
+
+        // Create FormData
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "uploads");
+
+        // Upload to Supabase Storage via our API
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+          credentials: "include"
+        });
+
+        if (!response.ok) {
+          throw new Error(`File ${index + 1}: Upload failed`);
+        }
+
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(`File ${index + 1}: ${data.error}`);
+        }
+
+        successCount++;
+        return {
+          id: Date.now().toString() + index,
+          url: data.url,
+          tags: ["gallery"] // Default to gallery
+        };
+      } catch (error) {
+        errorCount++;
+        console.error(`Upload error for file ${index + 1}:`, error);
+        return null;
+      }
+    });
+
+    try {
+      const results = await Promise.all(uploadPromises);
+      const validImages = results.filter((img): img is ProjectImage => img !== null);
+      
+      if (validImages.length > 0) {
+        onChange([...images, ...validImages]);
+      }
+
+      if (errorCount > 0) {
+        setError(`${successCount} image(s) uploaded successfully. ${errorCount} failed.`);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      setError(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setIsUploading(false);
+      setUploadingCount(0);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   const handleRemove = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
     onChange(newImages);
@@ -165,6 +282,7 @@ export function MultiFileImageUpload({
     }
   };
 
+  // Check if more images can be added
   const canAddMore = images.length < maxImages;
 
   return (
@@ -182,9 +300,14 @@ export function MultiFileImageUpload({
       {/* Upload Area */}
       <div
         onClick={canAddMore ? handleClick : undefined}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         className={`
           relative border-2 border-dashed rounded-lg p-6 transition-all
           ${canAddMore ? "cursor-pointer border-gray-300 hover:border-gray-400 hover:bg-gray-50" : "border-gray-200 bg-gray-50 cursor-not-allowed"}
+          ${isDragging ? "border-blue-500 bg-blue-50" : ""}
           ${isUploading ? "opacity-50" : ""}
         `}
       >

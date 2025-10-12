@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
-import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
 // Using simple alerts instead of toast system
@@ -78,11 +77,10 @@ export default function NewProjectPage() {
       console.log('Created project:', result);
       
       // Show success and redirect
-      showSuccess('Project created successfully!');
-      setTimeout(() => router.push('/admin/projects'), 1500);
+        // Project created successfully - redirect immediately
+        router.push('/admin/projects');
     } catch (err) {
-      console.error('Error creating project:', err);
-      showError('Failed to create project: ' + (err instanceof Error ? err.message : 'Please try again.'));
+      console.error('Failed to create project:', err);
       setIsSaving(false);
     }
   };
@@ -195,26 +193,23 @@ export default function NewProjectPage() {
           </div>
 
           {/* Images */}
-          <div className="space-y-4">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
-              Project Images
-            </h2>
-
-            <HeroImageManager
-              imageUrl={heroImageUrl}
-              onChange={setHeroImageUrl}
-              label="Hero Image"
-              description="Main project image displayed on cards and detail pages"
-              required
-            />
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50 mb-2">
+                Project Images
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Upload your images, then select one as the hero image for project cards and detail pages.
+              </p>
+            </div>
 
             <ProjectImagesManager
               images={projectImages}
               pairs={imagePairs}
               onImagesChange={setProjectImages}
               onPairsChange={setImagePairs}
-              label="Project Images"
-              description="Upload, organize, and create before/after pairs for your project images."
+              label="Upload & Organize Images"
+              description="Upload images, tag them as before/after/gallery, and create pairs."
               maxImages={30}
               maxPairs={10}
             />

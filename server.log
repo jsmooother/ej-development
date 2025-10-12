@@ -1,0 +1,755 @@
+
+> ej-development@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 1018ms
+ ✓ Compiled /src/middleware in 60ms
+ ✓ Compiled (145 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 1727ms (667 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (118kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+✅ Fetched from DB: { projects: 8, editorials: 4, listings: 1, instagram: 9 }
+Published projects: 8 Selected: 3
+Hero project: Finca Moderna
+Published editorials: 4 Selected: 4
+Content limits: { frontpage: { projects: 3, instagram: 3, editorials: 10 } }
+ GET / 200 in 2888ms
+✅ Fetched from DB: { projects: 8, editorials: 4, listings: 1, instagram: 9 }
+Published projects: 8 Selected: 3
+Hero project: Finca Moderna
+Published editorials: 4 Selected: 4
+Content limits: { frontpage: { projects: 3, instagram: 3, editorials: 10 } }
+ GET / 200 in 151ms
+ ○ Compiling /api/content/status ...
+ ✓ Compiled /api/content/status in 638ms (680 modules)
+ ✓ Compiled in 1ms (387 modules)
+ ✓ Compiled in 80ms (666 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 864ms
+📊 Content Status API - Projects: [
+  { slug: 'casa-luminosa', isPublished: true },
+  { slug: 'finca-moderna', isPublished: true },
+  { slug: 'coastal-refuge', isPublished: true },
+  { slug: 'residencia-equilibrio', isPublished: true },
+  { slug: 'casa-palma', isPublished: true },
+  { slug: 'villa-serenidad', isPublished: true },
+  { slug: 'loma-azul', isPublished: true },
+  { slug: 'sierra-horizon', isPublished: true }
+]
+📊 Content Status API - Projects Status: {
+  'casa-luminosa': true,
+  'finca-moderna': true,
+  'coastal-refuge': true,
+  'residencia-equilibrio': true,
+  'casa-palma': true,
+  'villa-serenidad': true,
+  'loma-azul': true,
+  'sierra-horizon': true
+}
+ GET /api/content/status 200 in 524ms
+📊 Content Status API - Projects: [
+  { slug: 'casa-luminosa', isPublished: true },
+  { slug: 'finca-moderna', isPublished: true },
+  { slug: 'coastal-refuge', isPublished: true },
+  { slug: 'residencia-equilibrio', isPublished: true },
+  { slug: 'casa-palma', isPublished: true },
+  { slug: 'villa-serenidad', isPublished: true },
+  { slug: 'loma-azul', isPublished: true },
+  { slug: 'sierra-horizon', isPublished: true }
+]
+📊 Content Status API - Projects Status: {
+  'casa-luminosa': true,
+  'finca-moderna': true,
+  'coastal-refuge': true,
+  'residencia-equilibrio': true,
+  'casa-palma': true,
+  'villa-serenidad': true,
+  'loma-azul': true,
+  'sierra-horizon': true
+}
+ GET /api/content/status 200 in 128ms
+✅ Fetched from DB: { projects: 8, editorials: 4, listings: 1, instagram: 9 }
+Published projects: 8 Selected: 3
+Hero project: Finca Moderna
+Published editorials: 4 Selected: 4
+Content limits: { frontpage: { projects: 3, instagram: 3, editorials: 10 } }
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 603ms (892 modules)
+ GET / 404 in 697ms
+ ✓ Compiled /projects in 208ms (894 modules)
+ GET / 404 in 4ms
+ GET / 404 in 15ms
+📊 Database returned projects: 8
+📊 Projects data: [
+  {
+    "id": "1c60d199-6195-49d0-8e9a-391fec6ad8b1",
+    "slug": "loma-azul",
+    "title": "Loma Azul",
+    "summary": "Benahavís · 2022 - Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.",
+    "content": "Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.",
+    "year": 2022,
+    "facts": {
+      "sqm": 380,
+      "bedrooms": 5,
+      "bathrooms": 4
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2022-09-20T00:00:00.000Z",
+    "createdAt": "2025-10-11T20:21:40.320Z",
+    "updatedAt": "2025-10-11T23:34:53.000Z"
+  },
+  {
+    "id": "ae9afe55-678f-4aac-a18e-a70e75e13a1f",
+    "slug": "sierra-horizon",
+    "title": "Sierra Horizon",
+    "summary": "La Zagaleta · 2023 - Adaptive reuse opening a hillside estate toward the sea with layered courtyards.",
+    "content": "Adaptive reuse opening a hillside estate toward the sea with layered courtyards.",
+    "year": 2023,
+    "facts": {
+      "sqm": 420,
+      "bedrooms": 6,
+      "bathrooms": 5,
+      "Year Built": 2000
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2023-06-15T00:00:00.000Z",
+    "createdAt": "2025-10-11T20:21:40.230Z",
+    "updatedAt": "2025-10-12T12:49:15.000Z"
+  },
+  {
+    "id": "804cdf56-8123-419a-976f-7c1e84b55965",
+    "slug": "coastal-refuge",
+    "title": "Coastal Refuge",
+    "summary": "Marbella Club · 2023 - Beachfront property transformed into a wellness sanctuary",
+    "content": "Proximity to the beach guided every design decision. We created a home that embraces coastal living through material choices, spatial planning, and integrated wellness facilities.\n\nA basement spa complex includes sauna, hammam, and treatment room. The ground floor opens completely to the garden via 8-meter sliding glass panels. Upper level bedrooms each feature private terraces with ocean views.\n\nMaterials selected for salt-air resistance: teak decking, bronze fixtures, and limestone cladding that will develop a beautiful patina.",
+    "year": 2023,
+    "facts": {
+      "sqm": 420,
+      "plot": 1600,
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "parking": 2,
+      "pool": "15m heated pool"
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2025-10-10T14:45:27.000Z",
+    "createdAt": "2025-10-10T14:45:27.000Z",
+    "updatedAt": "2025-10-10T14:53:45.000Z"
+  },
+  {
+    "id": "cf26b6c7-eb81-4e9d-88a2-e1cbf4c9ccc6",
+    "slug": "residencia-equilibrio",
+    "title": "Residencia Equilibrio",
+    "summary": "Nueva Andalucía · 2025 - Sustainable renovation achieving BREEAM Outstanding",
+    "content": "An ambitious project targeting BREEAM Outstanding certification—the highest level of environmental performance. Every system and material was evaluated for its lifecycle impact.\n\nPhotovoltaic array provides 120% of energy needs, with excess returned to grid. Greywater recycling irrigates native xeriscaping. Passive cooling through cross-ventilation eliminates air conditioning need for 8 months annually.\n\nThe result proves that environmental excellence and aesthetic refinement are complementary, not conflicting, objectives.",
+    "year": 2025,
+    "facts": {
+      "sqm": 395,
+      "plot": 2000,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "parking": 3,
+      "pool": "Natural swimming pond"
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2025-10-10T14:45:27.000Z",
+    "createdAt": "2025-10-10T14:45:27.000Z",
+    "updatedAt": "2025-10-10T14:53:45.000Z"
+  },
+  {
+    "id": "1c38a543-23e8-4e9b-8371-90a611ae1b90",
+    "slug": "finca-moderna",
+    "title": "Finca Moderna",
+    "summary": "Sierra Blanca · 2024 - Traditional finca reinterpreted through contemporary lens",
+    "content": "A rare opportunity to work with an authentic Andalusian finca. Rather than fighting its traditional character, we amplified it—restoring original terracotta floors, exposing timber beams, and celebrating courtyard living.\n\nContemporary insertions are surgical: a glass pavilion dining room, minimalist kitchen cabinetry, and spa-grade bathrooms. The dialogue between old and new creates spatial richness impossible to achieve in new construction.\n\nLandscape design honors the property's agricultural heritage with productive olive groves and herb gardens.",
+    "year": 2024,
+    "facts": {
+      "sqm": 520,
+      "plot": 3200,
+      "bedrooms": 6,
+      "bathrooms": 5,
+      "parking": 4,
+      "pool": "Natural pool with stone filtration"
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": true,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2025-10-10T14:45:26.000Z",
+    "createdAt": "2025-10-10T14:45:26.000Z",
+    "updatedAt": "2025-10-10T14:53:45.000Z"
+  },
+  {
+    "id": "1c772289-16d7-411e-9daf-6490de3b5339",
+    "slug": "casa-luminosa",
+    "title": "Casa Luminosa",
+    "summary": "Puerto Banús · 2023 - Mid-century villa reimagined with Scandinavian minimalism",
+    "content": "This 1970s property possessed excellent bones—generous ceiling heights, solid construction, and prime positioning. Our intervention focused on opening the interior to capture coastal light while introducing contemporary material palettes.\n\nWhite oak floors, micro-cement bathrooms, and custom steel-framed glazing create interiors that feel both timeless and distinctly modern.\n\nThe garden was completely redesigned, introducing a sunken lounge, outdoor kitchen, and meditation pavilion.",
+    "year": 2023,
+    "facts": {
+      "sqm": 380,
+      "plot": 1800,
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "parking": 2,
+      "pool": "18m lap pool"
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2025-10-10T14:45:25.000Z",
+    "createdAt": "2025-10-10T14:45:25.000Z",
+    "updatedAt": "2025-10-10T14:53:45.000Z"
+  },
+  {
+    "id": "3364b378-1b3e-419c-bc0e-ae5bfcb2a00c",
+    "slug": "villa-serenidad",
+    "title": "Villa Serenidad",
+    "summary": "La Zagaleta · 2024 - Complete transformation of a 1990s villa into a contemporary masterpiece",
+    "content": "A comprehensive renovation that reimagined every aspect of this hilltop estate. We stripped back to the structural core, reconfiguring the layout to prioritize views, natural light, and indoor-outdoor flow.\n\nThe project exemplifies our approach to luxury renovation: preserve what has merit, enhance what has potential, and replace what doesn't serve the vision.\n\nCustom Italian marble throughout, handcrafted oak joinery, and a fully redesigned landscape create a cohesive expression of refined Mediterranean living.",
+    "year": 2024,
+    "facts": {
+      "sqm": 485,
+      "plot": 2400,
+      "bedrooms": 5,
+      "bathrooms": 4,
+      "parking": 3,
+      "pool": "25m infinity edge"
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2025-10-10T14:45:25.000Z",
+    "createdAt": "2025-10-10T14:45:25.000Z",
+    "updatedAt": "2025-10-10T14:53:44.000Z"
+  },
+  {
+    "id": "749e3c77-eda0-4b67-83e7-cd32aa415e42",
+    "slug": "casa-palma",
+    "title": "Casa Palma",
+    "summary": "Marbella Club · 2021 - Palm-framed sanctuary with shaded loggias and a terraced pool axis.",
+    "content": "Palm-framed sanctuary with shaded loggias and a terraced pool axis.",
+    "year": 2023,
+    "facts": {
+      "sqm": 320,
+      "bedrooms": 4,
+      "bathrooms": 3
+    },
+    "heroImagePath": "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=1200&q=80",
+    "projectImages": [],
+    "imagePairs": [],
+    "isHero": false,
+    "isComingSoon": false,
+    "isPublished": true,
+    "publishedAt": "2025-10-10T08:03:46.000Z",
+    "createdAt": "2025-10-08T21:59:48.110Z",
+    "updatedAt": "2025-10-10T14:53:45.000Z"
+  }
+]
+Project Loma Azul: isPublished=true, data= {
+  id: '1c60d199-6195-49d0-8e9a-391fec6ad8b1',
+  slug: 'loma-azul',
+  title: 'Loma Azul',
+  summary: 'Benahavís · 2022 - Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.',
+  content: 'Minimalist cliffside retreat capturing Andalusian light from sunrise to dusk.',
+  year: 2022,
+  facts: { sqm: 380, bedrooms: 5, bathrooms: 4 },
+  heroImagePath: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2022-09-20T00:00:00.000Z,
+  createdAt: 2025-10-11T20:21:40.320Z,
+  updatedAt: 2025-10-11T23:34:53.000Z
+}
+Project Sierra Horizon: isPublished=true, data= {
+  id: 'ae9afe55-678f-4aac-a18e-a70e75e13a1f',
+  slug: 'sierra-horizon',
+  title: 'Sierra Horizon',
+  summary: 'La Zagaleta · 2023 - Adaptive reuse opening a hillside estate toward the sea with layered courtyards.',
+  content: 'Adaptive reuse opening a hillside estate toward the sea with layered courtyards.',
+  year: 2023,
+  facts: { sqm: 420, bedrooms: 6, bathrooms: 5, 'Year Built': 2000 },
+  heroImagePath: 'https://images.unsplash.com/photo-1487956382158-bb926046304a?auto=format&fit=crop&w=1400&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2023-06-15T00:00:00.000Z,
+  createdAt: 2025-10-11T20:21:40.230Z,
+  updatedAt: 2025-10-12T12:49:15.000Z
+}
+Project Coastal Refuge: isPublished=true, data= {
+  id: '804cdf56-8123-419a-976f-7c1e84b55965',
+  slug: 'coastal-refuge',
+  title: 'Coastal Refuge',
+  summary: 'Marbella Club · 2023 - Beachfront property transformed into a wellness sanctuary',
+  content: 'Proximity to the beach guided every design decision. We created a home that embraces coastal living through material choices, spatial planning, and integrated wellness facilities.\n' +
+    '\n' +
+    'A basement spa complex includes sauna, hammam, and treatment room. The ground floor opens completely to the garden via 8-meter sliding glass panels. Upper level bedrooms each feature private terraces with ocean views.\n' +
+    '\n' +
+    'Materials selected for salt-air resistance: teak decking, bronze fixtures, and limestone cladding that will develop a beautiful patina.',
+  year: 2023,
+  facts: {
+    sqm: 420,
+    plot: 1600,
+    bedrooms: 4,
+    bathrooms: 4,
+    parking: 2,
+    pool: '15m heated pool'
+  },
+  heroImagePath: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2025-10-10T14:45:27.000Z,
+  createdAt: 2025-10-10T14:45:27.000Z,
+  updatedAt: 2025-10-10T14:53:45.000Z
+}
+Project Residencia Equilibrio: isPublished=true, data= {
+  id: 'cf26b6c7-eb81-4e9d-88a2-e1cbf4c9ccc6',
+  slug: 'residencia-equilibrio',
+  title: 'Residencia Equilibrio',
+  summary: 'Nueva Andalucía · 2025 - Sustainable renovation achieving BREEAM Outstanding',
+  content: 'An ambitious project targeting BREEAM Outstanding certification—the highest level of environmental performance. Every system and material was evaluated for its lifecycle impact.\n' +
+    '\n' +
+    'Photovoltaic array provides 120% of energy needs, with excess returned to grid. Greywater recycling irrigates native xeriscaping. Passive cooling through cross-ventilation eliminates air conditioning need for 8 months annually.\n' +
+    '\n' +
+    'The result proves that environmental excellence and aesthetic refinement are complementary, not conflicting, objectives.',
+  year: 2025,
+  facts: {
+    sqm: 395,
+    plot: 2000,
+    bedrooms: 4,
+    bathrooms: 3,
+    parking: 3,
+    pool: 'Natural swimming pond'
+  },
+  heroImagePath: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2025-10-10T14:45:27.000Z,
+  createdAt: 2025-10-10T14:45:27.000Z,
+  updatedAt: 2025-10-10T14:53:45.000Z
+}
+Project Finca Moderna: isPublished=true, data= {
+  id: '1c38a543-23e8-4e9b-8371-90a611ae1b90',
+  slug: 'finca-moderna',
+  title: 'Finca Moderna',
+  summary: 'Sierra Blanca · 2024 - Traditional finca reinterpreted through contemporary lens',
+  content: 'A rare opportunity to work with an authentic Andalusian finca. Rather than fighting its traditional character, we amplified it—restoring original terracotta floors, exposing timber beams, and celebrating courtyard living.\n' +
+    '\n' +
+    'Contemporary insertions are surgical: a glass pavilion dining room, minimalist kitchen cabinetry, and spa-grade bathrooms. The dialogue between old and new creates spatial richness impossible to achieve in new construction.\n' +
+    '\n' +
+    "Landscape design honors the property's agricultural heritage with productive olive groves and herb gardens.",
+  year: 2024,
+  facts: {
+    sqm: 520,
+    plot: 3200,
+    bedrooms: 6,
+    bathrooms: 5,
+    parking: 4,
+    pool: 'Natural pool with stone filtration'
+  },
+  heroImagePath: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: true,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2025-10-10T14:45:26.000Z,
+  createdAt: 2025-10-10T14:45:26.000Z,
+  updatedAt: 2025-10-10T14:53:45.000Z
+}
+Project Casa Luminosa: isPublished=true, data= {
+  id: '1c772289-16d7-411e-9daf-6490de3b5339',
+  slug: 'casa-luminosa',
+  title: 'Casa Luminosa',
+  summary: 'Puerto Banús · 2023 - Mid-century villa reimagined with Scandinavian minimalism',
+  content: 'This 1970s property possessed excellent bones—generous ceiling heights, solid construction, and prime positioning. Our intervention focused on opening the interior to capture coastal light while introducing contemporary material palettes.\n' +
+    '\n' +
+    'White oak floors, micro-cement bathrooms, and custom steel-framed glazing create interiors that feel both timeless and distinctly modern.\n' +
+    '\n' +
+    'The garden was completely redesigned, introducing a sunken lounge, outdoor kitchen, and meditation pavilion.',
+  year: 2023,
+  facts: {
+    sqm: 380,
+    plot: 1800,
+    bedrooms: 4,
+    bathrooms: 3,
+    parking: 2,
+    pool: '18m lap pool'
+  },
+  heroImagePath: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2025-10-10T14:45:25.000Z,
+  createdAt: 2025-10-10T14:45:25.000Z,
+  updatedAt: 2025-10-10T14:53:45.000Z
+}
+Project Villa Serenidad: isPublished=true, data= {
+  id: '3364b378-1b3e-419c-bc0e-ae5bfcb2a00c',
+  slug: 'villa-serenidad',
+  title: 'Villa Serenidad',
+  summary: 'La Zagaleta · 2024 - Complete transformation of a 1990s villa into a contemporary masterpiece',
+  content: 'A comprehensive renovation that reimagined every aspect of this hilltop estate. We stripped back to the structural core, reconfiguring the layout to prioritize views, natural light, and indoor-outdoor flow.\n' +
+    '\n' +
+    "The project exemplifies our approach to luxury renovation: preserve what has merit, enhance what has potential, and replace what doesn't serve the vision.\n" +
+    '\n' +
+    'Custom Italian marble throughout, handcrafted oak joinery, and a fully redesigned landscape create a cohesive expression of refined Mediterranean living.',
+  year: 2024,
+  facts: {
+    sqm: 485,
+    plot: 2400,
+    bedrooms: 5,
+    bathrooms: 4,
+    parking: 3,
+    pool: '25m infinity edge'
+  },
+  heroImagePath: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2025-10-10T14:45:25.000Z,
+  createdAt: 2025-10-10T14:45:25.000Z,
+  updatedAt: 2025-10-10T14:53:44.000Z
+}
+Project Casa Palma: isPublished=true, data= {
+  id: '749e3c77-eda0-4b67-83e7-cd32aa415e42',
+  slug: 'casa-palma',
+  title: 'Casa Palma',
+  summary: 'Marbella Club · 2021 - Palm-framed sanctuary with shaded loggias and a terraced pool axis.',
+  content: 'Palm-framed sanctuary with shaded loggias and a terraced pool axis.',
+  year: 2023,
+  facts: { sqm: 320, bedrooms: 4, bathrooms: 3 },
+  heroImagePath: 'https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=1200&q=80',
+  projectImages: [],
+  imagePairs: [],
+  isHero: false,
+  isComingSoon: false,
+  isPublished: true,
+  publishedAt: 2025-10-10T08:03:46.000Z,
+  createdAt: 2025-10-08T21:59:48.110Z,
+  updatedAt: 2025-10-10T14:53:45.000Z
+}
+📊 After filtering: 8 published projects
+ GET /projects 200 in 748ms
+ GET / 404 in 6ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 9ms
+ GET / 404 in 3ms
+ GET / 404 in 5ms
+ GET / 404 in 7ms
+ GET / 404 in 8ms
+ GET / 404 in 7ms
+ GET / 404 in 7ms
+ GET / 404 in 5ms
+ GET / 404 in 10ms
+ GET / 404 in 11ms
+ GET / 404 in 9ms
+ GET / 404 in 11ms
+ GET / 404 in 5ms
+ GET / 404 in 7ms
+ GET / 404 in 10ms
+ GET / 404 in 7ms
+ GET / 404 in 8ms
+ GET / 404 in 7ms
+ GET / 404 in 4ms
+ GET / 404 in 8ms
+ GET / 404 in 6ms
+ GET / 404 in 7ms
+ GET / 404 in 10ms
+ GET / 404 in 8ms
+ GET / 404 in 9ms
+ GET / 404 in 8ms
+ GET / 404 in 5ms
+ GET / 404 in 7ms
+ GET / 404 in 10ms
+ GET / 404 in 7ms
+ GET / 404 in 7ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 6ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 11ms
+ GET / 404 in 6ms
+ GET / 404 in 5ms
+ GET / 404 in 8ms
+ GET / 404 in 5ms
+ GET / 404 in 9ms
+ GET / 404 in 12ms
+ GET / 404 in 6ms
+ GET / 404 in 8ms
+ GET / 404 in 6ms
+ GET / 404 in 3ms
+ GET / 404 in 4ms
+ GET / 404 in 6ms
+ GET / 404 in 6ms
+ GET / 404 in 8ms
+ GET / 404 in 6ms
+ GET / 404 in 7ms
+ GET / 404 in 7ms
+ GET / 404 in 6ms
+ GET / 404 in 10ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/jesper/Documents/GitHub/ej-development/.next/server'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/pages/_error' in /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/jesper/Documents/GitHub/ej-development/.next/server/pages/_error.js', but to 'Error: Can't resolve '../../../../.next/server/pages/_error' in '/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/pages/_error (expected /Users/jesper/Documents/GitHub/ej-development/.next/server/pages/_error.js)
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(site)/projects/page' in /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(site)/projects/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(site)/projects/page' in '/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(site)/projects/page (expected /Users/jesper/Documents/GitHub/ej-development/.next/server/app/(site)/projects/page.js)
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET / 404 in 4ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 12ms
+ GET / 404 in 11ms
+ GET / 404 in 11ms
+ GET / 404 in 13ms
+ GET / 404 in 11ms
+ GET / 404 in 10ms
+ GET / 404 in 13ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 12ms
+ GET / 404 in 11ms
+ GET / 404 in 10ms
+ GET / 404 in 6ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 9ms
+ GET / 404 in 11ms
+ GET / 404 in 11ms
+ GET / 404 in 11ms
+ GET / 404 in 12ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 12ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 8ms
+ GET / 404 in 11ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 13ms
+ GET / 404 in 12ms
+ GET / 404 in 10ms
+ GET / 404 in 13ms
+ GET / 404 in 9ms
+ GET / 404 in 8ms
+ GET / 404 in 11ms
+ GET / 404 in 7ms
+ GET / 404 in 12ms
+ GET / 404 in 10ms
+ ✓ Compiled /favicon.ico in 210ms (431 modules)
+ GET /favicon.ico 200 in 254ms
+✅ Fetched from DB: { projects: 8, editorials: 4, listings: 1, instagram: 9 }
+Published projects: 8 Selected: 3
+Hero project: Finca Moderna
+Published editorials: 4 Selected: 4
+Content limits: { frontpage: { projects: 3, instagram: 3, editorials: 10 } }
+ GET / 200 in 1114ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET /favicon.ico 404 in 3ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 11ms
+ GET / 404 in 12ms
+ GET / 404 in 8ms
+ GET / 404 in 9ms
+ GET / 404 in 12ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 11ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 11ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 8ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 11ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 8ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 7ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 11ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 11ms
+ GET / 404 in 10ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 7ms
+ GET / 404 in 10ms
+ GET / 404 in 16ms
+ GET / 404 in 10ms
+ GET / 404 in 10ms
+ GET / 404 in 10ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 13ms
+ GET / 404 in 8ms
+ GET / 404 in 10ms
+ GET / 404 in 11ms
+ GET / 404 in 11ms
+ GET / 404 in 8ms
+ GET / 404 in 4ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 6ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/Users/jesper/Documents/GitHub/ej-development/.next/server'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(site)/page' in /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(site)/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(site)/page' in '/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(site)/page (expected /Users/jesper/Documents/GitHub/ej-development/.next/server/app/(site)/page.js)
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/favicon.ico/route' in /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/jesper/Documents/GitHub/ej-development/.next/server/app/favicon.ico/route.js', but to 'Error: Can't resolve '../../../../.next/server/app/favicon.ico/route' in '/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/favicon.ico/route (expected /Users/jesper/Documents/GitHub/ej-development/.next/server/app/favicon.ico/route.js)
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/(site)/projects/page' in /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/Users/jesper/Documents/GitHub/ej-development/.next/server/app/(site)/projects/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/(site)/projects/page' in '/Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/(site)/projects/page (expected /Users/jesper/Documents/GitHub/ej-development/.next/server/app/(site)/projects/page.js)
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/require.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /Users/jesper/Documents/GitHub/ej-development/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 10ms
+ GET / 404 in 9ms
+ GET / 404 in 6ms
+ GET / 404 in 12ms
+ GET / 404 in 8ms
+ GET / 404 in 8ms
+ GET / 404 in 4ms
+ GET / 404 in 9ms
+ GET / 404 in 9ms
+ GET / 404 in 8ms
+ GET / 404 in 10ms
+ GET / 404 in 8ms
+ GET / 404 in 6ms
+ GET / 404 in 7ms
+ GET / 404 in 6ms
+ GET / 404 in 5ms
+ GET / 404 in 7ms
+ GET / 404 in 5ms
+ GET / 404 in 47ms
+ GET / 404 in 6ms
+ GET / 404 in 8ms
+ GET / 404 in 6ms
+ GET / 404 in 6ms
+ GET / 404 in 5ms
+ GET / 404 in 8ms
+ GET / 404 in 12ms
+ GET / 404 in 8ms
+ GET / 404 in 7ms
+ GET / 404 in 7ms
+ GET / 404 in 8ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 9ms
+ GET / 404 in 7ms
+ GET / 404 in 7ms
+ GET / 404 in 7ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 7ms
+ GET / 404 in 11ms

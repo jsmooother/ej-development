@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
-import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
 // Using simple alerts instead of toast system
 
@@ -48,9 +47,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  // Simple alert functions instead of toast system
-  const showSuccess = (message: string) => alert(`✅ ${message}`);
-  const showError = (message: string) => alert(`❌ ${message}`);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  // Silent save - no popups needed
 
   // Fetch project data from API
   useEffect(() => {
@@ -73,9 +72,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             year: data.project.year,
             facts: data.project.facts || {},
             heroImagePath: data.project.heroImagePath || '',
-            additionalImages: data.project.additionalImages || [], // Legacy
-            projectImages: data.project.projectImages || [], // All project images with tags
-            imagePairs: data.project.imagePairs || [], // Before/after pairs
+            additionalImages: Array.isArray(data.project.additionalImages) ? data.project.additionalImages : [], // Legacy
+            projectImages: Array.isArray(data.project.projectImages) ? data.project.projectImages : [], // All project images with tags
+            imagePairs: Array.isArray(data.project.imagePairs) ? data.project.imagePairs : [], // Before/after pairs
             isPublished: data.project.isPublished,
             createdAt: new Date(data.project.createdAt),
           };
@@ -93,44 +92,66 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     fetchProject();
   }, [params.id]);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Auto-save function for basic fields
+  const autoSave = async (updatedProject: Project, skipContent = false) => {
+    if (!updatedProject?.id) return;
+
+    setIsAutoSaving(true);
+    
+    try {
+      const response = await fetch(`/api/projects/${updatedProject.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: updatedProject.title,
+          slug: updatedProject.slug,
+          summary: updatedProject.summary,
+          content: skipContent ? project?.content : updatedProject.content, // Keep existing content if skipping
+          year: updatedProject.year,
+          facts: updatedProject.facts,
+          heroImagePath: updatedProject.heroImagePath,
+          additionalImages: updatedProject.additionalImages, // Legacy
+          projectImages: updatedProject.projectImages, // All project images with tags
+          imagePairs: updatedProject.imagePairs, // Before/after pairs
+          isPublished: updatedProject.isPublished,
+        }),
+      });
+
+      if (response.ok) {
+        setLastSaved(new Date());
+      }
+    } catch (err) {
+      console.error('Auto-save failed:', err);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
+
+  // Debounced auto-save for basic fields
+  const debouncedAutoSave = useMemo(
+    () => {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return (updatedProject: Project) => {
+        if (!updatedProject?.id) return; // Safety check
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          autoSave(updatedProject, true); // Skip content for auto-save
+        }, 1000); // 1 second delay
+      };
+    },
+    [project?.id]
+  );
+
+  // Manual save function for description
+  const handleSaveDescription = async () => {
     if (!project) return;
 
     setIsSaving(true);
     
     try {
-      const response = await fetch(`/api/projects/${project.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: project.title,
-          slug: project.slug,
-          summary: project.summary,
-          content: project.content,
-          year: project.year,
-          facts: project.facts,
-          heroImagePath: project.heroImagePath,
-          additionalImages: project.additionalImages, // Legacy
-          projectImages: project.projectImages, // All project images with tags
-          imagePairs: project.imagePairs, // Before/after pairs
-          isPublished: project.isPublished,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update project');
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        showSuccess('Project updated successfully!');
-        // Auto-redirect after showing success message
-        setTimeout(() => router.push('/admin/projects'), 1500);
-      }
+      await autoSave(project, false); // Include content for manual save
     } catch (err) {
-      console.error('Failed to save project:', err);
-      showError('Failed to save project. Please try again.');
+      console.error('Failed to save description:', err);
     } finally {
       setIsSaving(false);
     }
@@ -187,7 +208,36 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         }}
       />
 
-      <form onSubmit={handleSave} className="p-8">
+      <div className="p-8">
+        {/* Auto-save status indicator */}
+        <div className="mx-auto mb-6 max-w-4xl">
+          <div className="flex items-center justify-between rounded-lg border border-border/50 bg-card/50 px-4 py-2">
+            <div className="flex items-center gap-2">
+              {isAutoSaving ? (
+                <>
+                  <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500"></div>
+                  <span className="text-sm text-muted-foreground">Auto-saving...</span>
+                </>
+              ) : lastSaved ? (
+                <>
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-muted-foreground">
+                    Last saved: {lastSaved.toLocaleTimeString()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="h-2 w-2 rounded-full bg-gray-400"></div>
+                  <span className="text-sm text-muted-foreground">Ready to save</span>
+                </>
+              )}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Changes save automatically • Description saves manually
+            </span>
+          </div>
+        </div>
+        
         <div className="mx-auto max-w-4xl space-y-8">
           {/* Basic Information */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
@@ -201,7 +251,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 >
                   <Input
                     value={project.title}
-                    onChange={(e) => setProject({ ...project, title: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...project, title: e.target.value };
+                      setProject(updated);
+                      if (project?.id) debouncedAutoSave(updated);
+                    }}
                     placeholder="Enter project title"
                   />
                 </FormField>
@@ -213,7 +267,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 >
                   <Input
                     value={project.slug}
-                    onChange={(e) => setProject({ ...project, slug: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...project, slug: e.target.value };
+                      setProject(updated);
+                      if (project?.id) debouncedAutoSave(updated);
+                    }}
                     placeholder="project-slug"
                   />
                 </FormField>
@@ -226,7 +284,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               >
                 <Input
                   value={project.summary}
-                  onChange={(e) => setProject({ ...project, summary: e.target.value })}
+                  onChange={(e) => {
+                    const updated = { ...project, summary: e.target.value };
+                    setProject(updated);
+                    if (project?.id) debouncedAutoSave(updated);
+                  }}
                   placeholder="Location · Year"
                 />
               </FormField>
@@ -238,7 +300,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 <Input
                   type="number"
                   value={project.year || ''}
-                  onChange={(e) => setProject({ ...project, year: e.target.value ? parseInt(e.target.value) : null })}
+                  onChange={(e) => {
+                    const updated = { ...project, year: e.target.value ? parseInt(e.target.value) : null };
+                    setProject(updated);
+                    if (project?.id) debouncedAutoSave(updated);
+                  }}
                   placeholder="2023"
                   min="2000"
                   max="2030"
@@ -262,6 +328,19 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 className="resize-y min-h-[200px]"
               />
             </FormField>
+            <div className="mt-4 flex items-center justify-end gap-3">
+              {isSaving && (
+                <span className="text-sm text-muted-foreground">Saving...</span>
+              )}
+              <button
+                type="button"
+                onClick={handleSaveDescription}
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 disabled:opacity-50"
+              >
+                {isSaving ? 'Saving...' : 'Save Description'}
+              </button>
+            </div>
           </div>
 
           {/* Project Details */}
@@ -270,7 +349,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             
             <FactsEditor
               facts={project.facts}
-              onChange={(facts) => setProject({ ...project, facts })}
+              onChange={(facts) => {
+                const updated = { ...project, facts };
+                setProject(updated);
+                if (project?.id) debouncedAutoSave(updated);
+              }}
               label="Project Facts"
               description="Required for frontpage display: 'sqm' (size badge) and 'bedrooms' (rooms badge). Add other details as needed."
             />
@@ -278,23 +361,29 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
           {/* Images */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Images</h2>
+            <div className="mb-6">
+              <h2 className="font-sans text-lg font-medium text-foreground">Project Images</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Upload your images, then select one as the hero image for project cards and detail pages.
+              </p>
+            </div>
+            
             <div className="grid gap-6">
-              <HeroImageManager
-                imageUrl={project.heroImagePath}
-                onChange={(url) => setProject({ ...project, heroImagePath: url })}
-                label="Hero Image"
-                description="Main image displayed on project cards and detail pages"
-                required
-              />
-
               <ProjectImagesManager
                 images={project.projectImages}
                 pairs={project.imagePairs}
-                onImagesChange={(images) => setProject({ ...project, projectImages: images })}
-                onPairsChange={(pairs) => setProject({ ...project, imagePairs: pairs })}
-                label="Project Images"
-                description="Upload, organize, and create before/after pairs for your project images."
+                onImagesChange={(images) => {
+                  const updated = { ...project, projectImages: images };
+                  setProject(updated);
+                  if (project?.id) debouncedAutoSave(updated);
+                }}
+                onPairsChange={(pairs) => {
+                  const updated = { ...project, imagePairs: pairs };
+                  setProject(updated);
+                  if (project?.id) debouncedAutoSave(updated);
+                }}
+                label="Upload & Organize Images"
+                description="Upload images, tag them as before/after/gallery, and create pairs."
                 maxImages={30}
                 maxPairs={10}
               />
@@ -310,7 +399,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               label="Publish to Site"
               description="When enabled, this project will be visible on the public site"
               defaultChecked={project.isPublished}
-              onChange={(checked) => setProject({ ...project, isPublished: checked })}
+              onChange={(checked) => {
+                const updated = { ...project, isPublished: checked };
+                setProject(updated);
+                if (project?.id) debouncedAutoSave(updated);
+              }}
             />
           </div>
 
@@ -327,37 +420,16 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               Delete Project
             </button>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => router.push('/admin/projects')}
-                className="inline-flex items-center gap-2 rounded-xl border border-border/50 bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted/50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-2 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 disabled:opacity-50"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Save Changes
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => router.push('/admin/projects')}
+              className="inline-flex items-center gap-2 rounded-xl border border-border/50 bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted/50"
+            >
+              Back to Projects
+            </button>
           </div>
         </div>
-      </form>
+      </div>
       
       {/* Simple alerts used instead of toast notifications */}
     </div>

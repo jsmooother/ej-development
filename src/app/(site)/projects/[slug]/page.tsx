@@ -4,6 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useState, useEffect } from "react";
 
+type ProjectImage = {
+  id: string;
+  url: string;
+  tags: string[];
+};
+
 type Project = {
   id: string;
   slug: string;
@@ -13,6 +19,8 @@ type Project = {
   year: number | null;
   facts: Record<string, string | number | null>;
   heroImagePath: string;
+  projectImages: ProjectImage[];
+  imagePairs: any[];
   isPublished: boolean;
 };
 
@@ -25,14 +33,28 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
   useEffect(() => {
     async function fetchProject() {
       try {
-        const response = await fetch('/api/projects');
+        // First, get the list of projects to find the ID by slug
+        const listResponse = await fetch('/api/projects');
+        if (!listResponse.ok) {
+          setProject(null);
+          return;
+        }
+        const projects = await listResponse.json();
+        const foundProject = projects.find((p: any) => p.slug === params.slug && p.isPublished);
+        
+        if (!foundProject) {
+          setProject(null);
+          return;
+        }
+        
+        // Now fetch the full project data including images
+        const response = await fetch(`/api/projects/${foundProject.id}`);
         if (!response.ok) {
           setProject(null);
           return;
         }
-        const projects = await response.json();
-        const foundProject = projects.find((p: Project) => p.slug === params.slug && p.isPublished);
-        setProject(foundProject || null);
+        const data = await response.json();
+        setProject(data.success ? data.project : null);
       } catch (error) {
         console.error('Error fetching project:', error);
         setProject(null);
@@ -70,24 +92,37 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
 
   // Mock data for renovation before/after and gallery
   // In production, these would come from project_images table
-  const beforeImages = [
-    { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80', caption: 'Original exterior condition' },
-    { url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=80', caption: 'Original interior layout' },
-  ];
-
-  const afterImages = [
-    { url: project.heroImagePath || 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80', caption: 'Transformed exterior' },
-    { url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80', caption: 'Modern interior design' },
-  ];
-
-  const galleryImages = [
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
-    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80',
-    'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&q=80',
-    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80',
-    'https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=1200&q=80',
-    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80',
-  ];
+  // Use real project images and pairs instead of placeholders
+  const getImageById = (imageId: string) => project?.projectImages?.find(img => img.id === imageId);
+  
+  // Create proper before/after pairs from imagePairs data
+  const imagePairs = project?.imagePairs?.map(pair => {
+    const beforeImage = getImageById(pair.beforeImageId || '');
+    const afterImage = getImageById(pair.afterImageId || '');
+    return {
+      before: beforeImage ? {
+        url: beforeImage.url,
+        caption: pair.label || 'Before renovation'
+      } : null,
+      after: afterImage ? {
+        url: afterImage.url,
+        caption: pair.label || 'After renovation'
+      } : null,
+      label: pair.label
+    };
+  }).filter(pair => pair.before && pair.after) || [];
+  
+  // Fallback: if no pairs exist, show all tagged images separately
+  const beforeImages = imagePairs.length > 0 ? [] : project?.projectImages?.filter(img => img.tags.includes('before')).map(img => ({
+    url: img.url,
+    caption: 'Before renovation'
+  })) || [];
+  const afterImages = imagePairs.length > 0 ? [] : project?.projectImages?.filter(img => img.tags.includes('after')).map(img => ({
+    url: img.url,
+    caption: 'After renovation'
+  })) || [];
+  
+  const galleryImages = project?.projectImages?.map(img => img.url) || [];
 
   // Carousel functions
   const openLightbox = (index: number) => {
@@ -136,7 +171,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
       <section className="relative h-screen">
         <div className="absolute inset-0">
           <Image
-            src={project.heroImagePath || afterImages[0].url}
+            src={project.heroImagePath || afterImages[0]?.url || ''}
             alt={project.title}
             fill
             className="object-cover"
@@ -283,55 +318,69 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
 
           {/* Before/After Comparison - Side by Side */}
           <div className="space-y-12">
-            {beforeImages.map((beforeImg, index) => (
-              <div key={index} className="grid gap-4 md:grid-cols-2">
-                {/* Before */}
-                <div className="group relative overflow-hidden">
-                  <div className="relative h-[500px]">
-                    <Image
-                      src={beforeImg.url}
-                      alt={beforeImg.caption}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/20" />
-                  </div>
-                  <div className="absolute top-6 left-6">
-                    <div className="rounded-full bg-black/80 backdrop-blur-sm px-4 py-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-white">Before</span>
+            {imagePairs.length > 0 ? (
+              // Show actual pairs
+              imagePairs.map((pair, index) => (
+                <div key={index} className="grid gap-4 md:grid-cols-2">
+                  {/* Before */}
+                  <div className="group relative overflow-hidden">
+                    <div className="relative h-[500px]">
+                      <Image
+                        src={pair.before!.url}
+                        alt={pair.before!.caption}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/20" />
                     </div>
                   </div>
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <p className="rounded-lg bg-white/90 backdrop-blur-sm px-4 py-2 text-sm font-medium text-black">
-                      {beforeImg.caption}
-                    </p>
-                  </div>
-                </div>
 
-                {/* After */}
-                <div className="group relative overflow-hidden">
-                  <div className="relative h-[500px]">
-                    <Image
-                      src={afterImages[index]?.url || afterImages[0].url}
-                      alt={afterImages[index]?.caption || 'After renovation'}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/10" />
-                  </div>
-                  <div className="absolute top-6 left-6">
-                    <div className="rounded-full bg-white/90 backdrop-blur-sm px-4 py-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-black">After</span>
+                  {/* After */}
+                  <div className="group relative overflow-hidden">
+                    <div className="relative h-[500px]">
+                      <Image
+                        src={pair.after!.url}
+                        alt={pair.after!.caption}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/10" />
                     </div>
                   </div>
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <p className="rounded-lg bg-black/80 backdrop-blur-sm px-4 py-2 text-sm font-medium text-white">
-                      {afterImages[index]?.caption || 'Transformed space'}
-                    </p>
+                </div>
+              ))
+            ) : (
+              // Fallback: show separate before/after images if no pairs exist
+              beforeImages.map((beforeImg, index) => (
+                <div key={index} className="grid gap-4 md:grid-cols-2">
+                  {/* Before */}
+                  <div className="group relative overflow-hidden">
+                    <div className="relative h-[500px]">
+                      <Image
+                        src={beforeImg.url}
+                        alt={beforeImg.caption}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/20" />
+                    </div>
+                  </div>
+
+                  {/* After */}
+                  <div className="group relative overflow-hidden">
+                    <div className="relative h-[500px]">
+                      <Image
+                        src={afterImages[index]?.url || afterImages[0]?.url || ''}
+                        alt={afterImages[index]?.caption || 'After renovation'}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-black/10" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -344,23 +393,11 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           </h2>
           
           <div className="prose prose-lg max-w-none">
-            <p className="text-lg leading-relaxed text-gray-700 first-letter:float-left first-letter:mr-3 first-letter:text-7xl first-letter:font-light first-letter:leading-none first-letter:text-foreground">
-              {project.content || "This luxury renovation project represents the culmination of meticulous planning, exceptional craftsmanship, and a deep understanding of Mediterranean living. Every detail has been carefully considered to create a home that seamlessly blends traditional Andalusian architecture with contemporary luxury."}
-            </p>
-            
-            <div className="mt-8 space-y-6 text-lg leading-relaxed text-gray-700">
-              <p>
-                The transformation began with a comprehensive assessment of the property's bones—its structural integrity, spatial flow, and relationship to light. We preserved elements of architectural merit while reimagining the layout for modern living.
+            {project.content ? (
+              <p className="text-lg leading-relaxed text-gray-700 first-letter:float-left first-letter:mr-3 first-letter:text-7xl first-letter:font-light first-letter:leading-none first-letter:text-foreground">
+                {project.content}
               </p>
-              
-              <p>
-                Material selection prioritized authenticity and longevity. Natural stone flooring throughout, custom timber joinery crafted by local artisans, and Italian marble in bathrooms create a palette that will age gracefully while requiring minimal maintenance.
-              </p>
-              
-              <p>
-                The result is a home that honors its Mediterranean context while delivering the comfort and sophistication today's discerning residents expect. Every square meter has been optimized, every sightline considered, every material chosen with intention.
-              </p>
-            </div>
+            ) : null}
           </div>
         </div>
       </section>
