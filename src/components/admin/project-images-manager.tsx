@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ImageUpload } from "./image-upload";
+import { MultiFileImageUpload } from "./multi-file-image-upload";
 import { X, Plus, ArrowRight, Tag, Grid3X3, Link } from "lucide-react";
 import Image from "next/image";
 
@@ -46,22 +47,6 @@ export function ProjectImagesManager({
 }: ProjectImagesManagerProps) {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [isAddingUrl, setIsAddingUrl] = useState(false);
-  const [urlInput, setUrlInput] = useState("");
-
-  // Step 1: Upload Images
-  const addImage = (url: string) => {
-    if (url.trim() && images.length < maxImages) {
-      const newImage: ProjectImage = {
-        id: Date.now().toString(),
-        url: url.trim(),
-        tags: ["gallery"] // Default to gallery
-      };
-      onImagesChange([...images, newImage]);
-    }
-    setUrlInput("");
-    setIsAddingUrl(false);
-  };
 
   const removeImage = (imageId: string) => {
     // Remove from images
@@ -82,12 +67,30 @@ export function ProjectImagesManager({
     const newImages = images.map(img => {
       if (img.id === imageId) {
         const hasTag = img.tags.includes(tag);
-        return {
-          ...img,
-          tags: hasTag 
-            ? img.tags.filter(t => t !== tag)
-            : [...img.tags, tag]
-        };
+        
+        if (hasTag) {
+          // Remove the tag
+          return {
+            ...img,
+            tags: img.tags.filter(t => t !== tag)
+          };
+        } else {
+          // Add the tag, but handle mutual exclusivity for before/after
+          let newTags = [...img.tags, tag];
+          
+          if (tag === "before") {
+            // Remove "after" tag if adding "before"
+            newTags = newTags.filter(t => t !== "after");
+          } else if (tag === "after") {
+            // Remove "before" tag if adding "after"
+            newTags = newTags.filter(t => t !== "before");
+          }
+          
+          return {
+            ...img,
+            tags: newTags
+          };
+        }
       }
       return img;
     });
@@ -218,109 +221,29 @@ export function ProjectImagesManager({
             <p className="text-sm text-blue-800">Add all your project images first. You can organize them in the next steps.</p>
           </div>
 
-          {/* File Upload */}
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-900">Add Images</label>
-            <ImageUpload
-              value=""
-              onChange={addImage}
-              placeholder="Choose images or drag and drop"
-              className="max-w-md"
-              maxSize={10}
-              acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
-            />
-          </div>
+          {/* Multi-File Upload */}
+          <MultiFileImageUpload
+            images={images}
+            onChange={setImages}
+            placeholder="Choose multiple images or drag and drop"
+            maxImages={maxImages}
+            maxSize={10}
+            acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
+          />
 
-          {/* URL Input */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Or add via URL:</span>
-              {!isAddingUrl && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsAddingUrl(true);
-                  }}
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Add URL
-                </button>
-              )}
-            </div>
-
-            {isAddingUrl && (
-              <div className="flex gap-3">
-                <input
-                  type="url"
-                  value={urlInput}
-                  onChange={(e) => setUrlInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && addImage(urlInput)}
-                  placeholder="https://example.com/image.jpg"
-                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    addImage(urlInput);
-                  }}
-                  disabled={!urlInput.trim()}
-                  className="rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Add
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsAddingUrl(false);
-                    setUrlInput("");
-                  }}
-                  className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Uploaded Images Preview */}
+          {/* Continue Button */}
           {images.length > 0 && (
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-gray-900">Uploaded Images ({images.length})</h4>
-              <div className="grid grid-cols-4 gap-4">
-                {images.map((image) => (
-                  <div key={image.id} className="relative aspect-square overflow-hidden rounded-lg border border-gray-200">
-                    <Image
-                      src={image.url}
-                      alt="Project image"
-                      fill
-                      className="object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        removeImage(image.id);
-                      }}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 hover:opacity-100 transition-opacity"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
+            <div className="flex justify-end">
               <button
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   setCurrentStep("organize");
                 }}
-                className="mt-4 rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
-                Continue to Tag & Organize →
+                Continue to Tag & Organize
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -388,8 +311,14 @@ export function ProjectImagesManager({
                               ? getTagColor(tag)
                               : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-100"
                           }`}
+                          title={
+                            tag === "before" || tag === "after" 
+                              ? `Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag (mutually exclusive with ${tag === "before" ? "after" : "before"})`
+                              : `Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag`
+                          }
                         >
                           {tag}
+                          {image.tags.includes(tag) && <span className="ml-1">✓</span>}
                         </button>
                       ))}
                     </div>

@@ -54,12 +54,30 @@ export function TaggedImageUpload({
     const newImages = images.map(img => {
       if (img.id === imageId) {
         const hasTag = img.tags.includes(tag);
-        return {
-          ...img,
-          tags: hasTag 
-            ? img.tags.filter(t => t !== tag)
-            : [...img.tags, tag]
-        };
+        
+        if (hasTag) {
+          // Remove the tag
+          return {
+            ...img,
+            tags: img.tags.filter(t => t !== tag)
+          };
+        } else {
+          // Add the tag, but handle mutual exclusivity for before/after
+          let newTags = [...img.tags, tag];
+          
+          if (tag === "before") {
+            // Remove "after" tag if adding "before"
+            newTags = newTags.filter(t => t !== "after");
+          } else if (tag === "after") {
+            // Remove "before" tag if adding "after"
+            newTags = newTags.filter(t => t !== "before");
+          }
+          
+          return {
+            ...img,
+            tags: newTags
+          };
+        }
       }
       return img;
     });
@@ -212,7 +230,11 @@ export function TaggedImageUpload({
                             ? getTagColor(tag)
                             : "bg-white/90 text-gray-600 border-gray-200 hover:bg-gray-100"
                         }`}
-                        title={`Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag`}
+                        title={
+                          tag === "before" || tag === "after" 
+                            ? `Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag (mutually exclusive with ${tag === "before" ? "after" : "before"})`
+                            : `Click to ${image.tags.includes(tag) ? 'remove' : 'add'} ${tag} tag`
+                        }
                       >
                         {tag}
                         {image.tags.includes(tag) && <span className="ml-1">✓</span>}

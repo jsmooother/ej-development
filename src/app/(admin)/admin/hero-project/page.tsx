@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
-import { useToast, ToastContainer } from "@/components/ui/toast";
+// Using simple alerts instead of toast system
 
 interface Project {
   id: string;
@@ -18,7 +18,9 @@ export default function HeroProjectPage() {
   const [currentHero, setCurrentHero] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const { toasts, success, error, removeToast } = useToast();
+  // Simple alert functions instead of toast system
+  const showSuccess = (message: string) => alert(`✅ ${message}`);
+  const showError = (message: string) => alert(`❌ ${message}`);
 
   useEffect(() => {
     fetchData();
@@ -68,10 +70,10 @@ export default function HeroProjectPage() {
 
       // Refresh data
       await fetchData();
-      success('Hero project updated successfully!');
+      showSuccess('Hero project updated successfully!');
     } catch (err) {
       console.error('Error setting hero project:', err);
-      error('Failed to set hero project', 'Please try again.');
+      showError('Failed to set hero project. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -220,7 +222,7 @@ export default function HeroProjectPage() {
       </div>
       
       {/* Toast Notifications */}
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
+      {/* Simple alerts used instead of toast notifications */}
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
-import { useToast, ToastContainer } from "@/components/ui/toast";
+// Using simple alerts instead of toast system
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -48,7 +48,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const { toasts, success, error, removeToast } = useToast();
+  // Simple alert functions instead of toast system
+  const showSuccess = (message: string) => alert(`✅ ${message}`);
+  const showError = (message: string) => alert(`❌ ${message}`);
 
   // Fetch project data from API
   useEffect(() => {
@@ -82,7 +84,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         }
       } catch (err) {
         console.error('Error fetching project:', err);
-        alert('Failed to load project');
+        showError('Failed to load project. Please try refreshing the page.');
       } finally {
         setIsLoading(false);
       }
@@ -122,13 +124,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
       const data = await response.json();
       if (data.success) {
-        success('Project updated successfully!');
+        showSuccess('Project updated successfully!');
         // Auto-redirect after showing success message
         setTimeout(() => router.push('/admin/projects'), 1500);
       }
     } catch (err) {
       console.error('Failed to save project:', err);
-      error('Failed to save project', 'Please try again.');
+      showError('Failed to save project. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -148,13 +150,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
       const data = await response.json();
       if (data.success) {
-        success('Project deleted successfully!');
+        showSuccess('Project deleted successfully!');
         // Auto-redirect after showing success message
         setTimeout(() => router.push('/admin/projects'), 1500);
       }
     } catch (err) {
       console.error('Failed to delete project:', err);
-      error('Failed to delete project', 'Please try again.');
+      showError('Failed to delete project. Please try again.');
     }
   };
 
@@ -357,8 +359,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         </div>
       </form>
       
-      {/* Toast Notifications */}
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
+      {/* Simple alerts used instead of toast notifications */}
     </div>
   );
 }

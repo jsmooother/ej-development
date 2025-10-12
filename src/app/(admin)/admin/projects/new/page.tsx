@@ -8,7 +8,7 @@ import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
-import { useToast, ToastContainer } from "@/components/ui/toast";
+// Using simple alerts instead of toast system
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -30,7 +30,9 @@ interface ImagePair {
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
-  const { toasts, success, error, removeToast } = useToast();
+  // Simple alert functions instead of toast system
+  const showSuccess = (message: string) => alert(`✅ ${message}`);
+  const showError = (message: string) => alert(`❌ ${message}`);
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [galleryImages, setGalleryImages] = useState<string[]>([]); // Legacy
   const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
@@ -76,11 +78,11 @@ export default function NewProjectPage() {
       console.log('Created project:', result);
       
       // Show success and redirect
-      success('Project created successfully!');
+      showSuccess('Project created successfully!');
       setTimeout(() => router.push('/admin/projects'), 1500);
     } catch (err) {
       console.error('Error creating project:', err);
-      error('Failed to create project', err instanceof Error ? err.message : 'Please try again.');
+      showError('Failed to create project: ' + (err instanceof Error ? err.message : 'Please try again.'));
       setIsSaving(false);
     }
   };
@@ -276,7 +278,7 @@ export default function NewProjectPage() {
       </div>
       
       {/* Toast Notifications */}
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
+      {/* Simple alerts used instead of toast notifications */}
     </div>
   );
 }
