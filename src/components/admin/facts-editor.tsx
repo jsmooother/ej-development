@@ -327,8 +327,8 @@ export function FactsEditor({
         </p>
         <ul className="mt-1 text-xs text-blue-800 space-y-1 ml-4 list-disc">
           <li>Use templates for common facts or add custom ones</li>
-          <li>Numeric values (e.g., "450") will be stored as numbers</li>
-          <li>Text values (e.g., "Marbella") will be stored as text</li>
+          <li>Numeric values (e.g., &quot;450&quot;) will be stored as numbers</li>
+          <li>Text values (e.g., &quot;Marbella&quot;) will be stored as text</li>
           <li>Facts appear on the project detail page</li>
         </ul>
       </div>

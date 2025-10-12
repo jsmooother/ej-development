@@ -69,8 +69,8 @@ export default function HeroProjectPage() {
       // Refresh data
       await fetchData();
       success('Hero project updated successfully!');
-    } catch (error) {
-      console.error('Error setting hero project:', error);
+    } catch (err) {
+      console.error('Error setting hero project:', err);
       error('Failed to set hero project', 'Please try again.');
     } finally {
       setIsSaving(false);
