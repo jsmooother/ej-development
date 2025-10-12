@@ -171,13 +171,12 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
       const data = await response.json();
       if (data.success) {
-        showSuccess('Project deleted successfully!');
-        // Auto-redirect after showing success message
-        setTimeout(() => router.push('/admin/projects'), 1500);
+        // Project deleted successfully - redirect immediately
+        router.push('/admin/projects');
       }
     } catch (err) {
       console.error('Failed to delete project:', err);
-      showError('Failed to delete project. Please try again.');
+      // Delete failed - user can try again
     }
   };
 
