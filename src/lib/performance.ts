@@ -149,15 +149,21 @@ export function analyzeBundleSize() {
   console.log('Stylesheets:', stylesheets.length);
   
   // Log external resources
-  const externalScripts = scripts.filter(s => !s.src.includes(window.location.hostname));
-  const externalStyles = stylesheets.filter(s => !s.href.includes(window.location.hostname));
+  const externalScripts = scripts.filter(s => {
+    const script = s as HTMLScriptElement;
+    return script.src && !script.src.includes(window.location.hostname);
+  });
+  const externalStyles = stylesheets.filter(s => {
+    const link = s as HTMLLinkElement;
+    return link.href && !link.href.includes(window.location.hostname);
+  });
   
   if (externalScripts.length > 0) {
-    console.log('External Scripts:', externalScripts.map(s => s.src));
+    console.log('External Scripts:', externalScripts.map(s => (s as HTMLScriptElement).src));
   }
   
   if (externalStyles.length > 0) {
-    console.log('External Styles:', externalStyles.map(s => s.href));
+    console.log('External Styles:', externalStyles.map(s => (s as HTMLLinkElement).href));
   }
   
   console.groupEnd();
