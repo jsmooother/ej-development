@@ -16,9 +16,6 @@ type Project = {
   isPublished: boolean;
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 60;
-
 export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);

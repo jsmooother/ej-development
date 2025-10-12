@@ -387,7 +387,7 @@ export default async function HomePage() {
                     </div>
                     <div className="absolute bottom-4 right-4">
                       <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
-                        {item.rooms} rum
+                        {item.rooms} Bedrooms
                       </span>
                     </div>
                   </div>

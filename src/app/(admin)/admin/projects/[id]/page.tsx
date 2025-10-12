@@ -8,6 +8,7 @@ import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
+import { useToast, ToastContainer } from "@/components/ui/toast";
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -47,6 +48,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const { toasts, success, error, removeToast } = useToast();
 
   // Fetch project data from API
   useEffect(() => {
@@ -120,12 +122,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
       const data = await response.json();
       if (data.success) {
-        alert('Project updated successfully!');
-        router.push('/admin/projects');
+        success('Project updated successfully!');
+        // Auto-redirect after showing success message
+        setTimeout(() => router.push('/admin/projects'), 1500);
       }
     } catch (error) {
       console.error('Failed to save project:', error);
-      alert('Failed to save project. Please try again.');
+      error('Failed to save project', 'Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -145,12 +148,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
       const data = await response.json();
       if (data.success) {
-        alert('Project deleted successfully!');
-        router.push('/admin/projects');
+        success('Project deleted successfully!');
+        // Auto-redirect after showing success message
+        setTimeout(() => router.push('/admin/projects'), 1500);
       }
     } catch (error) {
       console.error('Failed to delete project:', error);
-      alert('Failed to delete project. Please try again.');
+      error('Failed to delete project', 'Please try again.');
     }
   };
 
@@ -266,7 +270,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               facts={project.facts}
               onChange={(facts) => setProject({ ...project, facts })}
               label="Project Facts"
-              description="Add key details about the project (e.g., location, size, features)"
+              description="Required for frontpage display: 'sqm' (size badge) and 'bedrooms' (rooms badge). Add other details as needed."
             />
           </div>
 
@@ -352,6 +356,9 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
           </div>
         </div>
       </form>
+      
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }

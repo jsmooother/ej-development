@@ -8,6 +8,7 @@ import { Toggle } from "@/components/admin/toggle";
 import { HeroImageManager } from "@/components/admin/hero-image-manager";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
+import { useToast, ToastContainer } from "@/components/ui/toast";
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -29,6 +30,7 @@ interface ImagePair {
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const { toasts, success, error, removeToast } = useToast();
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [galleryImages, setGalleryImages] = useState<string[]>([]); // Legacy
   const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
@@ -73,11 +75,12 @@ export default function NewProjectPage() {
       const result = await response.json();
       console.log('Created project:', result);
       
-      // Redirect to projects list
-      router.push('/admin/projects');
+      // Show success and redirect
+      success('Project created successfully!');
+      setTimeout(() => router.push('/admin/projects'), 1500);
     } catch (error) {
       console.error('Error creating project:', error);
-      alert(error instanceof Error ? error.message : 'Failed to create project');
+      error('Failed to create project', error instanceof Error ? error.message : 'Please try again.');
       setIsSaving(false);
     }
   };
@@ -185,7 +188,7 @@ export default function NewProjectPage() {
               facts={projectFacts}
               onChange={setProjectFacts}
               label="Project Facts"
-              description="Add key details about the project (e.g., location, size, features)"
+              description="Required for frontpage display: 'sqm' (size badge) and 'bedrooms' (rooms badge). Add other details as needed."
             />
           </div>
 
@@ -271,6 +274,9 @@ export default function NewProjectPage() {
           </div>
         </form>
       </div>
+      
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }

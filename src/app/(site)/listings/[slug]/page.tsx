@@ -29,9 +29,6 @@ type Listing = {
   isPublished: boolean;
 };
 
-export const dynamic = "force-dynamic";
-export const revalidate = 60;
-
 export default function ListingDetailPage({ params }: { params: { slug: string } }) {
   const [listing, setListing] = useState<Listing | null>(null);
   const [isLoading, setIsLoading] = useState(true);

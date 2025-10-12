@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
+import { useToast, ToastContainer } from "@/components/ui/toast";
 
 interface Project {
   id: string;
@@ -17,6 +18,7 @@ export default function HeroProjectPage() {
   const [currentHero, setCurrentHero] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const { toasts, success, error, removeToast } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -66,10 +68,10 @@ export default function HeroProjectPage() {
 
       // Refresh data
       await fetchData();
-      alert('Hero project updated successfully!');
+      success('Hero project updated successfully!');
     } catch (error) {
       console.error('Error setting hero project:', error);
-      alert('Failed to set hero project. Please try again.');
+      error('Failed to set hero project', 'Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -216,6 +218,9 @@ export default function HeroProjectPage() {
           </div>
         </div>
       </div>
+      
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }

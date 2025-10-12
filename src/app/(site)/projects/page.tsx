@@ -120,7 +120,7 @@ export default async function ProjectsPage() {
                   {project.facts?.bedrooms && (
                     <div className="absolute bottom-4 right-4">
                       <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
-                        {project.facts.bedrooms} rum
+                        {project.facts.bedrooms} Bedrooms
                       </span>
                     </div>
                   )}
