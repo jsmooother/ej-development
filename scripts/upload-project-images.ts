@@ -26,7 +26,7 @@ const db = drizzle(client);
 const PROJECT_MAPPING: Record<string, string> = {
   'Project - Classic Pearl': 'classic-pearl',
   'Project - Grand Celeste': 'grand-celeste',
-  'Project - No1 Östermalm': 'no1-ostermalm',
+  'Project - No1 Östermalm': 'no1-o-stermalm', // Note: database slug has hyphen between o and stermalm
   'Project - The Nest': 'the-nest',
   'Project - Wallin Revival': 'wallin-revival'
 };
