@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ImageUpload } from "./image-upload";
 import { MultiFileImageUpload } from "./multi-file-image-upload";
 import { X, Plus, ArrowRight, Tag, Grid3X3, Link, Star } from "lucide-react";
@@ -135,7 +135,7 @@ export function ProjectImagesManager({
     if (pairs.length < maxPairs) {
       const newPair: ImagePair = {
         id: Date.now().toString(),
-        label: `Pair ${pairs.length + 1}`,
+        label: `Before & After ${pairs.length + 1}`,
         beforeImageId,
         afterImageId
       };
@@ -146,7 +146,12 @@ export function ProjectImagesManager({
 
   const removePair = (pairId: string) => {
     const newPairs = pairs.filter(pair => pair.id !== pairId);
-    onPairsChange(newPairs);
+    // Renumber all pairs after deletion
+    const renumberedPairs = newPairs.map((pair, index) => ({
+      ...pair,
+      label: `Before & After ${index + 1}`
+    }));
+    onPairsChange(renumberedPairs);
   };
 
   const updatePairLabel = (pairId: string, label: string) => {
@@ -157,6 +162,15 @@ export function ProjectImagesManager({
       return pair;
     });
     onPairsChange(newPairs);
+  };
+
+  // Renumber all pairs to ensure sequential numbering
+  const renumberAllPairs = () => {
+    const renumberedPairs = pairs.map((pair, index) => ({
+      ...pair,
+      label: `Before & After ${index + 1}`
+    }));
+    onPairsChange(renumberedPairs);
   };
 
   const getImageById = (imageId: string) => images.find(img => img.id === imageId);
@@ -171,6 +185,20 @@ export function ProjectImagesManager({
   const beforeImages = images.filter(img => img.tags.includes("before"));
   const afterImages = images.filter(img => img.tags.includes("after"));
   const galleryImages = images.filter(img => img.tags.includes("gallery"));
+
+  // Auto-renumber pairs when component loads to fix any existing numbering issues
+  useEffect(() => {
+    if (pairs.length > 0) {
+      // Check if any pair has incorrect numbering
+      const needsRenumbering = pairs.some((pair, index) => 
+        pair.label !== `Before & After ${index + 1}`
+      );
+      
+      if (needsRenumbering) {
+        renumberAllPairs();
+      }
+    }
+  }, []); // Only run on mount
 
   return (
     <div className="space-y-8">
@@ -629,7 +657,19 @@ export function ProjectImagesManager({
           {/* Existing Pairs */}
           {pairs.length > 0 && (
             <div className="space-y-4">
-              <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
+              <div className="flex items-center justify-between">
+                <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    renumberAllPairs();
+                  }}
+                  className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Renumber Pairs
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {pairs.map((pair) => {
                   const beforeImage = getImageById(pair.beforeImageId || "");
