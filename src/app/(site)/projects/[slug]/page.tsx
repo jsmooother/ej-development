@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProjectDetailClient } from "./project-detail-client";
-import { db } from "@/lib/db";
-import { projects } from "@/lib/db/schema";
+import { getDb, projects } from "@/lib/db";
 import { eq, and } from "drizzle-orm";
 
 type ProjectImage = {
@@ -27,6 +26,7 @@ type Project = {
 export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
   // Fetch project directly from database
   try {
+    const db = getDb();
     const [project] = await db
       .select()
       .from(projects)
