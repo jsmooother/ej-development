@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { StatCard } from "@/components/admin/stat-card";
+import { StorageDashboard } from "@/components/admin/storage-dashboard";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = 'force-no-store';
@@ -181,6 +182,11 @@ export default async function AdminDashboardPage() {
               positive: false 
             } : undefined}
           />
+        </div>
+
+        {/* Storage Dashboard */}
+        <div className="mt-8">
+          <StorageDashboard />
         </div>
 
         {/* Recent Activity */}

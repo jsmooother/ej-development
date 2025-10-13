@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { compressImage, getOptimalCompressionSettings } from "@/lib/image-compression";
 import { Upload, X, Plus } from "lucide-react";
 
 type ImageTag = "before" | "after" | "gallery";
@@ -20,6 +21,7 @@ interface MultiFileImageUploadProps {
   maxSize?: number; // in MB
   acceptedTypes?: string[];
   maxImages?: number;
+  useCase?: 'hero' | 'gallery' | 'thumbnail'; // For optimal compression
 }
 
 export function MultiFileImageUpload({
