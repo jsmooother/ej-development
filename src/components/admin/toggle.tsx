@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface ToggleProps {
@@ -14,6 +14,11 @@ interface ToggleProps {
 
 export function Toggle({ id, name, label, description, defaultChecked = false, onChange }: ToggleProps) {
   const [checked, setChecked] = useState(defaultChecked);
+
+  // Sync internal state with prop changes
+  useEffect(() => {
+    setChecked(defaultChecked);
+  }, [defaultChecked]);
 
   const handleToggle = () => {
     const newValue = !checked;

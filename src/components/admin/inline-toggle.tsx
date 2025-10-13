@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface InlineToggleProps {
@@ -12,6 +12,11 @@ interface InlineToggleProps {
 export function InlineToggle({ id, initialChecked, onToggle }: InlineToggleProps) {
   const [checked, setChecked] = useState(initialChecked);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Sync internal state with prop changes
+  useEffect(() => {
+    setChecked(initialChecked);
+  }, [initialChecked]);
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation when clicking toggle
@@ -26,6 +31,8 @@ export function InlineToggle({ id, initialChecked, onToggle }: InlineToggleProps
     } catch (error) {
       console.error("Failed to update status:", error);
       alert("Failed to update status");
+      // Revert to previous state on error
+      setChecked(!newValue);
     } finally {
       setIsUpdating(false);
     }
