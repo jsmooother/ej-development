@@ -7,6 +7,8 @@ import { FormField, Input, Textarea, Select } from "@/components/admin/form-fiel
 import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
+import { ProjectPreviewModal } from "@/components/admin/project-preview-modal";
+import { Eye } from "lucide-react";
 // Using simple alerts instead of toast system
 
 type ImageTag = "before" | "after" | "gallery";
@@ -29,9 +31,16 @@ interface ImagePair {
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   // Simple alert functions instead of toast system
   const showSuccess = (message: string) => alert(`✅ ${message}`);
   const showError = (message: string) => alert(`❌ ${message}`);
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [summary, setSummary] = useState("");
+  const [content, setContent] = useState("");
+  const [year, setYear] = useState<number | null>(null);
+  const [isPublished, setIsPublished] = useState(false);
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [galleryImages, setGalleryImages] = useState<string[]>([]); // Legacy
   const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
@@ -85,11 +94,46 @@ export default function NewProjectPage() {
     }
   };
 
+  // Create preview project object
+  const previewProject = {
+    id: 'preview',
+    slug: slug || 'preview',
+    title: title || 'Untitled Project',
+    summary: summary || 'No summary provided',
+    content: content || '',
+    year: year,
+    facts: projectFacts,
+    heroImagePath: heroImageUrl,
+    projectImages,
+    imagePairs,
+    isPublished,
+    createdAt: new Date()
+  };
+
   return (
     <div>
       <AdminHeader 
         title="New Project" 
         description="Create a new portfolio project to showcase your work"
+      />
+
+      {/* Preview Button - Fixed Position */}
+      <div className="fixed bottom-8 right-8 z-40">
+        <button
+          type="button"
+          onClick={() => setShowPreview(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:shadow-xl"
+        >
+          <Eye className="h-5 w-5" />
+          Preview
+        </button>
+      </div>
+
+      {/* Preview Modal */}
+      <ProjectPreviewModal
+        project={previewProject}
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
       />
 
       <div className="mx-auto max-w-2xl p-8">
@@ -109,6 +153,8 @@ export default function NewProjectPage() {
               <Input 
                 id="title" 
                 name="title" 
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g., Sierra Horizon" 
                 required 
               />
@@ -123,6 +169,8 @@ export default function NewProjectPage() {
               <Input 
                 id="slug" 
                 name="slug" 
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
                 placeholder="sierra-horizon" 
                 pattern="[a-z0-9-]+"
                 required 
@@ -137,6 +185,8 @@ export default function NewProjectPage() {
               <Input 
                 id="summary" 
                 name="summary" 
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
                 placeholder="La Zagaleta · 2023"
               />
             </FormField>
@@ -150,6 +200,8 @@ export default function NewProjectPage() {
                 id="year" 
                 name="year" 
                 type="number"
+                value={year || ''}
+                onChange={(e) => setYear(e.target.value ? parseInt(e.target.value) : null)}
                 min="2000"
                 max="2030"
                 placeholder="2023"
@@ -171,6 +223,8 @@ export default function NewProjectPage() {
               <Textarea 
                 id="content" 
                 name="content" 
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 rows={12}
                 placeholder="Describe your project in detail..."
                 className="resize-y min-h-[200px]"
@@ -206,8 +260,10 @@ export default function NewProjectPage() {
             <ProjectImagesManager
               images={projectImages}
               pairs={imagePairs}
+              heroImageUrl={heroImageUrl}
               onImagesChange={setProjectImages}
               onPairsChange={setImagePairs}
+              onHeroImageChange={setHeroImageUrl}
               label="Upload & Organize Images"
               description="Upload images, tag them as before/after/gallery, and create pairs."
               maxImages={30}
@@ -226,7 +282,8 @@ export default function NewProjectPage() {
               name="isPublished"
               label="Publish to Site"
               description="When enabled, this project will be visible on the public site"
-              defaultChecked={true}
+              defaultChecked={isPublished}
+              onChange={setIsPublished}
             />
 
             <Toggle

@@ -7,6 +7,8 @@ import { FormField, Input, Textarea, Select } from "@/components/admin/form-fiel
 import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
+import { ProjectPreviewModal } from "@/components/admin/project-preview-modal";
+import { Eye } from "lucide-react";
 // Using simple alerts instead of toast system
 
 type ImageTag = "before" | "after" | "gallery";
@@ -48,6 +50,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   // Silent save - no popups needed
 
@@ -198,13 +201,32 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
 
   return (
     <div>
-      <AdminHeader 
-        title="Edit Project" 
+      <AdminHeader
+        title="Edit Project"
         description={`Modify "${project.title}"`}
         action={{
           label: "Back to Projects",
           href: "/admin/projects"
         }}
+      />
+
+      {/* Preview Button - Fixed Position */}
+      <div className="fixed bottom-8 right-8 z-40">
+        <button
+          type="button"
+          onClick={() => setShowPreview(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:shadow-xl"
+        >
+          <Eye className="h-5 w-5" />
+          Preview
+        </button>
+      </div>
+
+      {/* Preview Modal */}
+      <ProjectPreviewModal
+        project={project}
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
       />
 
       <div className="p-8">
@@ -371,6 +393,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               <ProjectImagesManager
                 images={project.projectImages}
                 pairs={project.imagePairs}
+                heroImageUrl={project.heroImagePath}
                 onImagesChange={(images) => {
                   const updated = { ...project, projectImages: images };
                   setProject(updated);
@@ -378,6 +401,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 }}
                 onPairsChange={(pairs) => {
                   const updated = { ...project, imagePairs: pairs };
+                  setProject(updated);
+                  if (project?.id) debouncedAutoSave(updated);
+                }}
+                onHeroImageChange={(url) => {
+                  const updated = { ...project, heroImagePath: url };
                   setProject(updated);
                   if (project?.id) debouncedAutoSave(updated);
                 }}
