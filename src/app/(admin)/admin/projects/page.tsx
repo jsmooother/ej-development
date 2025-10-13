@@ -24,7 +24,7 @@ export default function ProjectsListPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch projects from database on component mount
+  // Fetch projects from database on component mount and when page becomes visible
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -77,6 +77,39 @@ export default function ProjectsListPage() {
     };
 
     fetchProjects();
+  }, []);
+
+  // Refresh data when page becomes visible (e.g., returning from edit page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        // Page became visible, refresh data
+        const fetchProjects = async () => {
+          try {
+            const response = await fetch('/api/projects');
+            if (response.ok) {
+              const data = await response.json();
+              const statusResponse = await fetch('/api/content/status');
+              const statusData = await statusResponse.json();
+              
+              const projectsWithStatus = data.map((project: Project) => ({
+                ...project,
+                isPublished: statusData.projects[project.slug]?.isPublished || project.isPublished
+              }));
+              
+              setProjects(projectsWithStatus);
+            }
+          } catch (error) {
+            console.error('Failed to refresh projects:', error);
+          }
+        };
+        
+        fetchProjects();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   const handleTogglePublish = async (projectId: string, newStatus: boolean) => {

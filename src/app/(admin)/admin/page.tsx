@@ -27,13 +27,15 @@ export default async function AdminDashboardPage() {
       process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
 
     // Fetch data from APIs
-    const [projectsResponse, editorialsResponse] = await Promise.all([
+    const [projectsResponse, editorialsResponse, enquiriesResponse] = await Promise.all([
       fetch(`${baseUrl}/api/projects`),
-      fetch(`${baseUrl}/api/editorials`)
+      fetch(`${baseUrl}/api/editorials`),
+      fetch(`${baseUrl}/api/enquiries`)
     ]);
     
     let projectsData = [];
     let editorialsData = [];
+    let enquiriesData = [];
     
     if (projectsResponse.ok) {
       projectsData = await projectsResponse.json();
@@ -55,18 +57,32 @@ export default async function AdminDashboardPage() {
       });
     }
     
+    if (enquiriesResponse.ok) {
+      enquiriesData = await enquiriesResponse.json();
+    } else {
+      console.error('❌ Enquiries API failed:', {
+        status: enquiriesResponse.status,
+        statusText: enquiriesResponse.statusText,
+        url: `${baseUrl}/api/enquiries`
+      });
+    }
+    
     console.log('📊 Admin Dashboard:', {
       projectsResponse: projectsResponse.status,
       editorialsResponse: editorialsResponse.status,
+      enquiriesResponse: enquiriesResponse.status,
       projectsData: projectsData?.length || 0,
       editorialsData: editorialsData?.length || 0,
+      enquiriesData: enquiriesData?.length || 0,
       projectsUrl: `${baseUrl}/api/projects`,
-      editorialsUrl: `${baseUrl}/api/editorials`
+      editorialsUrl: `${baseUrl}/api/editorials`,
+      enquiriesUrl: `${baseUrl}/api/enquiries`
     });
     
     // Set counts
     projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
     postsCount = Array.isArray(editorialsData) ? editorialsData.length : 0;
+    enquiriesCount = Array.isArray(enquiriesData) ? enquiriesData.length : 0;
     
     // Get recent projects (published only)
     recentProjects = projectsData
@@ -90,11 +106,10 @@ export default async function AdminDashboardPage() {
         isPublished: post.isPublished
       }));
     
-    console.log('Dashboard counts from API:', { projectsCount, postsCount, listingsCount: 1, enquiriesCount: 0 });
+    console.log('Dashboard counts from API:', { projectsCount, postsCount, listingsCount: 1, enquiriesCount });
     
-    // For listings and enquiries, we'll use known values for now
+    // For listings, we'll use known values for now
     listingsCount = 1; // We know there's 1 listing from the database
-    enquiriesCount = 0;
     
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
