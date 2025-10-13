@@ -47,7 +47,7 @@ export function ProjectImagesManager({
   label = "Project Images",
   description,
   maxImages = 30,
-  maxPairs = 10
+  maxPairs = 8
 }: ProjectImagesManagerProps) {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
