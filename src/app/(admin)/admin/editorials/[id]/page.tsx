@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
+import { EditorialPreviewModal } from "@/components/admin/editorial-preview-modal";
+import { Eye } from "lucide-react";
 
 interface Editorial {
   id: string;
@@ -25,6 +27,9 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
   const [editorial, setEditorial] = useState<Editorial | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Fetch editorial data from API
   useEffect(() => {
@@ -66,36 +71,62 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
     fetchEditorial();
   }, [params.id]);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editorial) return;
+  // Auto-save function for basic fields
+  const autoSave = async (updatedEditorial: Editorial, skipContent = false) => {
+    if (!updatedEditorial?.id) return;
 
-    setIsSaving(true);
-    
+    setIsAutoSaving(true);
+
     try {
-      const response = await fetch(`/api/editorials/${editorial.id}`, {
+      const response = await fetch(`/api/editorials/${updatedEditorial.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: editorial.title,
-          slug: editorial.slug,
-          excerpt: editorial.excerpt,
-          content: editorial.content,
-          coverImagePath: editorial.coverImagePath,
-          tags: editorial.tags,
-          isPublished: editorial.isPublished,
+          title: updatedEditorial.title,
+          slug: updatedEditorial.slug,
+          excerpt: updatedEditorial.excerpt,
+          content: skipContent ? editorial?.content : updatedEditorial.content,
+          coverImagePath: updatedEditorial.coverImagePath,
+          tags: updatedEditorial.tags,
+          isPublished: updatedEditorial.isPublished,
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update editorial');
+      if (response.ok) {
+        setLastSaved(new Date());
       }
+    } catch (err) {
+      console.error('Auto-save failed:', err);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
 
-      alert('Editorial updated successfully!');
-      router.push('/admin/editorials');
-    } catch (error) {
-      console.error('Failed to save editorial:', error);
-      alert('Failed to save editorial. Please try again.');
+  // Debounced auto-save for basic fields
+  const debouncedAutoSave = useMemo(
+    () => {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return (updatedEditorial: Editorial) => {
+        if (!updatedEditorial?.id) return;
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          autoSave(updatedEditorial, true); // Skip content for auto-save
+        }, 1000);
+      };
+    },
+    [editorial?.id]
+  );
+
+  // Manual save function for content
+  const handleSaveContent = async () => {
+    if (!editorial) return;
+
+    setIsSaving(true);
+
+    try {
+      await autoSave(editorial, false); // Include content for manual save
+    } catch (err) {
+      console.error('Failed to save content:', err);
     } finally {
       setIsSaving(false);
     }
@@ -170,7 +201,55 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
         }}
       />
 
-      <form onSubmit={handleSave} className="p-8">
+      {/* Preview Button - Fixed Position */}
+      <div className="fixed bottom-8 right-8 z-40">
+        <button
+          type="button"
+          onClick={() => setShowPreview(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:shadow-xl"
+        >
+          <Eye className="h-5 w-5" />
+          Preview
+        </button>
+      </div>
+
+      {/* Preview Modal */}
+      <EditorialPreviewModal
+        editorial={editorial}
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+      />
+
+      <div className="p-8"> {/* Changed from form to div */}
+        {/* Auto-save status indicator */}
+        <div className="mx-auto mb-6 max-w-4xl">
+          <div className="flex items-center justify-between rounded-lg border border-border/50 bg-card/50 px-4 py-2">
+            <div className="flex items-center gap-2">
+              {isAutoSaving ? (
+                <>
+                  <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500"></div>
+                  <span className="text-sm text-muted-foreground">Auto-saving...</span>
+                </>
+              ) : lastSaved ? (
+                <>
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-muted-foreground">
+                    Last saved: {lastSaved.toLocaleTimeString()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="h-2 w-2 rounded-full bg-gray-400"></div>
+                  <span className="text-sm text-muted-foreground">Ready to save</span>
+                </>
+              )}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Changes save automatically • Content saves manually
+            </span>
+          </div>
+        </div>
+
         <div className="mx-auto max-w-4xl space-y-8">
           {/* Basic Information */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
@@ -184,7 +263,11 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                 >
                   <Input
                     value={editorial.title}
-                    onChange={(e) => setEditorial({ ...editorial, title: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...editorial, title: e.target.value };
+                      setEditorial(updated);
+                      if (editorial?.id) debouncedAutoSave(updated);
+                    }}
                     placeholder="Enter editorial title"
                   />
                 </FormField>
@@ -196,7 +279,11 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                 >
                   <Input
                     value={editorial.slug}
-                    onChange={(e) => setEditorial({ ...editorial, slug: e.target.value })}
+                    onChange={(e) => {
+                      const updated = { ...editorial, slug: e.target.value };
+                      setEditorial(updated);
+                      if (editorial?.id) debouncedAutoSave(updated);
+                    }}
                     placeholder="editorial-slug"
                   />
                 </FormField>
@@ -209,7 +296,11 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
               >
                 <Input
                   value={editorial.excerpt}
-                  onChange={(e) => setEditorial({ ...editorial, excerpt: e.target.value })}
+                  onChange={(e) => {
+                    const updated = { ...editorial, excerpt: e.target.value };
+                    setEditorial(updated);
+                    if (editorial?.id) debouncedAutoSave(updated);
+                  }}
                   placeholder="Brief description of the editorial"
                 />
               </FormField>
@@ -220,10 +311,14 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
               >
                 <Input
                   value={editorial.tags.join(', ')}
-                  onChange={(e) => setEditorial({ 
-                    ...editorial, 
-                    tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
-                  })}
+                  onChange={(e) => {
+                    const updated = { 
+                      ...editorial, 
+                      tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
+                    };
+                    setEditorial(updated);
+                    if (editorial?.id) debouncedAutoSave(updated);
+                  }}
                   placeholder="Market Insight, Design Journal, Guide"
                 />
               </FormField>
@@ -258,6 +353,19 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                 className="resize-y min-h-[300px]"
               />
             </FormField>
+            <div className="mt-4 flex items-center justify-end gap-3">
+              {isSaving && (
+                <span className="text-sm text-muted-foreground">Saving...</span>
+              )}
+              <button
+                type="button"
+                onClick={handleSaveContent}
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 disabled:opacity-50"
+              >
+                {isSaving ? 'Saving...' : 'Save Content'}
+              </button>
+            </div>
           </div>
 
           {/* Images */}
@@ -271,7 +379,11 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
               >
                 <Input
                   value={editorial.coverImagePath}
-                  onChange={(e) => setEditorial({ ...editorial, coverImagePath: e.target.value })}
+                  onChange={(e) => {
+                    const updated = { ...editorial, coverImagePath: e.target.value };
+                    setEditorial(updated);
+                    if (editorial?.id) debouncedAutoSave(updated);
+                  }}
                   placeholder="https://example.com/image.jpg"
                 />
               </FormField>
@@ -282,10 +394,14 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
               >
                 <Textarea
                   value={editorial.additionalImages.join('\n')}
-                  onChange={(e) => setEditorial({ 
-                    ...editorial, 
-                    additionalImages: e.target.value.split('\n').filter(url => url.trim())
-                  })}
+                  onChange={(e) => {
+                    const updated = { 
+                      ...editorial, 
+                      additionalImages: e.target.value.split('\n').filter(url => url.trim())
+                    };
+                    setEditorial(updated);
+                    if (editorial?.id) debouncedAutoSave(updated);
+                  }}
                   placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
                   rows={6}
                   className="resize-y min-h-[100px]"
@@ -311,7 +427,11 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
                   label="Publish to Site"
                   description="When enabled, this editorial will be visible on the public site"
                   defaultChecked={editorial.isPublished}
-                  onChange={(checked) => setEditorial({ ...editorial, isPublished: checked })}
+                  onChange={(checked) => {
+                    const updated = { ...editorial, isPublished: checked };
+                    setEditorial(updated);
+                    if (editorial?.id) debouncedAutoSave(updated);
+                  }}
                 />
               </div>
 
@@ -346,37 +466,16 @@ export default function EditEditorialPage({ params }: { params: { id: string } }
               Delete Editorial
             </button>
 
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => router.push('/admin/editorials')}
-                className="inline-flex items-center gap-2 rounded-xl border border-border/50 bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted/50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-2 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 disabled:opacity-50"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Save Changes
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => router.push('/admin/editorials')}
+              className="inline-flex items-center gap-2 rounded-xl border border-border/50 bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:bg-muted/50"
+            >
+              Back to Editorials
+            </button>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
