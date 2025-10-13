@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProjectDetailClient } from "./project-detail-client";
-import { getDb, projects } from "@/lib/db";
+import { getDb, projects } from "@/lib/db/index";
 import { eq, and } from "drizzle-orm";
 
 type ProjectImage = {
