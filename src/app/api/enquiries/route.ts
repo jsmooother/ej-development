@@ -17,7 +17,7 @@ export async function GET() {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     
     const recentEnquiries = allEnquiries.filter(enquiry => 
-      new Date(enquiry.createdAt) > sevenDaysAgo
+      enquiry.createdAt && new Date(enquiry.createdAt) > sevenDaysAgo
     );
     
     // Return both the full list and summary data
