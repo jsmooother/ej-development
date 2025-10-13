@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 type Editorial = {
@@ -36,24 +35,38 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 async function getEditorial(slug: string): Promise<Editorial | null> {
   try {
-    const headerList = headers();
-    const protocol = headerList.get("x-forwarded-proto") ?? "http";
-    const host =
-      headerList.get("x-forwarded-host") ??
-      headerList.get("host") ??
-      `localhost:${process.env.PORT || 3000}`;
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
-    const response = await fetch(new URL("/api/editorials", baseUrl).toString(), {
-      next: { revalidate: 60 }
-    });
-
-    if (!response.ok) return null;
-
-    const editorials = await response.json();
-    const editorial = editorials.find((e: Editorial) => e.slug === slug && e.isPublished);
+    // Use direct database access instead of internal API call
+    const { getDb } = await import('@/lib/db/index');
+    const { posts } = await import('@/lib/db/schema');
+    const { eq, and } = await import('drizzle-orm');
     
-    return editorial || null;
+    const db = getDb();
+    const [editorial] = await db
+      .select()
+      .from(posts)
+      .where(
+        and(
+          eq(posts.slug, slug),
+          eq(posts.isPublished, true)
+        )
+      )
+      .limit(1);
+    
+    if (!editorial) {
+      return null;
+    }
+    
+    return {
+      id: editorial.id,
+      slug: editorial.slug,
+      title: editorial.title,
+      excerpt: editorial.excerpt || '',
+      content: editorial.content || '',
+      coverImagePath: editorial.coverImagePath || '',
+      tags: editorial.tags || [],
+      publishedAt: editorial.publishedAt ? editorial.publishedAt.toISOString() : null,
+      isPublished: editorial.isPublished
+    };
   } catch (error) {
     console.error('Error fetching editorial:', error);
     return null;

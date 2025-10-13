@@ -266,7 +266,7 @@ export default function NewProjectPage() {
               onHeroImageChange={setHeroImageUrl}
               label="Upload & Organize Images"
               description="Upload images, tag them as before/after/gallery, and create pairs."
-              maxImages={30}
+              maxImages={50}
               maxPairs={10}
             />
           </div>

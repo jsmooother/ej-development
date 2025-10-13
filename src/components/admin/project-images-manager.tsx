@@ -46,7 +46,7 @@ export function ProjectImagesManager({
   onHeroImageChange,
   label = "Project Images",
   description,
-  maxImages = 30,
+  maxImages = 50,
   maxPairs = 8
 }: ProjectImagesManagerProps) {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
