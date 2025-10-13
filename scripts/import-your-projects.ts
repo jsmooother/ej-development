@@ -14,7 +14,7 @@ import { projects } from '../src/lib/db/schema';
 import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 // Database connection
 const connectionString = process.env.DATABASE_URL || 
@@ -73,17 +73,34 @@ function parseRTFFile(filePath: string): ProjectInfo | null {
 }
 
 /**
+ * Get correct MIME type for image files
+ */
+function getImageMimeType(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase();
+  const mimeTypes: Record<string, string> = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+    '.avif': 'image/avif',
+    '.gif': 'image/gif',
+  };
+  return mimeTypes[ext] || 'image/jpeg';
+}
+
+/**
  * Upload image to Supabase Storage with compression
  */
 async function uploadImage(filePath: string, projectName: string, type: 'before' | 'after'): Promise<string | null> {
   try {
     const fileBuffer = fs.readFileSync(filePath);
-    const fileName = `${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${type}/${uuidv4()}-${path.basename(filePath)}`;
+    const fileName = `${projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${type}/${randomUUID()}-${path.basename(filePath)}`;
+    const contentType = getImageMimeType(filePath);
 
     const { data, error } = await supabase.storage
       .from('images')
       .upload(fileName, fileBuffer, {
-        contentType: `image/${path.extname(filePath).substring(1)}`,
+        contentType,
         upsert: false
       });
 
@@ -142,7 +159,7 @@ async function processProject(projectFolder: string, aboutFile: string) {
       
       const url = await uploadImage(filePath, slug, 'before');
       if (url) {
-        const imageId = uuidv4();
+        const imageId = randomUUID();
         beforeImages.push({
           id: imageId,
           url,
@@ -174,7 +191,7 @@ async function processProject(projectFolder: string, aboutFile: string) {
       
       const url = await uploadImage(filePath, slug, 'after');
       if (url) {
-        const imageId = uuidv4();
+        const imageId = randomUUID();
         afterImages.push({
           id: imageId,
           url,
@@ -194,7 +211,7 @@ async function processProject(projectFolder: string, aboutFile: string) {
   
   for (let i = 0; i < pairCount; i++) {
     imagePairs.push({
-      id: uuidv4(),
+      id: randomUUID(),
       label: `Before & After ${i + 1}`,
       beforeImageId: beforeImages[i].id,
       afterImageId: afterImages[i].id,
