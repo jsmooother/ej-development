@@ -51,9 +51,13 @@ export function ProjectImagesManager({
 }: ProjectImagesManagerProps) {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [previewImage, setPreviewImage] = useState<ProjectImage | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
-  const removeImage = async (imageId: string) => {
-    const imageToRemove = images.find(img => img.id === imageId);
+  const confirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+    
+    const imageToRemove = images.find(img => img.id === imageToDelete);
     
     if (imageToRemove?.url) {
       try {
@@ -83,16 +87,19 @@ export function ProjectImagesManager({
     }
 
     // Remove from images
-    const newImages = images.filter(img => img.id !== imageId);
+    const newImages = images.filter(img => img.id !== imageToDelete);
     onImagesChange(newImages);
 
     // Remove from any pairs
     const newPairs = pairs.map(pair => ({
       ...pair,
-      beforeImageId: pair.beforeImageId === imageId ? undefined : pair.beforeImageId,
-      afterImageId: pair.afterImageId === imageId ? undefined : pair.afterImageId
+      beforeImageId: pair.beforeImageId === imageToDelete ? undefined : pair.beforeImageId,
+      afterImageId: pair.afterImageId === imageToDelete ? undefined : pair.afterImageId
     }));
     onPairsChange(newPairs);
+    
+    // Close the modal
+    setImageToDelete(null);
   };
 
   // Step 2: Tag Images
@@ -364,16 +371,9 @@ export function ProjectImagesManager({
                   {images.map((image) => {
                     const isSelected = heroImageUrl === image.url;
                     return (
-                      <button
+                      <div
                         key={image.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (onHeroImageChange) {
-                            onHeroImageChange(image.url);
-                          }
-                        }}
-                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all group ${
                           isSelected
                             ? "border-yellow-500 ring-2 ring-yellow-200"
                             : "border-gray-200 hover:border-gray-300"
@@ -383,20 +383,39 @@ export function ProjectImagesManager({
                           src={image.url}
                           alt="Project image"
                           fill
-                          className="object-cover"
+                          className="object-cover cursor-pointer"
+                          onClick={() => {
+                            if (onHeroImageChange) {
+                              onHeroImageChange(image.url);
+                            }
+                          }}
                         />
                         
                         {/* Selection indicator */}
                         {isSelected && (
-                          <div className="absolute inset-0 bg-yellow-500/20 flex items-center justify-center">
+                          <div className="absolute inset-0 bg-yellow-500/20 flex items-center justify-center pointer-events-none">
                             <div className="bg-yellow-500 rounded-full p-2">
                               <Star className="h-6 w-6 text-white fill-white" />
                             </div>
                           </div>
                         )}
                         
+                        {/* Delete Button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setImageToDelete(image.id);
+                          }}
+                          className="absolute top-2 right-2 rounded-full bg-red-500 p-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10"
+                          title="Delete image"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        
                         {/* Tags indicator */}
-                        <div className="absolute top-1 right-1 flex gap-1">
+                        <div className="absolute top-1 left-1 flex gap-1">
                           {image.tags.map((tag) => (
                             <span
                               key={tag}
@@ -412,7 +431,7 @@ export function ProjectImagesManager({
                             </span>
                           ))}
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
@@ -477,7 +496,8 @@ export function ProjectImagesManager({
                     src={image.url}
                     alt="Project image"
                     fill
-                    className="object-cover"
+                    className="object-cover cursor-pointer"
+                    onClick={() => setPreviewImage(image)}
                   />
                   
                   {/* Active Tags */}
@@ -492,6 +512,20 @@ export function ProjectImagesManager({
                     ))}
                   </div>
 
+                  {/* Delete Button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setImageToDelete(image.id);
+                    }}
+                    className="absolute top-2 right-2 rounded-full bg-red-500 p-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    title="Delete image"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+
                   {/* Tag Controls */}
                   <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="flex gap-1">
@@ -501,6 +535,7 @@ export function ProjectImagesManager({
                           type="button"
                           onClick={(e) => {
                             e.preventDefault();
+                            e.stopPropagation();
                             toggleTag(image.id, tag);
                           }}
                           className={`rounded-full px-2 py-1 text-xs font-medium border transition-colors ${
@@ -745,6 +780,117 @@ export function ProjectImagesManager({
             >
               ← Back to Tag & Organize
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Image Preview Modal */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl">
+              <div className="relative aspect-video w-full bg-gray-100">
+                <Image
+                  src={previewImage.url}
+                  alt={previewImage.caption || "Image preview"}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Image Details</h3>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Caption:</span>
+                    <p className="font-medium text-gray-900">{previewImage.caption || 'No caption'}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="text-gray-500">Tags:</span>
+                    <div className="flex gap-1 mt-1">
+                      {previewImage.tags.length > 0 ? (
+                        previewImage.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className={`rounded-full px-2 py-1 text-xs font-medium border ${getTagColor(tag)}`}
+                          >
+                            {tag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-gray-400">No tags</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImage(null)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImageToDelete(previewImage.id);
+                      setPreviewImage(null);
+                    }}
+                    className="px-4 py-2 rounded-lg bg-red-600 text-sm font-medium text-white hover:bg-red-700"
+                  >
+                    Delete Image
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {imageToDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setImageToDelete(null)}
+        >
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Image</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to delete this image? This will remove it from storage and cannot be undone.
+            </p>
+            
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setImageToDelete(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => confirmDeleteImage()}
+                className="px-4 py-2 rounded-lg bg-red-600 text-sm font-medium text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
