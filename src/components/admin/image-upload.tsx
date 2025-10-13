@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { compressImage, getOptimalCompressionSettings } from "@/lib/image-compression";
 
 interface ImageUploadProps {
   value?: string;
@@ -10,6 +11,7 @@ interface ImageUploadProps {
   className?: string;
   maxSize?: number; // in MB
   acceptedTypes?: string[];
+  useCase?: 'hero' | 'gallery' | 'thumbnail'; // For optimal compression
 }
 
 export function ImageUpload({
@@ -18,7 +20,8 @@ export function ImageUpload({
   placeholder = "Click to upload image",
   className = "",
   maxSize = 10,
-  acceptedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"]
+  acceptedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"],
+  useCase = 'gallery'
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,9 +49,13 @@ export function ImageUpload({
     setIsUploading(true);
 
     try {
-      // Create FormData
+      // Compress image before upload to save storage space
+      console.log(`📦 Compressing image for ${useCase} use case...`);
+      const compressedFile = await compressImage(file, getOptimalCompressionSettings(useCase));
+      
+      // Create FormData with compressed file
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressedFile);
       formData.append("folder", "uploads"); // Organize by folder
 
       // Upload to Supabase Storage via our API

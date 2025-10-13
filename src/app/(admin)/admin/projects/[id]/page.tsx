@@ -427,9 +427,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               description="When enabled, this project will be visible on the public site"
               defaultChecked={project.isPublished}
               onChange={(checked) => {
+                console.log('Toggle changed to:', checked);
                 const updated = { ...project, isPublished: checked };
                 setProject(updated);
-                if (project?.id) debouncedAutoSave(updated);
+                // Use immediate save for publish status (no debounce)
+                if (project?.id) autoSave(updated, true);
               }}
             />
           </div>
