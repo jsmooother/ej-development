@@ -1,11 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
 import { Toggle } from "@/components/admin/toggle";
-import { HeroImageManager } from "@/components/admin/hero-image-manager";
+import { ProjectImagesManager } from "@/components/admin/project-images-manager";
+import { ListingPreviewModal } from "@/components/admin/listing-preview-modal";
+import { Eye } from "lucide-react";
+
+type ImageTag = "before" | "after" | "gallery";
+
+interface ProjectImage {
+  id: string;
+  url: string;
+  tags: ImageTag[];
+  caption?: string;
+  pairId?: string;
+}
+
+interface ImagePair {
+  id: string;
+  label: string;
+  beforeImageId?: string;
+  afterImageId?: string;
+}
 
 interface Listing {
   id: string;
@@ -33,6 +52,8 @@ interface Listing {
   heroImagePath: string | null;
   heroVideoUrl: string | null;
   brochurePdfPath: string | null;
+  projectImages: ProjectImage[];
+  imagePairs: ImagePair[];
   isPublished: boolean;
   createdAt: string;
 }
@@ -42,6 +63,9 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
   const [listing, setListing] = useState<Listing | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Fetch listing data from API
   useEffect(() => {
@@ -53,7 +77,12 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
         }
         
         const data = await response.json();
-        setListing(data);
+        // Ensure projectImages and imagePairs are arrays
+        setListing({
+          ...data,
+          projectImages: Array.isArray(data.projectImages) ? data.projectImages : [],
+          imagePairs: Array.isArray(data.imagePairs) ? data.imagePairs : []
+        });
       } catch (error) {
         console.error('Error fetching listing:', error);
         alert('Failed to load listing');
@@ -65,28 +94,57 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
     fetchListing();
   }, [params.id]);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Auto-save function for basic fields
+  const autoSave = async (updatedListing: Listing, skipDescription = false) => {
+    if (!updatedListing?.id) return;
+
+    setIsAutoSaving(true);
+
+    try {
+      const response = await fetch(`/api/listings/${updatedListing.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...updatedListing,
+          description: skipDescription ? listing?.description : updatedListing.description,
+        }),
+      });
+
+      if (response.ok) {
+        setLastSaved(new Date());
+      }
+    } catch (err) {
+      console.error('Auto-save failed:', err);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
+
+  // Debounced auto-save for basic fields
+  const debouncedAutoSave = useMemo(
+    () => {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return (updatedListing: Listing) => {
+        if (!updatedListing?.id) return;
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          autoSave(updatedListing, true); // Skip description for auto-save
+        }, 1000);
+      };
+    },
+    [listing?.id]
+  );
+
+  // Manual save function for description
+  const handleSaveDescription = async () => {
     if (!listing) return;
 
     setIsSaving(true);
-    
+
     try {
-      const response = await fetch(`/api/listings/${listing.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(listing),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update listing');
-      }
-
-      alert('Listing updated successfully!');
-      router.push('/admin/listings');
-    } catch (error) {
-      console.error('Failed to save listing:', error);
-      alert('Failed to save listing. Please try again.');
+      await autoSave(listing, false); // Include description for manual save
+    } catch (err) {
+      console.error('Failed to save description:', err);
     } finally {
       setIsSaving(false);
     }
