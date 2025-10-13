@@ -132,7 +132,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
         }, 1000);
       };
     },
-    [listing?.id]
+    [listing?.id, autoSave]
   );
 
   // Manual save function for description
@@ -431,12 +431,29 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
               Media & Documents
             </h2>
 
-            <HeroImageManager
-              imageUrl={listing.heroImagePath || ''}
-              onChange={(url) => setListing({ ...listing, heroImagePath: url })}
-              label="Hero Image"
-              description="Main property image"
-              required
+            <ProjectImagesManager
+              images={listing.projectImages}
+              pairs={listing.imagePairs}
+              heroImageUrl={listing.heroImagePath || ''}
+              onImagesChange={(images) => {
+                const updated = { ...listing, projectImages: images };
+                setListing(updated);
+                if (listing?.id) debouncedAutoSave(updated);
+              }}
+              onPairsChange={(pairs) => {
+                const updated = { ...listing, imagePairs: pairs };
+                setListing(updated);
+                if (listing?.id) debouncedAutoSave(updated);
+              }}
+              onHeroImageChange={(url) => {
+                const updated = { ...listing, heroImagePath: url };
+                setListing(updated);
+                if (listing?.id) debouncedAutoSave(updated);
+              }}
+              label="Property Images"
+              description="Upload property images and select a hero image"
+              maxImages={20}
+              maxPairs={5}
             />
 
             <FormField label="Hero Video URL">
