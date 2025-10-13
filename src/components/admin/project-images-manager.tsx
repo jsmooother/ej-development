@@ -61,6 +61,7 @@ export function ProjectImagesManager({
     if (!imageToDelete) return;
     
     const imageToRemove = images.find(img => img.id === imageToDelete);
+    console.log(`🗑️  Attempting to delete image ${imageToDelete.substring(0, 8)}`);
     
     if (imageToRemove?.url) {
       try {
@@ -69,6 +70,7 @@ export function ProjectImagesManager({
         const filePath = url.pathname.split('/storage/v1/object/public/images/')[1];
         
         if (filePath) {
+          console.log(`🗑️  Deleting from storage: ${filePath}`);
           // Delete from Supabase Storage
           const response = await fetch('/api/storage/delete', {
             method: 'DELETE',
@@ -79,18 +81,22 @@ export function ProjectImagesManager({
           });
           
           if (!response.ok) {
-            console.error('Failed to delete file from storage:', await response.text());
+            const errorText = await response.text();
+            console.error('❌ Failed to delete file from storage:', errorText);
           } else {
             console.log('✅ File deleted from storage:', filePath);
           }
+        } else {
+          console.error('❌ Could not extract file path from URL:', imageToRemove.url);
         }
       } catch (error) {
-        console.error('Error deleting file from storage:', error);
+        console.error('❌ Error deleting file from storage:', error);
       }
     }
 
-    // Remove from images
+    // Remove from images array
     const newImages = images.filter(img => img.id !== imageToDelete);
+    console.log(`📤 Calling onImagesChange after delete. Images: ${images.length} → ${newImages.length}`);
     onImagesChange(newImages);
 
     // Remove from any pairs
@@ -99,7 +105,10 @@ export function ProjectImagesManager({
       beforeImageId: pair.beforeImageId === imageToDelete ? undefined : pair.beforeImageId,
       afterImageId: pair.afterImageId === imageToDelete ? undefined : pair.afterImageId
     }));
-    onPairsChange(newPairs);
+    if (pairs.length > 0) {
+      console.log(`📤 Calling onPairsChange after delete. Pairs: ${pairs.length}`);
+      onPairsChange(newPairs);
+    }
     
     // Close the modal
     setImageToDelete(null);
@@ -113,10 +122,12 @@ export function ProjectImagesManager({
         
         if (hasTag) {
           // Remove the tag
-          return {
+          const updated = {
             ...img,
             tags: img.tags.filter(t => t !== tag)
           };
+          console.log(`🏷️  Removed tag "${tag}" from image ${imageId.substring(0, 8)}`, updated.tags);
+          return updated;
         } else {
           // Add the tag, but handle mutual exclusivity for before/after
           let newTags = [...img.tags, tag];
@@ -129,14 +140,18 @@ export function ProjectImagesManager({
             newTags = newTags.filter(t => t !== "before");
           }
           
-        return {
-          ...img,
+          const updated = {
+            ...img,
             tags: newTags
-        };
+          };
+          console.log(`🏷️  Added tag "${tag}" to image ${imageId.substring(0, 8)}`, updated.tags);
+          return updated;
         }
       }
       return img;
     });
+    
+    console.log(`📤 Calling onImagesChange with ${newImages.length} images`);
     onImagesChange(newImages);
   };
 

@@ -100,7 +100,7 @@ export default function ProjectsListPage() {
       const project = projects.find(p => p.id === projectId);
       if (!project) return;
       
-      // Update via the same API endpoint as the edit page
+      // Update via the same API endpoint as the edit page - MUST include all required fields
       const response = await fetch(`/api/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -112,6 +112,8 @@ export default function ProjectsListPage() {
           year: project.year,
           facts: project.facts,
           heroImagePath: project.heroImagePath,
+          projectImages: project.projectImages || [], // CRITICAL: Must include these
+          imagePairs: project.imagePairs || [], // CRITICAL: Must include these
           isPublished: newStatus
         })
       });
@@ -121,12 +123,13 @@ export default function ProjectsListPage() {
         setProjects(prev => 
           prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p)
         );
-        console.log(`Successfully updated project ${projectId} status`);
+        console.log(`✅ Successfully updated project ${projectId} publish status to ${newStatus}`);
       } else {
-        console.error('Failed to update project status');
+        const errorData = await response.json();
+        console.error('❌ Failed to update project status:', errorData);
       }
     } catch (error) {
-      console.error('Error updating project status:', error);
+      console.error('❌ Error updating project status:', error);
     }
   };
 
