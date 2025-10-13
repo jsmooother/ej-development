@@ -63,6 +63,7 @@ export async function PUT(
         projectImages: body.projectImages || [],
         imagePairs: body.imagePairs || [],
         isPublished: body.isPublished,
+        publishedAt: body.isPublished ? new Date() : null,
         updatedAt: new Date(),
       })
       .where(eq(projects.id, params.id))
