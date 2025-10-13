@@ -40,6 +40,8 @@ export function MultiFileImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlInput, setUrlInput] = useState("");
   const [isAddingUrl, setIsAddingUrl] = useState(false);
+  const [previewImage, setPreviewImage] = useState<ProjectImage | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -250,9 +252,44 @@ export function MultiFileImageUpload({
     }
   };
 
-  const handleRemove = (index: number) => {
-    const newImages = images.filter((_, i) => i !== index);
+  const confirmDeleteImage = async () => {
+    if (imageToDelete === null) return;
+    
+    const imageToRemove = images[imageToDelete];
+    
+    if (imageToRemove?.url) {
+      try {
+        // Extract file path from Supabase URL
+        const url = new URL(imageToRemove.url);
+        const filePath = url.pathname.split('/storage/v1/object/public/images/')[1];
+        
+        if (filePath) {
+          // Delete from Supabase Storage
+          const response = await fetch('/api/storage/delete', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ filePath }),
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to delete file from storage:', await response.text());
+          } else {
+            console.log('✅ File deleted from storage:', filePath);
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting file from storage:', error);
+      }
+    }
+    
+    // Remove from images array
+    const newImages = images.filter((_, i) => i !== imageToDelete);
     onChange(newImages);
+    
+    // Close the modal
+    setImageToDelete(null);
   };
 
   const addImageFromUrl = async () => {
@@ -424,7 +461,10 @@ export function MultiFileImageUpload({
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {images.map((image, index) => (
               <div key={image.id} className="relative group">
-                <div className="relative w-full h-24 rounded-lg overflow-hidden bg-gray-100">
+                <div 
+                  className="relative w-full h-24 rounded-lg overflow-hidden bg-gray-100 cursor-pointer"
+                  onClick={() => setPreviewImage(image)}
+                >
                   <Image
                     src={image.url}
                     alt={`Uploaded image ${index + 1}`}
@@ -435,9 +475,12 @@ export function MultiFileImageUpload({
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleRemove(index)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setImageToDelete(index);
+                  }}
                   className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                  title="Remove image"
+                  title="Delete image"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -451,6 +494,95 @@ export function MultiFileImageUpload({
       {error && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* Image Preview Modal */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl">
+              <div className="relative aspect-video w-full bg-gray-100">
+                <Image
+                  src={previewImage.url}
+                  alt="Image preview"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Image Preview</h3>
+                </div>
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImage(null)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const index = images.findIndex(img => img.id === previewImage.id);
+                      if (index !== -1) {
+                        setImageToDelete(index);
+                        setPreviewImage(null);
+                      }
+                    }}
+                    className="px-4 py-2 rounded-lg bg-red-600 text-sm font-medium text-white hover:bg-red-700"
+                  >
+                    Delete Image
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {imageToDelete !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={() => setImageToDelete(null)}
+        >
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Image</h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Are you sure you want to delete this image? This will remove it from storage and cannot be undone.
+            </p>
+            
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setImageToDelete(null)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => confirmDeleteImage()}
+                className="px-4 py-2 rounded-lg bg-red-600 text-sm font-medium text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

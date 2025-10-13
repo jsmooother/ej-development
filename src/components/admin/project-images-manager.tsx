@@ -53,6 +53,7 @@ export function ProjectImagesManager({
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [previewImage, setPreviewImage] = useState<ProjectImage | null>(null);
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
+  const [imageSelectionModal, setImageSelectionModal] = useState<{ type: 'before' | 'after'; onSelect: (imageId: string) => void } | null>(null);
 
   const confirmDeleteImage = async () => {
     if (!imageToDelete) return;
@@ -234,7 +235,7 @@ export function ProjectImagesManager({
           >
             <div className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              1. Upload Images
+              1. Add Image(s)
             </div>
           </button>
           <button
@@ -291,7 +292,7 @@ export function ProjectImagesManager({
         </nav>
       </div>
 
-      {/* Step 1: Upload Images */}
+      {/* Step 1: Add Images */}
       {currentStep === "upload" && (
         <div className="space-y-6">
           <div className="bg-blue-50 rounded-lg p-4">
@@ -603,70 +604,102 @@ export function ProjectImagesManager({
                 </span>
               )}
             </div>
+            
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${pairs.length >= maxPairs ? 'opacity-50 pointer-events-none' : ''}`}>
-              {/* Before Images */}
+              {/* Before Image Selection */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-gray-900">Select Before Image</label>
-                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                  {beforeImages.map((image) => (
-                    <button
-                      key={image.id}
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (selectedImages.length === 0) {
-                          setSelectedImages([image.id]);
-                        } else if (selectedImages[0] === image.id) {
-                          setSelectedImages([]);
+                <label className="text-sm font-medium text-gray-900">Before Image</label>
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 cursor-pointer transition-colors"
+                  onClick={() => {
+                    if (pairs.length < maxPairs) {
+                      setImageSelectionModal({
+                        type: 'before',
+                        onSelect: (imageId) => {
+                          setSelectedImages([imageId]);
+                          setImageSelectionModal(null);
                         }
-                      }}
-                      className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                        selectedImages.includes(image.id)
-                          ? "border-blue-500"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
+                      });
+                    }
+                  }}
+                >
+                  {selectedImages[0] ? (
+                    <div className="relative aspect-video rounded-lg overflow-hidden">
                       <Image
-                        src={image.url}
-                        alt="Before image"
+                        src={images.find(img => img.id === selectedImages[0])?.url || ''}
+                        alt="Selected before image"
                         fill
                         className="object-cover"
                       />
-                    </button>
-                  ))}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedImages([]);
+                        }}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-gray-500">
+                      <Plus className="w-8 h-8 mx-auto mb-2" />
+                      <p className="text-sm">Click to select before image</p>
+                      <p className="text-xs text-gray-400 mt-1">{beforeImages.length} available</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* After Images */}
+              {/* After Image Selection */}
               <div className="space-y-3">
-                <label className="text-sm font-medium text-gray-900">Select After Image</label>
-                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                  {afterImages.map((image) => (
-                    <button
-                      key={image.id}
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (selectedImages.length === 1) {
-                          setSelectedImages([selectedImages[0], image.id]);
-                        } else if (selectedImages[1] === image.id) {
-                          setSelectedImages([selectedImages[0]]);
+                <label className="text-sm font-medium text-gray-900">After Image</label>
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 cursor-pointer transition-colors"
+                  onClick={() => {
+                    if (pairs.length < maxPairs && selectedImages.length > 0) {
+                      setImageSelectionModal({
+                        type: 'after',
+                        onSelect: (imageId) => {
+                          if (imageId !== selectedImages[0]) {
+                            setSelectedImages([selectedImages[0], imageId]);
+                          }
+                          setImageSelectionModal(null);
                         }
-                      }}
-                      className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                        selectedImages.includes(image.id)
-                          ? "border-blue-500"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
+                      });
+                    }
+                  }}
+                >
+                  {selectedImages[1] ? (
+                    <div className="relative aspect-video rounded-lg overflow-hidden">
                       <Image
-                        src={image.url}
-                        alt="After image"
+                        src={images.find(img => img.id === selectedImages[1])?.url || ''}
+                        alt="Selected after image"
                         fill
                         className="object-cover"
                       />
-                    </button>
-                  ))}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedImages(selectedImages.slice(0, 1));
+                        }}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-gray-500">
+                      <Plus className="w-8 h-8 mx-auto mb-2" />
+                      <p className="text-sm">Click to select after image</p>
+                      <p className="text-xs text-gray-400 mt-1">{afterImages.length} available</p>
+                      {selectedImages.length === 0 && (
+                        <p className="text-xs text-amber-500 mt-1">Select a before image first</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -685,6 +718,7 @@ export function ProjectImagesManager({
                     e.preventDefault();
                     if (selectedImages.length === 2 && pairs.length < maxPairs) {
                       createPair(selectedImages[0], selectedImages[1]);
+                      setSelectedImages([]);
                     }
                   }}
                   disabled={pairs.length >= maxPairs}
@@ -890,6 +924,71 @@ export function ProjectImagesManager({
               >
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Selection Modal */}
+      {imageSelectionModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setImageSelectionModal(null)}
+        >
+          <div className="relative max-w-6xl max-h-[90vh] w-full mx-4 bg-white rounded-lg overflow-hidden shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Select {imageSelectionModal.type === 'before' ? 'Before' : 'After'} Image
+              </h3>
+              <button
+                onClick={() => setImageSelectionModal(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-6 max-h-96 overflow-y-auto">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {(imageSelectionModal.type === 'before' ? beforeImages : afterImages).map((image) => (
+                  <button
+                    key={image.id}
+                    type="button"
+                    onClick={() => {
+                      // Don't allow selecting the same image for before/after
+                      if (imageSelectionModal.type === 'after' && image.id === selectedImages[0]) {
+                        return;
+                      }
+                      imageSelectionModal.onSelect(image.id);
+                    }}
+                    disabled={imageSelectionModal.type === 'after' && image.id === selectedImages[0]}
+                    className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                      imageSelectionModal.type === 'after' && image.id === selectedImages[0]
+                        ? 'border-gray-300 opacity-50 cursor-not-allowed'
+                        : 'border-gray-200 hover:border-blue-500 hover:shadow-lg cursor-pointer'
+                    }`}
+                  >
+                    <Image
+                      src={image.url}
+                      alt={`${imageSelectionModal.type} image`}
+                      fill
+                      className="object-cover"
+                    />
+                    {imageSelectionModal.type === 'after' && image.id === selectedImages[0] && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <span className="text-white text-xs font-medium">Already selected as before</span>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              {(imageSelectionModal.type === 'before' ? beforeImages : afterImages).length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No {imageSelectionModal.type} images available.</p>
+                  <p className="text-sm mt-1">Tag some images as "{imageSelectionModal.type}" in the Tag & Organize step first.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
