@@ -12,7 +12,23 @@ export async function GET() {
       .from(enquiries)
       .orderBy(desc(enquiries.createdAt));
     
-    return NextResponse.json(allEnquiries);
+    // Calculate recent enquiries (within last 7 days) as "unanswered"
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const recentEnquiries = allEnquiries.filter(enquiry => 
+      new Date(enquiry.createdAt) > sevenDaysAgo
+    );
+    
+    // Return both the full list and summary data
+    return NextResponse.json({
+      enquiries: allEnquiries,
+      summary: {
+        total: allEnquiries.length,
+        recent: recentEnquiries.length,
+        recentDays: 7
+      }
+    });
   } catch (error) {
     console.error('Error fetching enquiries:', error);
     return NextResponse.json(

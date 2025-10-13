@@ -42,7 +42,8 @@ export default function EnquiriesPage() {
       }
       
       const data = await response.json();
-      setEnquiries(data);
+      // Handle both old format (array) and new format (object with enquiries array)
+      setEnquiries(Array.isArray(data) ? data : data.enquiries || []);
     } catch (error) {
       console.error('Failed to fetch enquiries:', error);
       setEnquiries([]);

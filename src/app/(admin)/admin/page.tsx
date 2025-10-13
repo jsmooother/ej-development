@@ -36,6 +36,7 @@ export default async function AdminDashboardPage() {
     let projectsData = [];
     let editorialsData = [];
     let enquiriesData = [];
+    let enquiriesSummary = { total: 0, recent: 0, recentDays: 7 };
     
     if (projectsResponse.ok) {
       projectsData = await projectsResponse.json();
@@ -58,7 +59,15 @@ export default async function AdminDashboardPage() {
     }
     
     if (enquiriesResponse.ok) {
-      enquiriesData = await enquiriesResponse.json();
+      const enquiriesResponseData = await enquiriesResponse.json();
+      // Handle both old format (array) and new format (object with summary)
+      if (Array.isArray(enquiriesResponseData)) {
+        enquiriesData = enquiriesResponseData;
+        enquiriesSummary = { total: enquiriesResponseData.length, recent: 0, recentDays: 7 };
+      } else {
+        enquiriesData = enquiriesResponseData.enquiries || [];
+        enquiriesSummary = enquiriesResponseData.summary || { total: 0, recent: 0, recentDays: 7 };
+      }
     } else {
       console.error('❌ Enquiries API failed:', {
         status: enquiriesResponse.status,
@@ -167,6 +176,10 @@ export default async function AdminDashboardPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             }
+            trend={enquiriesSummary.recent > 0 ? { 
+              value: `${enquiriesSummary.recent} unanswered`, 
+              positive: false 
+            } : undefined}
           />
         </div>
 
