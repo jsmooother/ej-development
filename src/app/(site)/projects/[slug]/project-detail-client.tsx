@@ -59,14 +59,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     };
   }).filter((pair): pair is { id: string; title: string; before: ProjectImage; after: ProjectImage } => pair !== null) || []);
 
-  // Get all gallery images (images not used in pairs)
+  // Get all gallery images (images tagged as "gallery")
   const galleryImages = project.projectImages.filter(img => 
-    !project.imagePairs?.some(pair => 
-      pair.beforeImageId === img.id || pair.afterImageId === img.id
-    )
+    img.tags.includes('gallery')
   );
 
-  // Combine all images for lightbox
+  // Combine all images for lightbox (before/after pairs + gallery images)
   const allImages = [
     ...beforeAfterPairs.flatMap(pair => [pair.before, pair.after]),
     ...galleryImages
