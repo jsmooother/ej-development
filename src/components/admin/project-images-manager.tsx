@@ -54,6 +54,7 @@ export function ProjectImagesManager({
   const [previewImage, setPreviewImage] = useState<ProjectImage | null>(null);
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [imageSelectionModal, setImageSelectionModal] = useState<{ type: 'before' | 'after'; onSelect: (imageId: string) => void } | null>(null);
+  const [draggedImage, setDraggedImage] = useState<string | null>(null);
 
   const confirmDeleteImage = async () => {
     if (!imageToDelete) return;
@@ -127,10 +128,10 @@ export function ProjectImagesManager({
             newTags = newTags.filter(t => t !== "before");
           }
           
-          return {
-            ...img,
+        return {
+          ...img,
             tags: newTags
-          };
+        };
         }
       }
       return img;
@@ -188,6 +189,47 @@ export function ProjectImagesManager({
       case "after": return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case "gallery": return "bg-blue-50 text-blue-700 border-blue-200";
     }
+  };
+
+  // Drag and drop functions
+  const handleDragStart = (e: React.DragEvent, imageId: string) => {
+    setDraggedImage(imageId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', imageId);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetImageId: string) => {
+    e.preventDefault();
+    
+    if (!draggedImage || draggedImage === targetImageId) {
+      setDraggedImage(null);
+      return;
+    }
+
+    const draggedIndex = images.findIndex(img => img.id === draggedImage);
+    const targetIndex = images.findIndex(img => img.id === targetImageId);
+    
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedImage(null);
+      return;
+    }
+
+    // Create new array with reordered images
+    const newImages = [...images];
+    const [draggedItem] = newImages.splice(draggedIndex, 1);
+    newImages.splice(targetIndex, 0, draggedItem);
+    
+    onImagesChange(newImages);
+    setDraggedImage(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedImage(null);
   };
 
   const beforeImages = images.filter(img => img.tags.includes("before"));
@@ -306,9 +348,9 @@ export function ProjectImagesManager({
             onChange={onImagesChange}
             placeholder="Choose multiple images or drag and drop"
             maxImages={maxImages}
-            maxSize={10}
-            acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
-          />
+              maxSize={10}
+              acceptedTypes={["image/jpeg", "image/png", "image/webp", "image/avif"]}
+            />
 
           {/* Continue Button */}
           {images.length > 0 && (
@@ -340,16 +382,16 @@ export function ProjectImagesManager({
           {images.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 mb-4">No images uploaded yet.</p>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
                   setCurrentStep("upload");
-                }}
+                  }}
                 className="text-blue-600 hover:text-blue-800 font-medium"
-              >
+                >
                 ← Go back to upload images
-              </button>
+                </button>
             </div>
           ) : (
             <>
@@ -363,7 +405,7 @@ export function ProjectImagesManager({
                   <span className="font-medium">Gallery: <span className="font-normal">{galleryImages.length}</span></span>
                   <span className="font-medium">Pairs: <span className="font-normal">{pairs.length}</span></span>
                 </div>
-              </div>
+            </div>
 
               {/* Hero Image Selection Grid */}
               <div className="space-y-4">
@@ -400,20 +442,6 @@ export function ProjectImagesManager({
                             </div>
                           </div>
                         )}
-                        
-                        {/* Delete Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setImageToDelete(image.id);
-                          }}
-                          className="absolute top-2 right-2 rounded-full bg-red-500 p-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10"
-                          title="Delete image"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
                         
                         {/* Tags indicator */}
                         <div className="absolute top-1 left-1 flex gap-1">
@@ -471,8 +499,8 @@ export function ProjectImagesManager({
       {currentStep === "organize" && (
         <div className="space-y-6">
           <div className="bg-green-50 rounded-lg p-4">
-            <h4 className="text-lg font-medium text-green-900 mb-2">Tag Your Images</h4>
-            <p className="text-sm text-green-800">Tag images as Before, After, or Gallery. Images can have multiple tags.</p>
+            <h4 className="text-lg font-medium text-green-900 mb-2">Tag & Organize Your Images</h4>
+            <p className="text-sm text-green-800">Tag images as Before, After, or Gallery. Drag and drop to reorder images. Images can have multiple tags.</p>
           </div>
 
           {images.length === 0 ? (
@@ -491,8 +519,34 @@ export function ProjectImagesManager({
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-6">
-              {images.map((image) => (
-                <div key={image.id} className="relative aspect-square overflow-hidden rounded-lg border border-gray-200 group">
+              {images.map((image, index) => (
+                <div 
+                  key={image.id} 
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, image.id)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, image.id)}
+                  onDragEnd={handleDragEnd}
+                  className={`relative aspect-square overflow-hidden rounded-lg border border-gray-200 group transition-all duration-200 ${
+                    draggedImage === image.id 
+                      ? 'opacity-50 scale-95 shadow-lg' 
+                      : draggedImage && 'hover:border-blue-400'
+                  }`}
+                >
+                  {/* Drag Handle */}
+                  <div className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="bg-black/50 rounded p-1 text-white cursor-move">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Order Number */}
+                  <div className="absolute top-2 right-2 z-10 bg-black/70 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    {index + 1}
+                  </div>
+
                   <Image
                     src={image.url}
                     alt="Project image"
@@ -502,7 +556,7 @@ export function ProjectImagesManager({
                   />
                   
                   {/* Active Tags */}
-                  <div className="absolute top-2 left-2 flex gap-1">
+                  <div className="absolute top-2 left-12 flex gap-1">
                     {image.tags.map((tag) => (
                       <span
                         key={tag}
@@ -595,7 +649,7 @@ export function ProjectImagesManager({
           </div>
 
           {/* Create New Pair */}
-          <div className="space-y-4">
+            <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h5 className="text-sm font-medium text-gray-900">Create New Pair</h5>
               {pairs.length >= maxPairs && (
@@ -607,7 +661,7 @@ export function ProjectImagesManager({
             
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${pairs.length >= maxPairs ? 'opacity-50 pointer-events-none' : ''}`}>
               {/* Before Image Selection */}
-              <div className="space-y-3">
+                <div className="space-y-3">
                 <label className="text-sm font-medium text-gray-900">Before Image</label>
                 <div 
                   className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 cursor-pointer transition-colors"
@@ -635,7 +689,7 @@ export function ProjectImagesManager({
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedImages([]);
+                            setSelectedImages([]);
                         }}
                         className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
                       >
@@ -649,11 +703,11 @@ export function ProjectImagesManager({
                       <p className="text-xs text-gray-400 mt-1">{beforeImages.length} available</p>
                     </div>
                   )}
+                  </div>
                 </div>
-              </div>
 
               {/* After Image Selection */}
-              <div className="space-y-3">
+                <div className="space-y-3">
                 <label className="text-sm font-medium text-gray-900">After Image</label>
                 <div 
                   className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 cursor-pointer transition-colors"
@@ -700,24 +754,24 @@ export function ProjectImagesManager({
                       )}
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {selectedImages.length === 2 && (
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  placeholder="Pair label (e.g., Kitchen Renovation)"
-                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              {selectedImages.length === 2 && (
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    placeholder="Pair label (e.g., Kitchen Renovation)"
+                    className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   disabled={pairs.length >= maxPairs}
-                />
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
                     if (selectedImages.length === 2 && pairs.length < maxPairs) {
-                      createPair(selectedImages[0], selectedImages[1]);
+                        createPair(selectedImages[0], selectedImages[1]);
                       setSelectedImages([]);
                     }
                   }}
@@ -727,12 +781,12 @@ export function ProjectImagesManager({
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-700'
                   }`}
-                >
-                  Create Pair
-                </button>
-              </div>
-            )}
-          </div>
+                  >
+                    Create Pair
+                  </button>
+                </div>
+              )}
+            </div>
 
           {/* Existing Pairs */}
           {pairs.length > 0 && (
