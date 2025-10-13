@@ -31,6 +31,7 @@ interface ProjectDetailClientProps {
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [beforeAfterExpanded, setBeforeAfterExpanded] = useState(false);
 
   // Auto-focus the carousel when it opens for immediate keyboard navigation
   useEffect(() => {
@@ -143,13 +144,61 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
         </div>
       </section>
 
-      {/* Before/After Pairs */}
+      {/* Gallery */}
+      {galleryImages.length > 0 && (
+        <section className="mx-auto max-w-6xl px-6">
+          <div className="space-y-8">
+            <h2 className="text-center text-3xl font-serif">Gallery</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {galleryImages.map((image, index) => (
+                <div key={image.id} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                  <Image
+                    src={image.url}
+                    alt={`${project.title} - Gallery ${index + 1}`}
+                    fill
+                    className="object-cover cursor-pointer transition-transform hover:scale-105"
+                    onClick={() => openLightbox(allImages.findIndex(img => img?.id === image.id))}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Before/After Pairs - Collapsible */}
       {beforeAfterPairs.length > 0 && (
         <section className="mx-auto max-w-6xl px-6">
-          <div className="space-y-16">
-            <h2 className="text-center text-3xl font-serif">Transformation</h2>
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-3xl font-serif">Transformation</h2>
+              <button
+                onClick={() => setBeforeAfterExpanded(!beforeAfterExpanded)}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-sm font-medium transition-colors hover:bg-muted"
+                aria-expanded={beforeAfterExpanded}
+                aria-label={beforeAfterExpanded ? "Collapse before/after images" : "Expand all before/after images"}
+              >
+                {beforeAfterExpanded ? (
+                  <>
+                    <span>Show Less</span>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    <span>View All ({beforeAfterPairs.length})</span>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            </div>
+
             <div className="space-y-24">
-              {beforeAfterPairs.map((pair, index) => (
+              {/* First pair - always visible */}
+              {beforeAfterPairs.slice(0, 1).map((pair) => (
                 <div key={pair.id} className="space-y-6">
                   <h3 className="text-center text-xl font-medium">{pair.title}</h3>
                   <div className="grid gap-6 md:grid-cols-2">
@@ -180,26 +229,37 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* Gallery */}
-      {galleryImages.length > 0 && (
-        <section className="mx-auto max-w-6xl px-6">
-          <div className="space-y-8">
-            <h2 className="text-center text-3xl font-serif">Gallery</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {galleryImages.map((image, index) => (
-                <div key={image.id} className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                  <Image
-                    src={image.url}
-                    alt={`${project.title} - Gallery ${index + 1}`}
-                    fill
-                    className="object-cover cursor-pointer transition-transform hover:scale-105"
-                    onClick={() => openLightbox(allImages.findIndex(img => img?.id === image.id))}
-                  />
+              {/* Remaining pairs - collapsible */}
+              {beforeAfterExpanded && beforeAfterPairs.slice(1).map((pair) => (
+                <div key={pair.id} className="space-y-6">
+                  <h3 className="text-center text-xl font-medium">{pair.title}</h3>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">Before</h4>
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                        <Image
+                          src={pair.before.url}
+                          alt={`${pair.title} - Before`}
+                          fill
+                          className="object-cover cursor-pointer transition-transform hover:scale-105"
+                          onClick={() => openLightbox(allImages.findIndex(img => img?.id === pair.before.id))}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <h4 className="text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground">After</h4>
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                        <Image
+                          src={pair.after.url}
+                          alt={`${pair.title} - After`}
+                          fill
+                          className="object-cover cursor-pointer transition-transform hover:scale-105"
+                          onClick={() => openLightbox(allImages.findIndex(img => img?.id === pair.after.id))}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
