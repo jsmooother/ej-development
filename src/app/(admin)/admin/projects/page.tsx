@@ -136,9 +136,12 @@ export default function ProjectsListPage() {
 
       if (response.ok) {
         // Update local state
-        setProjects(prev => 
-          prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p)
-        );
+        setProjects(prev => {
+          const updated = prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p);
+          console.log(`🔄 Updated local state for ${projectId}: ${newStatus}`);
+          console.log('📊 All projects after update:', updated.map(p => ({ id: p.id, title: p.title, isPublished: p.isPublished })));
+          return updated;
+        });
         console.log(`✅ Successfully updated project ${projectId} publish status to ${newStatus}`);
       } else {
         const errorData = await response.json();

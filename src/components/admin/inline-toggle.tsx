@@ -13,15 +13,11 @@ export function InlineToggle({ id, initialChecked, onToggle }: InlineToggleProps
   const [checked, setChecked] = useState(initialChecked);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Sync internal state with prop changes
+  // Always sync with the prop - this is the source of truth
   useEffect(() => {
+    console.log(`🔄 InlineToggle sync for ${id}: ${checked} → ${initialChecked}`);
     setChecked(initialChecked);
-  }, [initialChecked]);
-
-  // Also sync when the component mounts or when the prop changes significantly
-  useEffect(() => {
-    setChecked(initialChecked);
-  }, [id, initialChecked]); // Re-sync when ID changes (force re-render) or initialChecked changes
+  }, [initialChecked, id]);
 
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation when clicking toggle
@@ -34,8 +30,9 @@ export function InlineToggle({ id, initialChecked, onToggle }: InlineToggleProps
     
     try {
       await onToggle(newValue);
-      setChecked(newValue);
-      console.log(`✅ Toggle updated for ${id}: ${newValue}`);
+      // Don't update local state here - let the parent component update the prop
+      // The useEffect will sync the state when the parent updates initialChecked
+      console.log(`✅ Toggle API call completed for ${id}: ${newValue}`);
     } catch (error) {
       console.error("Failed to update status:", error);
       alert("Failed to update status");
