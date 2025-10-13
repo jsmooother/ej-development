@@ -5,6 +5,20 @@ import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { InlineToggle } from "@/components/admin/inline-toggle";
 
+interface ProjectImage {
+  id: string;
+  url: string;
+  tags: string[];
+  caption?: string;
+}
+
+interface ImagePair {
+  id: string;
+  label: string;
+  beforeImageId?: string;
+  afterImageId?: string;
+}
+
 interface Project {
   id: string;
   slug: string;
@@ -14,6 +28,8 @@ interface Project {
   year: number | null;
   facts: Record<string, string | number | null>;
   heroImagePath: string;
+  projectImages: ProjectImage[];
+  imagePairs: ImagePair[];
   isPublished: boolean;
   publishedAt: string | null;
   createdAt: string;
