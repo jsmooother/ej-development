@@ -286,6 +286,7 @@ export default function ProjectsListPage() {
                       <div className="ml-4 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                           <InlineToggle
+                            key={`${project.id}-${project.isPublished}`} // Force re-render when status changes
                             id={project.id}
                             initialChecked={project.isPublished}
                             onToggle={(checked) => handleTogglePublish(project.id, checked)}

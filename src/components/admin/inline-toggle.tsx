@@ -18,9 +18,16 @@ export function InlineToggle({ id, initialChecked, onToggle }: InlineToggleProps
     setChecked(initialChecked);
   }, [initialChecked]);
 
+  // Also sync when the component mounts or when the prop changes significantly
+  useEffect(() => {
+    setChecked(initialChecked);
+  }, [id, initialChecked]); // Re-sync when ID changes (force re-render) or initialChecked changes
+
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation when clicking toggle
     e.stopPropagation(); // Stop event from bubbling to parent link
+    
+    console.log(`🔄 Toggle clicked for ${id}: ${checked} → ${!checked}`);
     
     setIsUpdating(true);
     const newValue = !checked;
@@ -28,6 +35,7 @@ export function InlineToggle({ id, initialChecked, onToggle }: InlineToggleProps
     try {
       await onToggle(newValue);
       setChecked(newValue);
+      console.log(`✅ Toggle updated for ${id}: ${newValue}`);
     } catch (error) {
       console.error("Failed to update status:", error);
       alert("Failed to update status");
