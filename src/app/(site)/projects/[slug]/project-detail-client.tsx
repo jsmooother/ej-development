@@ -64,6 +64,14 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     img.tags.includes('gallery')
   );
 
+  // Debug logging
+  console.log('🔍 Project images debug:', {
+    totalImages: project.projectImages.length,
+    galleryImages: galleryImages.length,
+    imageTags: project.projectImages.map(img => ({ id: img.id, tags: img.tags })),
+    beforeAfterPairs: beforeAfterPairs.length
+  });
+
   // Combine all images for lightbox (before/after pairs + gallery images)
   const allImages = [
     ...beforeAfterPairs.flatMap(pair => [pair.before, pair.after]),
