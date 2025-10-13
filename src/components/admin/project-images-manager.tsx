@@ -559,117 +559,116 @@ export function ProjectImagesManager({
           </div>
 
           {/* Create New Pair */}
-          {pairs.length < maxPairs && (
-            <div className="space-y-4">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
               <h5 className="text-sm font-medium text-gray-900">Create New Pair</h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Before Images */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-900">Select Before Image</label>
-                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                    {beforeImages.map((image) => (
-                      <button
-                        key={image.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (selectedImages.length === 0) {
-                            setSelectedImages([image.id]);
-                          } else if (selectedImages[0] === image.id) {
-                            setSelectedImages([]);
-                          }
-                        }}
-                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                          selectedImages.includes(image.id)
-                            ? "border-blue-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <Image
-                          src={image.url}
-                          alt="Before image"
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* After Images */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-900">Select After Image</label>
-                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                    {afterImages.map((image) => (
-                      <button
-                        key={image.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (selectedImages.length === 1) {
-                            setSelectedImages([selectedImages[0], image.id]);
-                          } else if (selectedImages[1] === image.id) {
-                            setSelectedImages([selectedImages[0]]);
-                          }
-                        }}
-                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                          selectedImages.includes(image.id)
-                            ? "border-blue-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <Image
-                          src={image.url}
-                          alt="After image"
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
+              {pairs.length >= maxPairs && (
+                <span className="text-xs text-amber-600 font-medium">
+                  Maximum pairs reached ({maxPairs})
+                </span>
+              )}
+            </div>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${pairs.length >= maxPairs ? 'opacity-50 pointer-events-none' : ''}`}>
+              {/* Before Images */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-900">Select Before Image</label>
+                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                  {beforeImages.map((image) => (
+                    <button
+                      key={image.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (selectedImages.length === 0) {
+                          setSelectedImages([image.id]);
+                        } else if (selectedImages[0] === image.id) {
+                          setSelectedImages([]);
+                        }
+                      }}
+                      className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
+                        selectedImages.includes(image.id)
+                          ? "border-blue-500"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <Image
+                        src={image.url}
+                        alt="Before image"
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {selectedImages.length === 2 && (
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder="Pair label (e.g., Kitchen Renovation)"
-                    className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (selectedImages.length === 2) {
-                        createPair(selectedImages[0], selectedImages[1]);
-                      }
-                    }}
-                    className="rounded-lg bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 transition-colors"
-                  >
-                    Create Pair
-                  </button>
+              {/* After Images */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-900">Select After Image</label>
+                <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+                  {afterImages.map((image) => (
+                    <button
+                      key={image.id}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (selectedImages.length === 1) {
+                          setSelectedImages([selectedImages[0], image.id]);
+                        } else if (selectedImages[1] === image.id) {
+                          setSelectedImages([selectedImages[0]]);
+                        }
+                      }}
+                      className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
+                        selectedImages.includes(image.id)
+                          ? "border-blue-500"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <Image
+                        src={image.url}
+                        alt="After image"
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
-          )}
 
-          {/* Existing Pairs */}
-          {pairs.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
+            {selectedImages.length === 2 && (
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="Pair label (e.g., Kitchen Renovation)"
+                  className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  disabled={pairs.length >= maxPairs}
+                />
                 <button
                   type="button"
                   onClick={(e) => {
                     e.preventDefault();
-                    renumberAllPairs();
+                    if (selectedImages.length === 2 && pairs.length < maxPairs) {
+                      createPair(selectedImages[0], selectedImages[1]);
+                    }
                   }}
-                  className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  disabled={pairs.length >= maxPairs}
+                  className={`rounded-lg px-4 py-3 text-sm font-medium text-white transition-colors ${
+                    pairs.length >= maxPairs
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
                 >
-                  Renumber Pairs
+                  Create Pair
                 </button>
               </div>
+            )}
+          </div>
+
+          {/* Existing Pairs */}
+          {pairs.length > 0 && (
+            <div className="space-y-4">
+              <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {pairs.map((pair) => {
                   const beforeImage = getImageById(pair.beforeImageId || "");
@@ -735,7 +734,7 @@ export function ProjectImagesManager({
             </div>
           )}
 
-          <div className="flex justify-between">
+          <div className="flex justify-start">
             <button
               type="button"
               onClick={(e) => {
@@ -746,9 +745,6 @@ export function ProjectImagesManager({
             >
               ← Back to Tag & Organize
             </button>
-            <div className="text-sm text-gray-500">
-              Workflow complete! Your images are organized.
-            </div>
           </div>
         </div>
       )}
