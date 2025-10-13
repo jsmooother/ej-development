@@ -118,9 +118,13 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
       console.log('💾 Auto-saving project:', {
         id: updatedProject.id,
         title: updatedProject.title,
+        summary: updatedProject.summary,
+        year: updatedProject.year,
+        facts: updatedProject.facts,
         projectImagesCount: updatedProject.projectImages?.length || 0,
         imagePairsCount: updatedProject.imagePairs?.length || 0,
         skipContent,
+        fullPayload: payload,
       });
 
       const response = await fetch(`/api/projects/${updatedProject.id}`, {
@@ -286,6 +290,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                   <Input
                     value={project.title}
                     onChange={(e) => {
+                      console.log('📝 Title changed:', e.target.value);
                       const updated = { ...project, title: e.target.value };
                       setProject(updated);
                       if (project?.id) debouncedAutoSave(updated);
@@ -319,6 +324,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 <Input
                   value={project.summary}
                   onChange={(e) => {
+                    console.log('📝 Summary changed:', e.target.value);
                     const updated = { ...project, summary: e.target.value };
                     setProject(updated);
                     if (project?.id) debouncedAutoSave(updated);
@@ -433,29 +439,6 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          {/* Publishing Status - Read Only */}
-          <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Publishing Status</h2>
-            <div className="flex items-center gap-3">
-              <div className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
-                project.isPublished 
-                  ? 'bg-green-50 border border-green-200' 
-                  : 'bg-gray-50 border border-gray-200'
-              }`}>
-                <div className={`h-2 w-2 rounded-full ${
-                  project.isPublished ? 'bg-green-500' : 'bg-gray-400'
-                }`}></div>
-                <span className={`text-sm font-medium ${
-                  project.isPublished ? 'text-green-700' : 'text-gray-600'
-                }`}>
-                  {project.isPublished ? 'Published' : 'Draft'}
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Manage publishing status from the Projects list page
-              </p>
-            </div>
-          </div>
 
           {/* Actions */}
           <div className="flex items-center justify-between rounded-2xl border border-border/50 bg-card p-6">
