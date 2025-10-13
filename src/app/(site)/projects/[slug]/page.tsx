@@ -33,30 +33,47 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
   useEffect(() => {
     async function fetchProject() {
       try {
+        console.log('🔍 Fetching project for slug:', params.slug);
+        
         // First, get the list of projects to find the ID by slug
         const listResponse = await fetch('/api/projects');
+        console.log('📊 Projects API response status:', listResponse.status);
+        
         if (!listResponse.ok) {
+          console.error('❌ Projects API failed:', listResponse.status, listResponse.statusText);
           setProject(null);
           return;
         }
+        
         const projects = await listResponse.json();
+        console.log('📊 All projects:', projects.length);
+        console.log('📊 Looking for slug:', params.slug);
+        
         const foundProject = projects.find((p: any) => p.slug === params.slug && p.isPublished);
+        console.log('📊 Found project:', foundProject ? { id: foundProject.id, title: foundProject.title, slug: foundProject.slug, isPublished: foundProject.isPublished } : 'NOT FOUND');
         
         if (!foundProject) {
+          console.error('❌ Project not found or not published');
           setProject(null);
           return;
         }
         
         // Now fetch the full project data including images
+        console.log('🔍 Fetching full project data for ID:', foundProject.id);
         const response = await fetch(`/api/projects/${foundProject.id}`);
+        console.log('📊 Project detail API response status:', response.status);
+        
         if (!response.ok) {
+          console.error('❌ Project detail API failed:', response.status, response.statusText);
           setProject(null);
           return;
         }
+        
         const data = await response.json();
+        console.log('📊 Project detail data:', data.success ? 'SUCCESS' : 'FAILED');
         setProject(data.success ? data.project : null);
       } catch (error) {
-        console.error('Error fetching project:', error);
+        console.error('❌ Error fetching project:', error);
         setProject(null);
       } finally {
         setIsLoading(false);
