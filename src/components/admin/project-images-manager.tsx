@@ -52,7 +52,36 @@ export function ProjectImagesManager({
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
-  const removeImage = (imageId: string) => {
+  const removeImage = async (imageId: string) => {
+    const imageToRemove = images.find(img => img.id === imageId);
+    
+    if (imageToRemove?.url) {
+      try {
+        // Extract file path from Supabase URL
+        const url = new URL(imageToRemove.url);
+        const filePath = url.pathname.split('/storage/v1/object/public/images/')[1];
+        
+        if (filePath) {
+          // Delete from Supabase Storage
+          const response = await fetch('/api/storage/delete', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ filePath }),
+          });
+          
+          if (!response.ok) {
+            console.error('Failed to delete file from storage:', await response.text());
+          } else {
+            console.log('✅ File deleted from storage:', filePath);
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting file from storage:', error);
+      }
+    }
+
     // Remove from images
     const newImages = images.filter(img => img.id !== imageId);
     onImagesChange(newImages);

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { StatCard } from "@/components/admin/stat-card";
-import { StorageDashboard } from "@/components/admin/storage-dashboard";
+import { StorageStatusIndicator } from "@/components/admin/storage-status-indicator";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = 'force-no-store';
@@ -94,9 +94,9 @@ export default async function AdminDashboardPage() {
     postsCount = Array.isArray(editorialsData) ? editorialsData.length : 0;
     enquiriesCount = Array.isArray(enquiriesData) ? enquiriesData.length : 0;
     
-    // Get recent projects (published only)
+    // Get recent projects (all projects, sorted by updatedAt)
     recentProjects = projectsData
-      .filter((project: any) => project.isPublished)
+      .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 3)
       .map((project: any) => ({
         id: project.id,
@@ -105,9 +105,9 @@ export default async function AdminDashboardPage() {
         isPublished: project.isPublished
       }));
     
-    // Get recent posts (published only)
+    // Get recent posts (all editorials, sorted by updatedAt)
     recentPosts = editorialsData
-      .filter((post: any) => post.isPublished)
+      .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 3)
       .map((post: any) => ({
         id: post.id,
@@ -137,6 +137,7 @@ export default async function AdminDashboardPage() {
       <AdminHeader 
         title="Dashboard" 
         description="Welcome back! Here's an overview of your content."
+        rightContent={<StorageStatusIndicator />}
       />
 
       <div className="p-8">
@@ -184,10 +185,6 @@ export default async function AdminDashboardPage() {
           />
         </div>
 
-        {/* Storage Dashboard */}
-        <div className="mt-8">
-          <StorageDashboard />
-        </div>
 
         {/* Recent Activity */}
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
