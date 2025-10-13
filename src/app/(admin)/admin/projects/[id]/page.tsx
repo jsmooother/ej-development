@@ -397,22 +397,25 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 onImagesChange={(images) => {
                   const updated = { ...project, projectImages: images };
                   setProject(updated);
-                  if (project?.id) debouncedAutoSave(updated);
+                  // Use immediate save for images (no debounce) to prevent data loss on reload
+                  if (project?.id) autoSave(updated, true);
                 }}
                 onPairsChange={(pairs) => {
                   const updated = { ...project, imagePairs: pairs };
                   setProject(updated);
-                  if (project?.id) debouncedAutoSave(updated);
+                  // Use immediate save for pairs (no debounce) to prevent data loss on reload
+                  if (project?.id) autoSave(updated, true);
                 }}
                 onHeroImageChange={(url) => {
                   const updated = { ...project, heroImagePath: url };
                   setProject(updated);
-                  if (project?.id) debouncedAutoSave(updated);
+                  // Use immediate save for hero image (no debounce)
+                  if (project?.id) autoSave(updated, true);
                 }}
                 label="Upload & Organize Images"
                 description="Upload images, tag them as before/after/gallery, and create pairs."
                 maxImages={30}
-                maxPairs={10}
+                maxPairs={8}
               />
             </div>
           </div>
