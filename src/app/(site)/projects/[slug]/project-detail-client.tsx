@@ -48,16 +48,17 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const getImageById = (imageId: string) => project?.projectImages?.find(img => img.id === imageId);
   
   // Create proper before/after pairs from imagePairs data
-  const beforeAfterPairs = project?.imagePairs?.map((pair: any) => {
+  const beforeAfterPairs = (project?.imagePairs?.map((pair: any) => {
     const beforeImage = getImageById(pair.beforeImageId);
     const afterImage = getImageById(pair.afterImageId);
+    if (!beforeImage || !afterImage) return null;
     return {
       id: pair.id,
       title: pair.title || 'Before & After',
       before: beforeImage,
       after: afterImage
     };
-  }).filter(pair => pair.before && pair.after) || [];
+  }).filter((pair): pair is { id: string; title: string; before: ProjectImage; after: ProjectImage } => pair !== null) || []);
 
   // Get all gallery images (images not in pairs)
   const galleryImages = project?.projectImages?.filter(img => 
