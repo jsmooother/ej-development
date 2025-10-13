@@ -13,6 +13,7 @@ export default async function AdminDashboardPage() {
   let projectsCount = 0;
   let postsCount = 0;
   let enquiriesCount = 0;
+  let enquiriesSummary = { total: 0, recent: 0, recentDays: 7 };
   let recentProjects: any[] = [];
   let recentPosts: any[] = [];
 
@@ -36,7 +37,6 @@ export default async function AdminDashboardPage() {
     let projectsData = [];
     let editorialsData = [];
     let enquiriesData = [];
-    let enquiriesSummary = { total: 0, recent: 0, recentDays: 7 };
     
     if (projectsResponse.ok) {
       projectsData = await projectsResponse.json();
