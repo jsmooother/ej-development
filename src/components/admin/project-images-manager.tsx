@@ -55,6 +55,7 @@ export function ProjectImagesManager({
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [imageSelectionModal, setImageSelectionModal] = useState<{ type: 'before' | 'after'; onSelect: (imageId: string) => void } | null>(null);
   const [draggedImage, setDraggedImage] = useState<string | null>(null);
+  const [draggedPair, setDraggedPair] = useState<string | null>(null);
 
   const confirmDeleteImage = async () => {
     if (!imageToDelete) return;
@@ -230,6 +231,53 @@ export function ProjectImagesManager({
 
   const handleDragEnd = () => {
     setDraggedImage(null);
+  };
+
+  // Pair drag and drop functions
+  const handlePairDragStart = (e: React.DragEvent, pairId: string) => {
+    setDraggedPair(pairId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', pairId);
+  };
+
+  const handlePairDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handlePairDrop = (e: React.DragEvent, targetPairId: string) => {
+    e.preventDefault();
+    
+    if (!draggedPair || draggedPair === targetPairId) {
+      setDraggedPair(null);
+      return;
+    }
+
+    const draggedIndex = pairs.findIndex(pair => pair.id === draggedPair);
+    const targetIndex = pairs.findIndex(pair => pair.id === targetPairId);
+    
+    if (draggedIndex === -1 || targetIndex === -1) {
+      setDraggedPair(null);
+      return;
+    }
+
+    // Create new array with reordered pairs
+    const newPairs = [...pairs];
+    const [draggedItem] = newPairs.splice(draggedIndex, 1);
+    newPairs.splice(targetIndex, 0, draggedItem);
+    
+    // Renumber all pairs after reordering
+    const renumberedPairs = newPairs.map((pair, index) => ({
+      ...pair,
+      label: `Before & After ${index + 1}`
+    }));
+    
+    onPairsChange(renumberedPairs);
+    setDraggedPair(null);
+  };
+
+  const handlePairDragEnd = () => {
+    setDraggedPair(null);
   };
 
   const beforeImages = images.filter(img => img.tags.includes("before"));
@@ -798,7 +846,19 @@ export function ProjectImagesManager({
                   const afterImage = getImageById(pair.afterImageId || "");
                   
                   return (
-                    <div key={pair.id} className="border border-gray-200 rounded-lg p-4">
+                    <div 
+                      key={pair.id} 
+                      draggable
+                      onDragStart={(e) => handlePairDragStart(e, pair.id)}
+                      onDragOver={handlePairDragOver}
+                      onDrop={(e) => handlePairDrop(e, pair.id)}
+                      onDragEnd={handlePairDragEnd}
+                      className={`border border-gray-200 rounded-lg p-4 transition-all duration-200 cursor-move ${
+                        draggedPair === pair.id 
+                          ? 'opacity-50 scale-95 shadow-lg' 
+                          : draggedPair && 'hover:border-blue-400'
+                      }`}
+                    >
                       <div className="flex items-center justify-between mb-3">
                         <input
                           type="text"

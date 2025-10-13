@@ -32,6 +32,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [beforeAfterExpanded, setBeforeAfterExpanded] = useState(false);
+  const [lightboxType, setLightboxType] = useState<'gallery' | 'pairs'>('gallery');
 
   // Auto-focus the carousel when it opens for immediate keyboard navigation
   useEffect(() => {
@@ -72,15 +73,17 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     beforeAfterPairs: beforeAfterPairs.length
   });
 
-  // Combine all images for lightbox (before/after pairs + gallery images)
-  const allImages = [
-    ...beforeAfterPairs.flatMap(pair => [pair.before, pair.after]),
-    ...galleryImages
-  ].filter(Boolean);
+  // Separate images for different lightbox types
+  const pairImages = beforeAfterPairs.flatMap(pair => [pair.before, pair.after]).filter(Boolean);
 
-  const openLightbox = (index: number) => {
+  const openLightbox = (index: number, type: 'gallery' | 'pairs' = 'gallery') => {
     setCurrentImageIndex(index);
+    setLightboxType(type);
     setLightboxOpen(true);
+  };
+
+  const getCurrentImages = () => {
+    return lightboxType === 'gallery' ? galleryImages : pairImages;
   };
 
   const closeLightbox = () => {
@@ -88,13 +91,15 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   };
 
   const nextImage = () => {
-    if (allImages.length === 0) return;
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+    const currentImages = getCurrentImages();
+    if (currentImages.length === 0) return;
+    setCurrentImageIndex((prev) => (prev + 1) % currentImages.length);
   };
 
   const prevImage = () => {
-    if (allImages.length === 0) return;
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+    const currentImages = getCurrentImages();
+    if (currentImages.length === 0) return;
+    setCurrentImageIndex((prev) => (prev - 1 + currentImages.length) % currentImages.length);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -163,7 +168,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                     alt={`${project.title} - Gallery ${index + 1}`}
                     fill
                     className="object-cover cursor-pointer transition-transform hover:scale-105"
-                    onClick={() => openLightbox(allImages.findIndex(img => img?.id === image.id))}
+                    onClick={() => openLightbox(index, 'gallery')}
                   />
                 </div>
               ))}
@@ -216,7 +221,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                           alt={`${pair.title} - Before`}
                           fill
                           className="object-cover cursor-pointer transition-transform hover:scale-105"
-                          onClick={() => openLightbox(allImages.findIndex(img => img?.id === pair.before.id))}
+                          onClick={() => openLightbox(pairImages.findIndex(img => img?.id === pair.before.id), 'pairs')}
                         />
                       </div>
                     </div>
@@ -228,7 +233,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                           alt={`${pair.title} - After`}
                           fill
                           className="object-cover cursor-pointer transition-transform hover:scale-105"
-                          onClick={() => openLightbox(allImages.findIndex(img => img?.id === pair.after.id))}
+                          onClick={() => openLightbox(pairImages.findIndex(img => img?.id === pair.after.id), 'pairs')}
                         />
                       </div>
                     </div>
@@ -249,7 +254,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                           alt={`${pair.title} - Before`}
                           fill
                           className="object-cover cursor-pointer transition-transform hover:scale-105"
-                          onClick={() => openLightbox(allImages.findIndex(img => img?.id === pair.before.id))}
+                          onClick={() => openLightbox(pairImages.findIndex(img => img?.id === pair.before.id), 'pairs')}
                         />
                       </div>
                     </div>
@@ -261,7 +266,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                           alt={`${pair.title} - After`}
                           fill
                           className="object-cover cursor-pointer transition-transform hover:scale-105"
-                          onClick={() => openLightbox(allImages.findIndex(img => img?.id === pair.after.id))}
+                          onClick={() => openLightbox(pairImages.findIndex(img => img?.id === pair.after.id), 'pairs')}
                         />
                       </div>
                     </div>
@@ -295,7 +300,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       </section>
 
       {/* Lightbox */}
-      {lightboxOpen && allImages.length > 0 && (
+      {lightboxOpen && getCurrentImages().length > 0 && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
           onClick={closeLightbox}
@@ -320,10 +325,10 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               onKeyDown={handleKeyDown}
               tabIndex={0}
             >
-              {allImages[currentImageIndex] && (
+              {getCurrentImages()[currentImageIndex] && (
                 <Image
-                  src={allImages[currentImageIndex].url}
-                  alt={`${project.title} - Image ${currentImageIndex + 1}`}
+                  src={getCurrentImages()[currentImageIndex].url}
+                  alt={`${project.title} - ${lightboxType === 'gallery' ? 'Gallery' : 'Transformation'} ${currentImageIndex + 1}`}
                   width={1200}
                   height={800}
                   className="max-h-[90vh] w-auto object-contain"
@@ -331,7 +336,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 />
               )}
               
-              {allImages.length > 1 && (
+              {getCurrentImages().length > 1 && (
                 <>
                   <button
                     onClick={(e) => {
@@ -360,7 +365,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                   </button>
                   
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-sm text-white">
-                    {currentImageIndex + 1} / {allImages.length}
+                    {currentImageIndex + 1} / {getCurrentImages().length}
                   </div>
                 </>
               )}
