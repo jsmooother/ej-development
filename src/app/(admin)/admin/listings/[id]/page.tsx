@@ -197,8 +197,37 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
         }}
       />
 
-      <form onSubmit={handleSave} className="mx-auto max-w-2xl p-8">
-        <div className="space-y-8">
+      <div className="p-8">
+        {/* Auto-save status indicator */}
+        <div className="mx-auto mb-6 max-w-4xl">
+          <div className="flex items-center justify-between rounded-lg border border-border/50 bg-card/50 px-4 py-2">
+            <div className="flex items-center gap-2">
+              {isAutoSaving ? (
+                <>
+                  <div className="h-2 w-2 animate-pulse rounded-full bg-blue-500"></div>
+                  <span className="text-sm text-muted-foreground">Auto-saving...</span>
+                </>
+              ) : lastSaved ? (
+                <>
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-muted-foreground">
+                    Last saved: {lastSaved.toLocaleTimeString()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="h-2 w-2 rounded-full bg-gray-400"></div>
+                  <span className="text-sm text-muted-foreground">Ready to save</span>
+                </>
+              )}
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Changes save automatically • Description saves manually
+            </span>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-4xl space-y-8">
           {/* Basic Information */}
           <div className="space-y-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/50">
@@ -208,7 +237,11 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
             <FormField label="Property Title" required>
               <Input
                 value={listing.title}
-                onChange={(e) => setListing({ ...listing, title: e.target.value })}
+                onChange={(e) => {
+                  const updated = { ...listing, title: e.target.value };
+                  setListing(updated);
+                  if (listing?.id) debouncedAutoSave(updated);
+                }}
                 placeholder="Enter property title"
                 required
               />
@@ -217,7 +250,11 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
             <FormField label="Slug" required>
               <Input
                 value={listing.slug}
-                onChange={(e) => setListing({ ...listing, slug: e.target.value })}
+                onChange={(e) => {
+                  const updated = { ...listing, slug: e.target.value };
+                  setListing(updated);
+                  if (listing?.id) debouncedAutoSave(updated);
+                }}
                 placeholder="property-slug"
                 required
               />
@@ -226,7 +263,11 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
             <FormField label="Subtitle">
               <Input
                 value={listing.subtitle || ''}
-                onChange={(e) => setListing({ ...listing, subtitle: e.target.value })}
+                onChange={(e) => {
+                  const updated = { ...listing, subtitle: e.target.value };
+                  setListing(updated);
+                  if (listing?.id) debouncedAutoSave(updated);
+                }}
                 placeholder="Brief tagline"
               />
             </FormField>
@@ -234,7 +275,11 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
             <FormField label="Status">
               <Select
                 value={listing.status}
-                onChange={(e) => setListing({ ...listing, status: e.target.value as 'coming_soon' | 'for_sale' | 'sold' })}
+                onChange={(e) => {
+                  const updated = { ...listing, status: e.target.value as 'coming_soon' | 'for_sale' | 'sold' };
+                  setListing(updated);
+                  if (listing?.id) debouncedAutoSave(updated);
+                }}
               >
                 <option value="for_sale">For Sale</option>
                 <option value="coming_soon">Coming Soon</option>
@@ -328,6 +373,19 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
                 className="resize-y min-h-[200px]"
               />
             </FormField>
+            <div className="flex items-center justify-end gap-3">
+              {isSaving && (
+                <span className="text-sm text-muted-foreground">Saving...</span>
+              )}
+              <button
+                type="button"
+                onClick={handleSaveDescription}
+                disabled={isSaving}
+                className="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 disabled:opacity-50"
+              >
+                {isSaving ? 'Saving...' : 'Save Description'}
+              </button>
+            </div>
           </div>
 
           {/* Property Details */}
@@ -523,22 +581,15 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => router.back()}
+                onClick={() => router.push('/admin/listings')}
                 className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="rounded-xl bg-foreground px-6 py-2.5 text-sm font-medium text-background shadow-sm transition-all hover:bg-foreground/90 hover:shadow-md disabled:opacity-50"
-              >
-                {isSaving ? "Saving..." : "Save Changes"}
+                Back to Listings
               </button>
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
