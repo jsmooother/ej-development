@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { FormField, Input, Textarea, Select } from "@/components/admin/form-field";
-import { Toggle } from "@/components/admin/toggle";
 import { ProjectImagesManager } from "@/components/admin/project-images-manager";
 import { FactsEditor } from "@/components/admin/facts-editor";
 import { ProjectPreviewModal } from "@/components/admin/project-preview-modal";
@@ -434,23 +433,28 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
-          {/* Publishing */}
+          {/* Publishing Status - Read Only */}
           <div className="rounded-2xl border border-border/50 bg-card p-6">
-            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Publishing</h2>
-            <Toggle
-              id="isPublished"
-              name="isPublished"
-              label="Publish to Site"
-              description="When enabled, this project will be visible on the public site"
-              defaultChecked={project.isPublished}
-              onChange={(checked) => {
-                console.log('Toggle changed to:', checked);
-                const updated = { ...project, isPublished: checked };
-                setProject(updated);
-                // Use immediate save for publish status (no debounce)
-                if (project?.id) autoSave(updated, true);
-              }}
-            />
+            <h2 className="mb-6 font-sans text-lg font-medium text-foreground">Publishing Status</h2>
+            <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-2 rounded-lg px-4 py-2 ${
+                project.isPublished 
+                  ? 'bg-green-50 border border-green-200' 
+                  : 'bg-gray-50 border border-gray-200'
+              }`}>
+                <div className={`h-2 w-2 rounded-full ${
+                  project.isPublished ? 'bg-green-500' : 'bg-gray-400'
+                }`}></div>
+                <span className={`text-sm font-medium ${
+                  project.isPublished ? 'text-green-700' : 'text-gray-600'
+                }`}>
+                  {project.isPublished ? 'Published' : 'Draft'}
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Manage publishing status from the Projects list page
+              </p>
+            </div>
           </div>
 
           {/* Actions */}

@@ -49,6 +49,14 @@ export async function PUT(
     const body = await request.json();
     const db = getDb();
     
+    console.log('📥 PUT Request for project:', params.id);
+    console.log('📊 Received data:', {
+      title: body.title,
+      projectImagesCount: body.projectImages?.length || 0,
+      imagePairsCount: body.imagePairs?.length || 0,
+      isPublished: body.isPublished,
+    });
+    
     // Update the project
     const updatedProject = await db
       .update(projects)
@@ -70,18 +78,27 @@ export async function PUT(
       .returning();
     
     if (!updatedProject || updatedProject.length === 0) {
+      console.error('❌ Project not found:', params.id);
       return NextResponse.json({
         success: false,
         error: 'Project not found'
       }, { status: 404 });
     }
     
+    console.log('✅ Updated project in DB:', {
+      id: updatedProject[0].id,
+      title: updatedProject[0].title,
+      projectImagesCount: updatedProject[0].projectImages?.length || 0,
+      imagePairsCount: updatedProject[0].imagePairs?.length || 0,
+      isPublished: updatedProject[0].isPublished,
+    });
+    
     return NextResponse.json({
       success: true,
       project: updatedProject[0]
     });
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('❌ Database error:', error);
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'
