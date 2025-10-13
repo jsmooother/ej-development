@@ -65,13 +65,15 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     img.tags.includes('gallery')
   );
 
-  // Debug logging
-  console.log('🔍 Project images debug:', {
-    totalImages: project.projectImages.length,
-    galleryImages: galleryImages.length,
-    imageTags: project.projectImages.map(img => ({ id: img.id, tags: img.tags })),
-    beforeAfterPairs: beforeAfterPairs.length
-  });
+  // Debug logging (client-side only)
+  useEffect(() => {
+    console.log('🔍 Project images debug:', {
+      totalImages: project.projectImages.length,
+      galleryImages: galleryImages.length,
+      imageTags: project.projectImages.map(img => ({ id: img.id, tags: img.tags })),
+      beforeAfterPairs: beforeAfterPairs.length
+    });
+  }, [project.projectImages, galleryImages, beforeAfterPairs]);
 
   // Separate images for different lightbox types
   const pairImages = beforeAfterPairs.flatMap(pair => [pair.before, pair.after]).filter(Boolean);
