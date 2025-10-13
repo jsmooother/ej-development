@@ -261,7 +261,26 @@ export function MultiFileImageUpload({
       try {
         // Extract file path from Supabase URL
         const url = new URL(imageToRemove.url);
-        const filePath = url.pathname.split('/storage/v1/object/public/images/')[1];
+        console.log('🔍 Deleting image URL:', imageToRemove.url);
+        console.log('🔍 URL pathname:', url.pathname);
+        
+        // Try different path patterns for Supabase Storage URLs
+        let filePath = '';
+        
+        // Pattern 1: /storage/v1/object/public/images/filename
+        if (url.pathname.includes('/storage/v1/object/public/images/')) {
+          filePath = url.pathname.split('/storage/v1/object/public/images/')[1];
+        }
+        // Pattern 2: /storage/v1/object/sign-images/filename (signed URLs)
+        else if (url.pathname.includes('/storage/v1/object/sign-images/')) {
+          filePath = url.pathname.split('/storage/v1/object/sign-images/')[1];
+        }
+        // Pattern 3: Direct path after /images/
+        else if (url.pathname.includes('/images/')) {
+          filePath = url.pathname.split('/images/')[1];
+        }
+        
+        console.log('🔍 Extracted file path:', filePath);
         
         if (filePath) {
           // Delete from Supabase Storage
@@ -274,13 +293,16 @@ export function MultiFileImageUpload({
           });
           
           if (!response.ok) {
-            console.error('Failed to delete file from storage:', await response.text());
+            const errorText = await response.text();
+            console.error('❌ Failed to delete file from storage:', errorText);
           } else {
             console.log('✅ File deleted from storage:', filePath);
           }
+        } else {
+          console.error('❌ Could not extract file path from URL:', imageToRemove.url);
         }
       } catch (error) {
-        console.error('Error deleting file from storage:', error);
+        console.error('❌ Error deleting file from storage:', error);
       }
     }
     

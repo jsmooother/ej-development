@@ -102,29 +102,43 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
     setIsAutoSaving(true);
     
     try {
+      const payload = {
+        title: updatedProject.title,
+        slug: updatedProject.slug,
+        summary: updatedProject.summary,
+        content: skipContent ? project?.content : updatedProject.content, // Keep existing content if skipping
+        year: updatedProject.year,
+        facts: updatedProject.facts,
+        heroImagePath: updatedProject.heroImagePath,
+        additionalImages: updatedProject.additionalImages, // Legacy
+        projectImages: updatedProject.projectImages, // All project images with tags
+        imagePairs: updatedProject.imagePairs, // Before/after pairs
+        isPublished: updatedProject.isPublished,
+      };
+
+      console.log('💾 Auto-saving project:', {
+        id: updatedProject.id,
+        title: updatedProject.title,
+        projectImagesCount: updatedProject.projectImages?.length || 0,
+        imagePairsCount: updatedProject.imagePairs?.length || 0,
+        skipContent,
+      });
+
       const response = await fetch(`/api/projects/${updatedProject.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: updatedProject.title,
-          slug: updatedProject.slug,
-          summary: updatedProject.summary,
-          content: skipContent ? project?.content : updatedProject.content, // Keep existing content if skipping
-          year: updatedProject.year,
-          facts: updatedProject.facts,
-          heroImagePath: updatedProject.heroImagePath,
-          additionalImages: updatedProject.additionalImages, // Legacy
-          projectImages: updatedProject.projectImages, // All project images with tags
-          imagePairs: updatedProject.imagePairs, // Before/after pairs
-          isPublished: updatedProject.isPublished,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
+        console.log('✅ Auto-save successful');
         setLastSaved(new Date());
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Auto-save failed:', response.status, errorText);
       }
     } catch (err) {
-      console.error('Auto-save failed:', err);
+      console.error('❌ Auto-save error:', err);
     } finally {
       setIsAutoSaving(false);
     }
