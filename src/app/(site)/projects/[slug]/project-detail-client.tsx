@@ -42,30 +42,28 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
     }
   }, [lightboxOpen]);
 
-  // Mock data for renovation before/after and gallery
-  // In production, these would come from project_images table
-  // Use real project images and pairs instead of placeholders
-  const getImageById = (imageId: string) => project?.projectImages?.find(img => img.id === imageId);
+  // Helper function to get image by ID
+  const getImageById = (imageId: string) => project.projectImages.find(img => img.id === imageId);
   
-  // Create proper before/after pairs from imagePairs data
-  const beforeAfterPairs = (project?.imagePairs?.map((pair: any) => {
+  // Create before/after pairs from imagePairs data
+  const beforeAfterPairs = (project.imagePairs?.map((pair: any) => {
     const beforeImage = getImageById(pair.beforeImageId);
     const afterImage = getImageById(pair.afterImageId);
     if (!beforeImage || !afterImage) return null;
     return {
       id: pair.id,
-      title: pair.title || 'Before & After',
+      title: pair.label || 'Before & After',
       before: beforeImage,
       after: afterImage
     };
   }).filter((pair): pair is { id: string; title: string; before: ProjectImage; after: ProjectImage } => pair !== null) || []);
 
-  // Get all gallery images (images not in pairs)
-  const galleryImages = project?.projectImages?.filter(img => 
-    !project?.imagePairs?.some(pair => 
+  // Get all gallery images (images not used in pairs)
+  const galleryImages = project.projectImages.filter(img => 
+    !project.imagePairs?.some(pair => 
       pair.beforeImageId === img.id || pair.afterImageId === img.id
     )
-  ) || [];
+  );
 
   // Combine all images for lightbox
   const allImages = [
@@ -83,10 +81,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   };
 
   const nextImage = () => {
+    if (allImages.length === 0) return;
     setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
   };
 
   const prevImage = () => {
+    if (allImages.length === 0) return;
     setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
@@ -229,15 +229,19 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       </section>
 
       {/* Lightbox */}
-      {lightboxOpen && (
+      {lightboxOpen && allImages.length > 0 && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
           onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image gallery lightbox"
         >
           <div className="relative max-h-[90vh] max-w-[90vw]">
             <button
               onClick={closeLightbox}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors"
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 rounded"
+              aria-label="Close lightbox"
             >
               <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -246,18 +250,20 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
             
             <div
               data-carousel="lightbox"
-              className="relative"
+              className="relative focus:outline-none"
               onKeyDown={handleKeyDown}
               tabIndex={0}
             >
-              <Image
-                src={allImages[currentImageIndex]?.url || ''}
-                alt={`${project.title} - Image ${currentImageIndex + 1}`}
-                width={1200}
-                height={800}
-                className="max-h-[90vh] w-auto object-contain"
-                priority
-              />
+              {allImages[currentImageIndex] && (
+                <Image
+                  src={allImages[currentImageIndex].url}
+                  alt={`${project.title} - Image ${currentImageIndex + 1}`}
+                  width={1200}
+                  height={800}
+                  className="max-h-[90vh] w-auto object-contain"
+                  priority
+                />
+              )}
               
               {allImages.length > 1 && (
                 <>
@@ -266,7 +272,8 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                       e.stopPropagation();
                       prevImage();
                     }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+                    aria-label="Previous image"
                   >
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -278,7 +285,8 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                       e.stopPropagation();
                       nextImage();
                     }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+                    aria-label="Next image"
                   >
                     <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
