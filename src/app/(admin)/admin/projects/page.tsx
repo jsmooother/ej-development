@@ -52,21 +52,8 @@ export default function ProjectsListPage() {
           data
         });
         
-        // Fetch status from content API
-        const statusResponse = await fetch('/api/content/status');
-        const statusData = await statusResponse.json();
-        console.log('📊 Content Status API response:', {
-          status: statusResponse.status,
-          data: statusData
-        });
-        
-        // Merge projects with their publish status
-        const projectsWithStatus = data.map((project: Project) => ({
-          ...project,
-          isPublished: statusData.projects[project.slug]?.isPublished || project.isPublished
-        }));
-        
-        setProjects(projectsWithStatus);
+        // Use projects data directly - it already has the correct isPublished status from DB
+        setProjects(data);
       } catch (error) {
         console.error('Failed to fetch projects:', error);
         // Fallback to empty array on error
@@ -89,15 +76,8 @@ export default function ProjectsListPage() {
             const response = await fetch('/api/projects');
             if (response.ok) {
               const data = await response.json();
-              const statusResponse = await fetch('/api/content/status');
-              const statusData = await statusResponse.json();
-              
-              const projectsWithStatus = data.map((project: Project) => ({
-                ...project,
-                isPublished: statusData.projects[project.slug]?.isPublished || project.isPublished
-              }));
-              
-              setProjects(projectsWithStatus);
+              // Use projects data directly - it already has the correct isPublished status from DB
+              setProjects(data);
             }
           } catch (error) {
             console.error('Failed to refresh projects:', error);
@@ -116,16 +96,22 @@ export default function ProjectsListPage() {
     console.log(`Toggling project ${projectId} to ${newStatus ? 'published' : 'draft'}`);
     
     try {
-      // Call API to update status using slug
+      // Find the project to get all its data
       const project = projects.find(p => p.id === projectId);
       if (!project) return;
       
-      const response = await fetch('/api/content/status', {
-        method: 'POST',
+      // Update via the same API endpoint as the edit page
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: 'project',
-          id: project.slug,
+          title: project.title,
+          slug: project.slug,
+          summary: project.summary,
+          content: project.content,
+          year: project.year,
+          facts: project.facts,
+          heroImagePath: project.heroImagePath,
           isPublished: newStatus
         })
       });
