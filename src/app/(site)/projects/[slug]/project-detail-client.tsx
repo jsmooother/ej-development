@@ -18,6 +18,7 @@ type Project = {
   content: string;
   year: number | null;
   facts: Record<string, string | number | null>;
+  heroImagePath: string | null;
   projectImages: ProjectImage[];
   imagePairs: any[];
   isPublished: boolean;
