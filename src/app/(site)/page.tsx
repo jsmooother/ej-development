@@ -61,16 +61,6 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
-// Helper function to shuffle array (for randomizing projects)
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
 export default async function HomePage() {
   // Default content limits
   let contentLimits: ContentLimits = {
@@ -191,10 +181,10 @@ export default async function HomePage() {
   const heroProject = publishedProjects.find(p => p.isHero) || publishedProjects[0];
   const otherProjects = publishedProjects.filter(p => p.id !== heroProject?.id);
   
-  // Select content based on published status
+  // Select content based on published status (use deterministic order to avoid hydration issues)
   const selectedProjects = heroProject 
-    ? [heroProject, ...shuffleArray(otherProjects).slice(0, contentLimits.frontpage.projects - 1)] 
-    : shuffleArray(publishedProjects).slice(0, contentLimits.frontpage.projects);
+    ? [heroProject, ...otherProjects.slice(0, contentLimits.frontpage.projects - 1)] 
+    : publishedProjects.slice(0, contentLimits.frontpage.projects);
   const selectedEditorials = publishedEditorials.slice(0, contentLimits.frontpage.editorials);
   const selectedListings = publishedListings.slice(0, contentLimits.frontpage.listings || 3);
   const selectedInstagram = publishedInstagram.slice(0, contentLimits.frontpage.instagram);

@@ -274,7 +274,7 @@ async function createEditorials() {
         title: editorial.title,
         excerpt: editorial.excerpt,
         content: editorial.content,
-        imageUrl: editorial.imageUrl,
+        coverImagePath: editorial.imageUrl,
         isPublished: editorial.isPublished,
         publishedAt: editorial.isPublished ? new Date() : null,
         createdAt: new Date(),
