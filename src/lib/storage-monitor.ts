@@ -8,6 +8,8 @@ export interface StorageStats {
   totalSizeMB: number;
   usagePercentage: number; // of 1GB free tier
   filesByType: Record<string, { count: number; size: number }>;
+  freeTierLimitMB: number;
+  remainingMB: number;
 }
 
 export async function getStorageStats(): Promise<StorageStats> {
@@ -24,7 +26,9 @@ export async function getStorageStats(): Promise<StorageStats> {
       totalSize: 0,
       totalSizeMB: 0,
       usagePercentage: 0,
-      filesByType: {}
+      filesByType: {},
+      freeTierLimitMB: 1024,
+      remainingMB: 1024
     };
   }
 }
