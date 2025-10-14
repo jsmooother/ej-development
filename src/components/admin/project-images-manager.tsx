@@ -54,6 +54,7 @@ export function ProjectImagesManager({
   const [selectedPairImages, setSelectedPairImages] = useState<string[]>([]);
   const [pairLabel, setPairLabel] = useState("");
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
+  const [draggedPairIndex, setDraggedPairIndex] = useState<number | null>(null);
 
   const confirmDelete = async () => {
     if (!imageToDelete) return;
@@ -166,6 +167,30 @@ export function ProjectImagesManager({
       return pair;
     });
     onPairsChange(newPairs);
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedPairIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedPairIndex === null || draggedPairIndex === dropIndex) {
+      setDraggedPairIndex(null);
+      return;
+    }
+
+    const newPairs = [...pairs];
+    const draggedPair = newPairs[draggedPairIndex];
+    newPairs.splice(draggedPairIndex, 1);
+    newPairs.splice(dropIndex, 0, draggedPair);
+    
+    onPairsChange(newPairs);
+    setDraggedPairIndex(null);
   };
 
   const getImageById = (imageId: string) => images.find(img => img.id === imageId);
@@ -685,25 +710,54 @@ export function ProjectImagesManager({
           {/* Existing Pairs */}
           {pairs.length > 0 && (
             <div className="space-y-4">
-              <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {pairs.map((pair) => {
+              <div className="flex items-center justify-between">
+                <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
+                <p className="text-xs text-gray-500">Drag to reorder</p>
+              </div>
+              <div className="space-y-3">
+                {pairs.map((pair, index) => {
                   const beforeImage = getImageById(pair.beforeImageId || "");
                   const afterImage = getImageById(pair.afterImageId || "");
+                  const isDragging = draggedPairIndex === index;
                   
                   return (
-                    <div key={pair.id} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
+                    <div
+                      key={pair.id}
+                      draggable
+                      onDragStart={() => handleDragStart(index)}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDrop={(e) => handleDrop(e, index)}
+                      className={`border border-gray-200 rounded-lg p-4 cursor-move transition-all ${
+                        isDragging ? 'opacity-50 scale-95' : 'hover:border-blue-300 hover:shadow-md'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        {/* Drag handle and number */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col gap-0.5 text-gray-400">
+                            <div className="w-1 h-1 bg-current rounded-full"></div>
+                            <div className="w-1 h-1 bg-current rounded-full"></div>
+                            <div className="w-1 h-1 bg-current rounded-full"></div>
+                          </div>
+                          <span className="text-sm font-bold text-gray-500 min-w-[24px]">#{index + 1}</span>
+                        </div>
+                        
+                        {/* Label input */}
                         <input
                           type="text"
                           value={pair.label}
                           onChange={(e) => updatePairLabel(pair.id, e.target.value)}
-                          className="text-sm font-medium text-gray-900 bg-transparent border-none outline-none focus:bg-gray-50 rounded px-2 py-1"
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex-1 text-sm font-medium text-gray-900 bg-transparent border-none outline-none focus:bg-gray-50 rounded px-2 py-1"
+                          placeholder={`Pair ${index + 1}`}
                         />
+                        
+                        {/* Delete button */}
                         <button
                           type="button"
                           onClick={(e) => {
                             e.preventDefault();
+                            e.stopPropagation();
                             removePair(pair.id);
                           }}
                           className="text-gray-400 hover:text-red-600 transition-colors"
@@ -713,35 +767,45 @@ export function ProjectImagesManager({
                       </div>
                       
                       <div className="grid grid-cols-2 gap-2">
-                        <div className="aspect-square overflow-hidden rounded-lg border border-gray-200">
-                          {beforeImage ? (
-                            <Image
-                              src={beforeImage.url}
-                              alt="Before"
-                              width={100}
-                              height={100}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-                              No before image
-                            </div>
-                          )}
+                        <div className="relative">
+                          <div className="aspect-square overflow-hidden rounded-lg border border-gray-200">
+                            {beforeImage ? (
+                              <Image
+                                src={beforeImage.url}
+                                alt="Before"
+                                width={100}
+                                height={100}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                No before image
+                              </div>
+                            )}
+                          </div>
+                          <span className="absolute top-1 left-1 text-xs bg-orange-600 text-white px-2 py-0.5 rounded font-semibold">
+                            BEFORE
+                          </span>
                         </div>
-                        <div className="aspect-square overflow-hidden rounded-lg border border-gray-200">
-                          {afterImage ? (
-                            <Image
-                              src={afterImage.url}
-                              alt="After"
-                              width={100}
-                              height={100}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-                              No after image
-                            </div>
-                          )}
+                        <div className="relative">
+                          <div className="aspect-square overflow-hidden rounded-lg border border-gray-200">
+                            {afterImage ? (
+                              <Image
+                                src={afterImage.url}
+                                alt="After"
+                                width={100}
+                                height={100}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                No after image
+                              </div>
+                            )}
+                          </div>
+                          <span className="absolute top-1 left-1 text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">
+                            AFTER
+                          </span>
                         </div>
                       </div>
                     </div>
