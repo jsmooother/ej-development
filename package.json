@@ -14,6 +14,7 @@
     "db:studio": "drizzle-kit studio",
     "seed": "tsx scripts/seed.ts",
     "import-projects": "tsx scripts/import-projects-from-folders.ts",
+    "import-sample": "tsx scripts/one-time-import.ts",
     "setup-storage": "tsx scripts/setup-storage.ts",
     "redis:dev": "docker run -d --name ej-redis -p 6379:6379 redis:7-alpine",
     "redis:stop": "docker stop ej-redis && docker rm ej-redis"
@@ -64,6 +65,6 @@
     "typescript": "^5.5.4"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": "20.x"
   }
 }
