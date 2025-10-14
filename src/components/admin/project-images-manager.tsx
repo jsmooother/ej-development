@@ -51,7 +51,8 @@ export function ProjectImagesManager({
   maxPairs = 10
 }: ProjectImagesManagerProps) {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedPairImages, setSelectedPairImages] = useState<string[]>([]);
+  const [pairLabel, setPairLabel] = useState("");
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
   const confirmDelete = async () => {
@@ -144,12 +145,11 @@ export function ProjectImagesManager({
     if (pairs.length < maxPairs) {
       const newPair: ImagePair = {
         id: Date.now().toString(),
-        label: `Pair ${pairs.length + 1}`,
+        label: pairLabel.trim() || `Pair ${pairs.length + 1}`,
         beforeImageId,
         afterImageId
       };
       onPairsChange([...pairs, newPair]);
-      setSelectedImages([]);
     }
   };
 
@@ -554,89 +554,129 @@ export function ProjectImagesManager({
                 {/* Before Images */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-900">Select Before Image</label>
-                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                    {beforeImages.map((image) => (
-                      <button
-                        key={image.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (selectedImages.length === 0) {
-                            setSelectedImages([image.id]);
-                          } else if (selectedImages[0] === image.id) {
-                            setSelectedImages([]);
-                          }
-                        }}
-                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                          selectedImages.includes(image.id)
-                            ? "border-blue-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <Image
-                          src={image.url}
-                          alt="Before image"
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 rounded-lg">
+                    {beforeImages.length === 0 ? (
+                      <div className="col-span-2 text-center py-8 text-gray-500 text-sm">
+                        No "before" images tagged yet. Tag images in Step 3.
+                      </div>
+                    ) : (
+                      beforeImages.map((image) => (
+                        <button
+                          key={image.id}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (selectedPairImages.length === 0) {
+                              setSelectedPairImages([image.id]);
+                            } else if (selectedPairImages[0] === image.id) {
+                              setSelectedPairImages([]);
+                            } else {
+                              setSelectedPairImages([image.id]);
+                            }
+                          }}
+                          className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                            selectedPairImages.includes(image.id)
+                              ? "border-orange-500 ring-2 ring-orange-200"
+                              : "border-gray-200 hover:border-orange-300"
+                          }`}
+                        >
+                          <Image
+                            src={image.url}
+                            alt="Before image"
+                            fill
+                            className="object-cover"
+                          />
+                          {selectedPairImages.includes(image.id) && (
+                            <div className="absolute inset-0 bg-orange-500/20 flex items-center justify-center">
+                              <div className="bg-orange-600 text-white px-2 py-1 rounded text-xs font-bold">
+                                BEFORE
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
 
                 {/* After Images */}
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-gray-900">Select After Image</label>
-                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
-                    {afterImages.map((image) => (
-                      <button
-                        key={image.id}
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          if (selectedImages.length === 1) {
-                            setSelectedImages([selectedImages[0], image.id]);
-                          } else if (selectedImages[1] === image.id) {
-                            setSelectedImages([selectedImages[0]]);
-                          }
-                        }}
-                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-colors ${
-                          selectedImages.includes(image.id)
-                            ? "border-blue-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <Image
-                          src={image.url}
-                          alt="After image"
-                          fill
-                          className="object-cover"
-                        />
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 rounded-lg">
+                    {afterImages.length === 0 ? (
+                      <div className="col-span-2 text-center py-8 text-gray-500 text-sm">
+                        No "after" images tagged yet. Tag images in Step 3.
+                      </div>
+                    ) : (
+                      afterImages.map((image) => (
+                        <button
+                          key={image.id}
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (selectedPairImages.length === 1) {
+                              setSelectedPairImages([selectedPairImages[0], image.id]);
+                            } else if (selectedPairImages.length === 2 && selectedPairImages[1] === image.id) {
+                              setSelectedPairImages([selectedPairImages[0]]);
+                            } else if (selectedPairImages.length === 2) {
+                              setSelectedPairImages([selectedPairImages[0], image.id]);
+                            }
+                          }}
+                          className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                            selectedPairImages.includes(image.id)
+                              ? "border-green-500 ring-2 ring-green-200"
+                              : "border-gray-200 hover:border-green-300"
+                          }`}
+                        >
+                          <Image
+                            src={image.url}
+                            alt="After image"
+                            fill
+                            className="object-cover"
+                          />
+                          {selectedPairImages.includes(image.id) && (
+                            <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                              <div className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">
+                                AFTER
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
 
-              {selectedImages.length === 2 && (
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder="Pair label (e.g., Kitchen Renovation)"
-                    className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (selectedImages.length === 2) {
-                        createPair(selectedImages[0], selectedImages[1]);
-                      }
-                    }}
-                    className="rounded-lg bg-green-600 px-4 py-3 text-sm font-medium text-white hover:bg-green-700 transition-colors"
-                  >
-                    Create Pair
-                  </button>
+              {selectedPairImages.length === 2 && (
+                <div className="space-y-3">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800 font-medium mb-2">✓ Both images selected!</p>
+                    <p className="text-xs text-blue-600">Enter a label and click "Create Pair" to save this comparison.</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={pairLabel}
+                      onChange={(e) => setPairLabel(e.target.value)}
+                      placeholder="Pair label (e.g., Kitchen Renovation)"
+                      className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (selectedPairImages.length === 2) {
+                          createPair(selectedPairImages[0], selectedPairImages[1]);
+                          setSelectedPairImages([]);
+                          setPairLabel("");
+                        }
+                      }}
+                      className="rounded-lg bg-green-600 px-6 py-3 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                    >
+                      Create Pair
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
