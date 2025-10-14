@@ -709,12 +709,12 @@ export function ProjectImagesManager({
 
           {/* Existing Pairs */}
           {pairs.length > 0 && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h5 className="text-sm font-medium text-gray-900">Created Pairs ({pairs.length})</h5>
                 <p className="text-xs text-gray-500">Drag to reorder</p>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {pairs.map((pair, index) => {
                   const beforeImage = getImageById(pair.beforeImageId || "");
                   const afterImage = getImageById(pair.afterImageId || "");
@@ -727,87 +727,85 @@ export function ProjectImagesManager({
                       onDragStart={() => handleDragStart(index)}
                       onDragOver={(e) => handleDragOver(e, index)}
                       onDrop={(e) => handleDrop(e, index)}
-                      className={`border border-gray-200 rounded-lg p-4 cursor-move transition-all ${
-                        isDragging ? 'opacity-50 scale-95' : 'hover:border-blue-300 hover:shadow-md'
+                      className={`flex items-center gap-2 border border-gray-200 rounded-lg p-2 cursor-move transition-all ${
+                        isDragging ? 'opacity-50 scale-95' : 'hover:border-blue-300 hover:bg-gray-50'
                       }`}
                     >
-                      <div className="flex items-center gap-3 mb-3">
-                        {/* Drag handle and number */}
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-col gap-0.5 text-gray-400">
-                            <div className="w-1 h-1 bg-current rounded-full"></div>
-                            <div className="w-1 h-1 bg-current rounded-full"></div>
-                            <div className="w-1 h-1 bg-current rounded-full"></div>
-                          </div>
-                          <span className="text-sm font-bold text-gray-500 min-w-[24px]">#{index + 1}</span>
-                        </div>
-                        
-                        {/* Label input */}
-                        <input
-                          type="text"
-                          value={pair.label}
-                          onChange={(e) => updatePairLabel(pair.id, e.target.value)}
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex-1 text-sm font-medium text-gray-900 bg-transparent border-none outline-none focus:bg-gray-50 rounded px-2 py-1"
-                          placeholder={`Pair ${index + 1}`}
-                        />
-                        
-                        {/* Delete button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            removePair(pair.id);
-                          }}
-                          className="text-gray-400 hover:text-red-600 transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
+                      {/* Drag handle */}
+                      <div className="flex flex-col gap-0.5 text-gray-400 px-1">
+                        <div className="w-1 h-1 bg-current rounded-full"></div>
+                        <div className="w-1 h-1 bg-current rounded-full"></div>
+                        <div className="w-1 h-1 bg-current rounded-full"></div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="relative">
-                          <div className="aspect-square overflow-hidden rounded-lg border border-gray-200">
-                            {beforeImage ? (
-                              <Image
-                                src={beforeImage.url}
-                                alt="Before"
-                                width={100}
-                                height={100}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-                                No before image
-                              </div>
-                            )}
-                          </div>
-                          <span className="absolute top-1 left-1 text-xs bg-orange-600 text-white px-2 py-0.5 rounded font-semibold">
-                            BEFORE
-                          </span>
+                      {/* Number */}
+                      <span className="text-xs font-bold text-gray-500 w-6 flex-shrink-0">#{index + 1}</span>
+                      
+                      {/* Before Image */}
+                      <div className="relative w-16 h-16 flex-shrink-0">
+                        <div className="w-full h-full overflow-hidden rounded-lg border border-gray-200">
+                          {beforeImage ? (
+                            <Image
+                              src={beforeImage.url}
+                              alt="Before"
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-100"></div>
+                          )}
                         </div>
-                        <div className="relative">
-                          <div className="aspect-square overflow-hidden rounded-lg border border-gray-200">
-                            {afterImage ? (
-                              <Image
-                                src={afterImage.url}
-                                alt="After"
-                                width={100}
-                                height={100}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
-                                No after image
-                              </div>
-                            )}
-                          </div>
-                          <span className="absolute top-1 left-1 text-xs bg-green-600 text-white px-2 py-0.5 rounded font-semibold">
-                            AFTER
-                          </span>
-                        </div>
+                        <span className="absolute top-1 left-1 text-[9px] font-medium bg-black/60 backdrop-blur-sm text-white px-1.5 py-0.5 rounded">
+                          Before
+                        </span>
                       </div>
+                      
+                      {/* Arrow */}
+                      <ArrowRight className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
+                      
+                      {/* After Image */}
+                      <div className="relative w-16 h-16 flex-shrink-0">
+                        <div className="w-full h-full overflow-hidden rounded-lg border border-gray-200">
+                          {afterImage ? (
+                            <Image
+                              src={afterImage.url}
+                              alt="After"
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-100"></div>
+                          )}
+                        </div>
+                        <span className="absolute top-1 left-1 text-[9px] font-medium bg-black/60 backdrop-blur-sm text-white px-1.5 py-0.5 rounded">
+                          After
+                        </span>
+                      </div>
+                      
+                      {/* Label input */}
+                      <input
+                        type="text"
+                        value={pair.label}
+                        onChange={(e) => updatePairLabel(pair.id, e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex-1 min-w-0 text-xs text-gray-900 bg-transparent border-none outline-none focus:bg-white rounded px-2 py-1"
+                        placeholder={`Pair ${index + 1}`}
+                      />
+                      
+                      {/* Delete button */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          removePair(pair.id);
+                        }}
+                        className="text-gray-400 hover:text-red-600 transition-colors p-1 flex-shrink-0"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </div>
                   );
                 })}
