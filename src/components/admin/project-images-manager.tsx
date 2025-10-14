@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ImageUpload } from "./image-upload";
 import { MultiFileImageUpload } from "./multi-file-image-upload";
-import { X, Plus, ArrowRight, Tag, Grid3X3, Link, Star } from "lucide-react";
+import { X, Plus, ArrowRight, Tag, Grid3X3, Link, Star, Camera, Image as ImageIcon, Link2 } from "lucide-react";
 import Image from "next/image";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
@@ -198,9 +198,9 @@ export function ProjectImagesManager({
   const getImageById = (imageId: string) => images.find(img => img.id === imageId);
   const getTagColor = (tag: ImageTag) => {
     switch (tag) {
-      case "before": return "bg-orange-50 text-orange-700 border-orange-200";
-      case "after": return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      case "gallery": return "bg-blue-50 text-blue-700 border-blue-200";
+      case "before": return "bg-orange-100 text-orange-800 border-orange-300";
+      case "after": return "bg-green-100 text-green-800 border-green-300";
+      case "gallery": return "bg-blue-100 text-blue-800 border-blue-300";
     }
   };
 
@@ -415,13 +415,7 @@ export function ProjectImagesManager({
                           {image.tags.map((tag) => (
                             <span
                               key={tag}
-                              className={`text-xs px-1 py-0.5 rounded ${
-                                tag === "before" 
-                                  ? "bg-orange-500 text-white" 
-                                  : tag === "after"
-                                  ? "bg-green-500 text-white"
-                                  : "bg-blue-500 text-white"
-                              }`}
+                              className={`text-xs px-2 py-1 rounded-full font-medium border ${getTagColor(tag)}`}
                             >
                               {tag}
                             </span>
@@ -590,7 +584,9 @@ export function ProjectImagesManager({
                   className="flex-1 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition-colors"
                 >
                   <div className="text-center">
-                    <div className="text-2xl mb-2">📸</div>
+                    <div className="flex justify-center mb-2">
+                      <Camera className="w-6 h-6 text-gray-400" />
+                    </div>
                     <div className="text-sm font-medium text-gray-700">
                       {selectedPairImages[0] ? 'Before Selected' : 'Select Before Image'}
                     </div>
@@ -615,7 +611,9 @@ export function ProjectImagesManager({
                   className="flex-1 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors"
                 >
                   <div className="text-center">
-                    <div className="text-2xl mb-2">📸</div>
+                    <div className="flex justify-center mb-2">
+                      <Camera className="w-6 h-6 text-gray-400" />
+                    </div>
                     <div className="text-sm font-medium text-gray-700">
                       {selectedPairImages[1] ? 'After Selected' : 'Select After Image'}
                     </div>
@@ -710,7 +708,7 @@ export function ProjectImagesManager({
                             <div className="w-full h-full bg-gray-100"></div>
                           )}
                         </div>
-                        <span className="absolute top-1 left-1 text-[9px] font-medium bg-black/60 backdrop-blur-sm text-white px-1.5 py-0.5 rounded">
+                        <span className="absolute top-1 left-1 text-[9px] font-medium bg-orange-100 text-orange-800 border border-orange-300 px-1.5 py-0.5 rounded-full">
                           Before
                         </span>
                       </div>
@@ -733,7 +731,7 @@ export function ProjectImagesManager({
                             <div className="w-full h-full bg-gray-100"></div>
                           )}
                         </div>
-                        <span className="absolute top-1 left-1 text-[9px] font-medium bg-black/60 backdrop-blur-sm text-white px-1.5 py-0.5 rounded">
+                        <span className="absolute top-1 left-1 text-[9px] font-medium bg-green-100 text-green-800 border border-green-300 px-1.5 py-0.5 rounded-full">
                           After
                         </span>
                       </div>
@@ -858,10 +856,10 @@ export function ProjectImagesManager({
                     
                     {/* Tag indicator */}
                     <div className="absolute top-2 left-2">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium border ${
                         selectingFor === 'before' 
-                          ? 'bg-orange-500 text-white' 
-                          : 'bg-green-500 text-white'
+                          ? 'bg-orange-100 text-orange-800 border-orange-300' 
+                          : 'bg-green-100 text-green-800 border-green-300'
                       }`}>
                         {selectingFor}
                       </span>
@@ -873,7 +871,9 @@ export function ProjectImagesManager({
               {/* Empty state */}
               {(selectingFor === 'before' ? beforeImages : afterImages).length === 0 && (
                 <div className="text-center py-12">
-                  <div className="text-4xl mb-4">📷</div>
+                  <div className="flex justify-center mb-4">
+                    <ImageIcon className="w-12 h-12 text-gray-300" />
+                  </div>
                   <h4 className="text-lg font-medium text-gray-900 mb-2">
                     No {selectingFor} images found
                   </h4>
