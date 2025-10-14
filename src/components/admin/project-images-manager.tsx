@@ -5,6 +5,7 @@ import { ImageUpload } from "./image-upload";
 import { MultiFileImageUpload } from "./multi-file-image-upload";
 import { X, Plus, ArrowRight, Tag, Grid3X3, Link, Star } from "lucide-react";
 import Image from "next/image";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
 type ImageTag = "before" | "after" | "gallery";
 type WorkflowStep = "upload" | "hero" | "organize" | "pairs";
@@ -42,22 +43,21 @@ export function ProjectImagesManager({
   onPairsChange,
   label = "Project Images",
   description,
-  maxImages = 30,
+  maxImages = 50,
   maxPairs = 10
 }: ProjectImagesManagerProps) {
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
 
-  const removeImage = async (imageId: string) => {
-    const imageToRemove = images.find(img => img.id === imageId);
-    if (!imageToRemove) return;
+  const confirmDelete = async () => {
+    if (!imageToDelete) return;
 
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      `Are you sure you want to delete this image?\n\nThis will permanently remove the image from storage.`
-    );
-
-    if (!confirmed) return;
+    const imageToRemove = images.find(img => img.id === imageToDelete);
+    if (!imageToRemove) {
+      setImageToDelete(null);
+      return;
+    }
 
     try {
       // Delete from Supabase storage
@@ -75,24 +75,28 @@ export function ProjectImagesManager({
 
       if (!result.success) {
         alert(`Failed to delete image: ${result.error}`);
+        setImageToDelete(null);
         return;
       }
 
       // Remove from images array
-      const newImages = images.filter(img => img.id !== imageId);
+      const newImages = images.filter(img => img.id !== imageToDelete);
       onImagesChange(newImages);
 
       // Remove from any pairs
       const newPairs = pairs.map(pair => ({
         ...pair,
-        beforeImageId: pair.beforeImageId === imageId ? undefined : pair.beforeImageId,
-        afterImageId: pair.afterImageId === imageId ? undefined : pair.afterImageId
+        beforeImageId: pair.beforeImageId === imageToDelete ? undefined : pair.beforeImageId,
+        afterImageId: pair.afterImageId === imageToDelete ? undefined : pair.afterImageId
       }));
       onPairsChange(newPairs);
+      
+      setImageToDelete(null);
 
     } catch (error) {
       console.error('Error deleting image:', error);
       alert('Failed to delete image. Please try again.');
+      setImageToDelete(null);
     }
   };
 
@@ -697,6 +701,13 @@ export function ProjectImagesManager({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        isOpen={imageToDelete !== null}
+        onConfirm={confirmDelete}
+        onCancel={() => setImageToDelete(null)}
+      />
     </div>
   );
 }

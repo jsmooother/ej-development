@@ -210,7 +210,7 @@ export default function NewProjectPage() {
               onPairsChange={setImagePairs}
               label="Upload & Organize Images"
               description="Upload images, tag them as before/after/gallery, and create pairs."
-              maxImages={30}
+              maxImages={50}
               maxPairs={10}
             />
           </div>

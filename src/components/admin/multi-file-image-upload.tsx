@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { Upload, X, Plus } from "lucide-react";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
 type ImageTag = "before" | "after" | "gallery";
 
@@ -29,7 +30,7 @@ export function MultiFileImageUpload({
   className = "",
   maxSize = 10,
   acceptedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"],
-  maxImages = 20
+  maxImages = 50
 }: MultiFileImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +39,7 @@ export function MultiFileImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlInput, setUrlInput] = useState("");
   const [isAddingUrl, setIsAddingUrl] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -248,16 +250,14 @@ export function MultiFileImageUpload({
     }
   };
 
-  const handleRemove = async (index: number) => {
-    const imageToRemove = images[index];
-    if (!imageToRemove) return;
+  const confirmDelete = async () => {
+    if (imageToDelete === null) return;
 
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      `Are you sure you want to delete this image?\n\nThis will permanently remove the image from storage.`
-    );
-
-    if (!confirmed) return;
+    const imageToRemove = images[imageToDelete];
+    if (!imageToRemove) {
+      setImageToDelete(null);
+      return;
+    }
 
     try {
       // Delete from Supabase storage
@@ -275,16 +275,19 @@ export function MultiFileImageUpload({
 
       if (!result.success) {
         alert(`Failed to delete image: ${result.error}`);
+        setImageToDelete(null);
         return;
       }
 
       // Remove from images array
-      const newImages = images.filter((_, i) => i !== index);
+      const newImages = images.filter((_, i) => i !== imageToDelete);
       onChange(newImages);
+      setImageToDelete(null);
 
     } catch (error) {
       console.error('Error deleting image:', error);
       alert('Failed to delete image. Please try again.');
+      setImageToDelete(null);
     }
   };
 
@@ -471,7 +474,7 @@ export function MultiFileImageUpload({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    handleRemove(index);
+                    setImageToDelete(index);
                   }}
                   className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                   title="Remove image"
@@ -490,6 +493,13 @@ export function MultiFileImageUpload({
           <p className="text-sm text-red-600">{error}</p>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        isOpen={imageToDelete !== null}
+        onConfirm={confirmDelete}
+        onCancel={() => setImageToDelete(null)}
+      />
     </div>
   );
 }

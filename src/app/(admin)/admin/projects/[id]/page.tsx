@@ -383,7 +383,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 }}
                 label="Upload & Organize Images"
                 description="Upload images, tag them as before/after/gallery, and create pairs."
-                maxImages={30}
+                maxImages={50}
                 maxPairs={10}
               />
             </div>
