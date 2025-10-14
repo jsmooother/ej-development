@@ -208,7 +208,7 @@ export function ProjectImagesManager({
           >
             <div className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              1. Upload Images
+              1. Add/Remove Images
             </div>
           </button>
           <button
@@ -265,12 +265,12 @@ export function ProjectImagesManager({
         </nav>
       </div>
 
-      {/* Step 1: Upload Images */}
+      {/* Step 1: Add/Remove Images */}
       {currentStep === "upload" && (
         <div className="space-y-6">
           <div className="bg-blue-50 rounded-lg p-4">
-            <h4 className="text-lg font-medium text-blue-900 mb-2">Upload Your Images</h4>
-            <p className="text-sm text-blue-800">Add all your project images first. You can organize them in the next steps.</p>
+            <h4 className="text-lg font-medium text-blue-900 mb-2">Add or Remove Images</h4>
+            <p className="text-sm text-blue-800">Upload new images or select and delete existing ones. You can organize them in the next steps.</p>
           </div>
 
           {/* Multi-File Upload */}
