@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Plus } from "lucide-react";
 
 interface Fact {
@@ -21,39 +21,133 @@ interface FactsEditorProps {
   description?: string;
 }
 
+const mandatoryFacts: Fact[] = [
+  { key: "sqm", value: "" },
+  { key: "bedrooms", value: "" }
+];
+
+const ensureMandatoryFacts = (factsList: Fact[]): Fact[] => {
+  const result = [...factsList];
+  const existingKeys = new Set(result.map((fact) => fact.key));
+
+  mandatoryFacts.forEach((mandatoryFact, index) => {
+    if (!existingKeys.has(mandatoryFact.key)) {
+      result.splice(index, 0, { ...mandatoryFact });
+    }
+  });
+
+  return result;
+};
+
+const factsObjectToList = (facts: Record<string, string | number | null> | undefined): Fact[] => {
+  if (!facts) return [];
+
+  return Object.entries(facts).map(([key, value]) => ({
+    key,
+    value: value ?? ""
+  }));
+};
+
+const parseFactValue = (value: string | number | null | undefined): string | number => {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  if (trimmedValue === "") {
+    return "";
+  }
+
+  const numericValue = Number(trimmedValue);
+  return Number.isNaN(numericValue) ? trimmedValue : numericValue;
+};
+
+const factListToObject = (factsList: Fact[]): Record<string, string | number | null> => {
+  const factsObject: Record<string, string | number | null> = {};
+
+  factsList.forEach((fact) => {
+    const trimmedKey = fact.key.trim();
+    if (!trimmedKey) {
+      return;
+    }
+
+    factsObject[trimmedKey] = parseFactValue(fact.value);
+  });
+
+  return factsObject;
+};
+
+const prepareFactsEntries = (facts: Record<string, string | number | null> | undefined) => {
+  if (!facts) {
+    return [] as [string, string | number][];
+  }
+
+  return Object.entries(facts)
+    .map(([key, value]) => {
+      const trimmedKey = key.trim();
+      return [trimmedKey, parseFactValue(value)] as [string, string | number];
+    })
+    .filter(([key]) => key.length > 0)
+    .sort((entryA, entryB) => entryA[0].localeCompare(entryB[0]));
+};
+
+const areFactListsEqual = (a: Fact[], b: Fact[]) => {
+  const normalizeFacts = (facts: Fact[]) =>
+    facts
+      .filter((fact) => fact.key.trim().length > 0)
+      .map((fact) => ({
+        key: fact.key.trim(),
+        value: parseFactValue(fact.value),
+      }));
+
+  const normalizedA = normalizeFacts(a);
+  const normalizedB = normalizeFacts(b);
+
+  if (normalizedA.length !== normalizedB.length) {
+    return false;
+  }
+
+  return normalizedA.every((fact, index) => {
+    const other = normalizedB[index];
+    return fact.key === other.key && fact.value === other.value;
+  });
+};
+
 export function FactsEditor({
   facts,
   onChange,
   label = "Project Facts",
   description = "Add key details about the project (e.g., size, bedrooms, location)"
 }: FactsEditorProps) {
-  // Ensure mandatory facts are always present
-  const ensureMandatoryFacts = (factsList: Fact[]) => {
-    const mandatoryFacts = [
-      { key: "sqm", value: "" },
-      { key: "bedrooms", value: "" }
-    ];
-    
-    const result = [...factsList];
-    
-    // Add mandatory facts if they don't exist
-    mandatoryFacts.forEach(mandatory => {
-      if (!result.some(fact => fact.key === mandatory.key)) {
-        result.unshift(mandatory);
-      }
-    });
-    
-    return result;
-  };
+  const [factsList, setFactsList] = useState<Fact[]>(() =>
+    ensureMandatoryFacts(factsObjectToList(facts))
+  );
 
-  // Convert facts object to array for easier editing, ensuring mandatory facts
-  const [factsList, setFactsList] = useState<Fact[]>(() => {
-    const initialFacts = Object.entries(facts || {}).map(([key, value]) => ({
-      key,
-      value: value ?? ""
-    }));
-    return ensureMandatoryFacts(initialFacts);
-  });
+  const normalizedFactsObject = factListToObject(factsList);
+
+  useEffect(() => {
+    const normalizedFromProps = ensureMandatoryFacts(factsObjectToList(facts));
+
+    setFactsList((currentFacts) =>
+      areFactListsEqual(currentFacts, normalizedFromProps)
+        ? currentFacts
+        : normalizedFromProps
+    );
+  }, [facts]);
+
+  useEffect(() => {
+    const normalizedEntries = prepareFactsEntries(normalizedFactsObject);
+    const currentEntries = prepareFactsEntries(facts);
+
+    if (JSON.stringify(normalizedEntries) !== JSON.stringify(currentEntries)) {
+      onChange(normalizedFactsObject);
+    }
+  }, [facts, normalizedFactsObject, onChange]);
 
   // Common fact templates
   // Note: Keys must match what the frontend expects (lowercase, no spaces)
@@ -71,49 +165,40 @@ export function FactsEditor({
     { key: "seaViews", label: "Sea Views", value: "Yes" },
   ];
 
-  const updateFacts = (newFactsList: Fact[]) => {
-    setFactsList(newFactsList);
-    
-    // Convert back to object and pass to parent
-    const factsObject: Record<string, string | number | null> = {};
-    newFactsList.forEach(fact => {
-      if (fact.key.trim()) {
-        // Try to convert to number if it's numeric
-        const numValue = Number(fact.value);
-        factsObject[fact.key.trim()] = isNaN(numValue) || fact.value === "" 
-          ? fact.value 
-          : numValue;
-      }
-    });
-    onChange(factsObject);
+  const updateFacts = (newFacts: Fact[]) => {
+    setFactsList(newFacts);
   };
 
   const addFact = (key: string = "", value: string | number = "") => {
-    const newFactsList = [...factsList, { key, value }];
+    const newFactsList = ensureMandatoryFacts([...factsList, { key, value }]);
     updateFacts(newFactsList);
   };
 
   const updateFact = (index: number, field: "key" | "value", newValue: string) => {
-    const newFactsList = [...factsList];
-    
+    const currentFact = factsList[index];
+    if (!currentFact) return;
+
     // Prevent renaming of mandatory facts
-    if (field === "key") {
-      const currentFact = factsList[index];
-      if (currentFact && (currentFact.key === "sqm" || currentFact.key === "bedrooms")) {
-        return;
-      }
+    if (field === "key" && (currentFact.key === "sqm" || currentFact.key === "bedrooms")) {
+      return;
     }
-    
-    newFactsList[index][field] = newValue;
+
+    const newFactsList = factsList.map((fact, i) =>
+      i === index ? { ...fact, [field]: newValue } : fact
+    );
+
     updateFacts(newFactsList);
   };
 
   const removeFact = (index: number) => {
     const fact = factsList[index];
+    if (!fact) return;
+
     // Prevent deletion of mandatory facts
-    if (fact && (fact.key === "sqm" || fact.key === "bedrooms")) {
+    if (fact.key === "sqm" || fact.key === "bedrooms") {
       return;
     }
+
     const newFactsList = factsList.filter((_, i) => i !== index);
     updateFacts(newFactsList);
   };
