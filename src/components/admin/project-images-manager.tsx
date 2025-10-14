@@ -48,18 +48,52 @@ export function ProjectImagesManager({
   const [currentStep, setCurrentStep] = useState<WorkflowStep>("upload");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
-  const removeImage = (imageId: string) => {
-    // Remove from images
-    const newImages = images.filter(img => img.id !== imageId);
-    onImagesChange(newImages);
+  const removeImage = async (imageId: string) => {
+    const imageToRemove = images.find(img => img.id === imageId);
+    if (!imageToRemove) return;
 
-    // Remove from any pairs
-    const newPairs = pairs.map(pair => ({
-      ...pair,
-      beforeImageId: pair.beforeImageId === imageId ? undefined : pair.beforeImageId,
-      afterImageId: pair.afterImageId === imageId ? undefined : pair.afterImageId
-    }));
-    onPairsChange(newPairs);
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to delete this image?\n\nThis will permanently remove the image from storage.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      // Delete from Supabase storage
+      const response = await fetch('/api/delete-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageUrl: imageToRemove.url
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        alert(`Failed to delete image: ${result.error}`);
+        return;
+      }
+
+      // Remove from images array
+      const newImages = images.filter(img => img.id !== imageId);
+      onImagesChange(newImages);
+
+      // Remove from any pairs
+      const newPairs = pairs.map(pair => ({
+        ...pair,
+        beforeImageId: pair.beforeImageId === imageId ? undefined : pair.beforeImageId,
+        afterImageId: pair.afterImageId === imageId ? undefined : pair.afterImageId
+      }));
+      onPairsChange(newPairs);
+
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Failed to delete image. Please try again.');
+    }
   };
 
   // Step 2: Tag Images

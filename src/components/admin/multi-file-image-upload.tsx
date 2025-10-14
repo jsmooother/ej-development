@@ -248,9 +248,44 @@ export function MultiFileImageUpload({
     }
   };
 
-  const handleRemove = (index: number) => {
-    const newImages = images.filter((_, i) => i !== index);
-    onChange(newImages);
+  const handleRemove = async (index: number) => {
+    const imageToRemove = images[index];
+    if (!imageToRemove) return;
+
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to delete this image?\n\nThis will permanently remove the image from storage.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      // Delete from Supabase storage
+      const response = await fetch('/api/delete-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageUrl: imageToRemove.url
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        alert(`Failed to delete image: ${result.error}`);
+        return;
+      }
+
+      // Remove from images array
+      const newImages = images.filter((_, i) => i !== index);
+      onChange(newImages);
+
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Failed to delete image. Please try again.');
+    }
   };
 
   const addImageFromUrl = async () => {
@@ -433,7 +468,11 @@ export function MultiFileImageUpload({
                 </div>
                 <button
                   type="button"
-                  onClick={() => handleRemove(index)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleRemove(index);
+                  }}
                   className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                   title="Remove image"
                 >
