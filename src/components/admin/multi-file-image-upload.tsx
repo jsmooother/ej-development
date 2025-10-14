@@ -39,7 +39,9 @@ export function MultiFileImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [urlInput, setUrlInput] = useState("");
   const [isAddingUrl, setIsAddingUrl] = useState(false);
-  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
+  const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [previewImage, setPreviewImage] = useState<number | null>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -250,44 +252,55 @@ export function MultiFileImageUpload({
     }
   };
 
-  const confirmDelete = async () => {
-    if (imageToDelete === null) return;
-
-    const imageToRemove = images[imageToDelete];
-    if (!imageToRemove) {
-      setImageToDelete(null);
-      return;
+  const toggleImageSelection = (index: number) => {
+    const newSelected = new Set(selectedImages);
+    if (newSelected.has(index)) {
+      newSelected.delete(index);
+    } else {
+      newSelected.add(index);
     }
+    setSelectedImages(newSelected);
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedImages.size === 0) return;
 
     try {
-      // Delete from Supabase storage
-      const response = await fetch('/api/delete-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          imageUrl: imageToRemove.url
-        }),
+      // Delete all selected images from storage
+      const deletePromises = Array.from(selectedImages).map(async (index) => {
+        const imageToRemove = images[index];
+        if (!imageToRemove) return null;
+
+        const response = await fetch('/api/delete-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageUrl: imageToRemove.url
+          }),
+        });
+
+        const result = await response.json();
+        return result.success ? index : null;
       });
 
-      const result = await response.json();
+      const results = await Promise.all(deletePromises);
+      const deletedIndices = new Set(results.filter((i): i is number => i !== null));
 
-      if (!result.success) {
-        alert(`Failed to delete image: ${result.error}`);
-        setImageToDelete(null);
-        return;
+      if (deletedIndices.size > 0) {
+        // Remove deleted images from array
+        const newImages = images.filter((_, i) => !deletedIndices.has(i));
+        onChange(newImages);
+        setSelectedImages(new Set());
+        setShowDeleteConfirm(false);
+      } else {
+        alert('Failed to delete images. Please try again.');
       }
 
-      // Remove from images array
-      const newImages = images.filter((_, i) => i !== imageToDelete);
-      onChange(newImages);
-      setImageToDelete(null);
-
     } catch (error) {
-      console.error('Error deleting image:', error);
-      alert('Failed to delete image. Please try again.');
-      setImageToDelete(null);
+      console.error('Error deleting images:', error);
+      alert('Failed to delete images. Please try again.');
     }
   };
 
@@ -444,23 +457,57 @@ export function MultiFileImageUpload({
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-gray-900">
               Uploaded Images ({images.length})
+              {selectedImages.size > 0 && (
+                <span className="ml-2 text-blue-600">
+                  ({selectedImages.size} selected)
+                </span>
+              )}
             </h4>
-            {canAddMore && (
-              <button
-                type="button"
-                onClick={handleClick}
-                className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
-              >
-                <Plus className="w-4 h-4" />
-                Add More Images
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {selectedImages.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700"
+                >
+                  <X className="w-4 h-4" />
+                  Delete Selected ({selectedImages.size})
+                </button>
+              )}
+              {canAddMore && (
+                <button
+                  type="button"
+                  onClick={handleClick}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add More Images
+                </button>
+              )}
+            </div>
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {images.map((image, index) => (
               <div key={image.id} className="relative group">
-                <div className="relative w-full h-24 rounded-lg overflow-hidden bg-gray-100">
+                {/* Checkbox */}
+                <div className="absolute top-2 left-2 z-10">
+                  <input
+                    type="checkbox"
+                    checked={selectedImages.has(index)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      toggleImageSelection(index);
+                    }}
+                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                </div>
+
+                {/* Image */}
+                <div 
+                  className="relative w-full h-24 rounded-lg overflow-hidden bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => setPreviewImage(index)}
+                >
                   <Image
                     src={image.url}
                     alt={`Uploaded image ${index + 1}`}
@@ -469,21 +516,23 @@ export function MultiFileImageUpload({
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setImageToDelete(index);
-                  }}
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                  title="Remove image"
-                >
-                  <X className="w-3 h-3" />
-                </button>
               </div>
             ))}
           </div>
+
+          {/* Delete button at bottom when images are selected */}
+          {selectedImages.size > 0 && (
+            <div className="flex justify-center pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700"
+              >
+                <X className="w-4 h-4" />
+                Delete Selected ({selectedImages.size})
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -496,10 +545,55 @@ export function MultiFileImageUpload({
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
-        isOpen={imageToDelete !== null}
-        onConfirm={confirmDelete}
-        onCancel={() => setImageToDelete(null)}
+        isOpen={showDeleteConfirm}
+        onConfirm={handleDeleteSelected}
+        onCancel={() => setShowDeleteConfirm(false)}
+        title="Delete Images"
+        message={`Are you sure you want to delete ${selectedImages.size} image${selectedImages.size === 1 ? '' : 's'}? This action cannot be undone and will permanently remove ${selectedImages.size === 1 ? 'the image' : 'these images'} from storage.`}
       />
+
+      {/* Image Preview Modal */}
+      {previewImage !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setPreviewImage(null)}
+          />
+          
+          {/* Modal */}
+          <div className="relative z-10 w-full max-w-4xl">
+            <div className="bg-white rounded-lg shadow-xl overflow-hidden">
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => setPreviewImage(null)}
+                className="absolute top-4 right-4 z-20 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-700" />
+              </button>
+
+              {/* Image */}
+              <div className="relative w-full h-[70vh]">
+                <Image
+                  src={images[previewImage].url}
+                  alt={`Preview image ${previewImage + 1}`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                />
+              </div>
+
+              {/* Image info */}
+              <div className="p-4 bg-gray-50 border-t border-gray-200">
+                <p className="text-sm text-gray-600">
+                  Image {previewImage + 1} of {images.length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
