@@ -55,6 +55,8 @@ export function ProjectImagesManager({
   const [pairLabel, setPairLabel] = useState("");
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [draggedPairIndex, setDraggedPairIndex] = useState<number | null>(null);
+  const [showImageSelector, setShowImageSelector] = useState(false);
+  const [selectingFor, setSelectingFor] = useState<'before' | 'after' | null>(null);
 
   const confirmDelete = async () => {
     if (!imageToDelete) return;
@@ -575,104 +577,56 @@ export function ProjectImagesManager({
           {pairs.length < maxPairs && (
             <div className="space-y-4">
               <h5 className="text-sm font-medium text-gray-900">Create New Pair</h5>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Before Images */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-900">Select Before Image</label>
-                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 rounded-lg">
-                    {beforeImages.length === 0 ? (
-                      <div className="col-span-2 text-center py-8 text-gray-500 text-sm">
-                        No "before" images tagged yet. Tag images in Step 3.
-                      </div>
-                    ) : (
-                      beforeImages.map((image) => (
-                        <button
-                          key={image.id}
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (selectedPairImages.length === 0) {
-                              setSelectedPairImages([image.id]);
-                            } else if (selectedPairImages[0] === image.id) {
-                              setSelectedPairImages([]);
-                            } else {
-                              setSelectedPairImages([image.id]);
-                            }
-                          }}
-                          className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
-                            selectedPairImages.includes(image.id)
-                              ? "border-orange-500 ring-2 ring-orange-200"
-                              : "border-gray-200 hover:border-orange-300"
-                          }`}
-                        >
-                          <Image
-                            src={image.url}
-                            alt="Before image"
-                            fill
-                            className="object-cover"
-                          />
-                          {selectedPairImages.includes(image.id) && (
-                            <div className="absolute inset-0 bg-orange-500/20 flex items-center justify-center">
-                              <div className="bg-orange-600 text-white px-2 py-1 rounded text-xs font-bold">
-                                BEFORE
-                              </div>
-                            </div>
-                          )}
-                        </button>
-                      ))
+              
+              {/* Before/After Selection */}
+              <div className="flex gap-4">
+                {/* Before Image Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectingFor('before');
+                    setShowImageSelector(true);
+                  }}
+                  className="flex-1 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition-colors"
+                >
+                  <div className="text-center">
+                    <div className="text-2xl mb-2">📸</div>
+                    <div className="text-sm font-medium text-gray-700">
+                      {selectedPairImages[0] ? 'Before Selected' : 'Select Before Image'}
+                    </div>
+                    {selectedPairImages[0] && (
+                      <div className="mt-2 text-xs text-orange-600">✓ Ready</div>
                     )}
                   </div>
+                </button>
+
+                {/* Arrow */}
+                <div className="flex items-center">
+                  <ArrowRight className="w-6 h-6 text-gray-400" />
                 </div>
 
-                {/* After Images */}
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-900">Select After Image</label>
-                  <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 rounded-lg">
-                    {afterImages.length === 0 ? (
-                      <div className="col-span-2 text-center py-8 text-gray-500 text-sm">
-                        No "after" images tagged yet. Tag images in Step 3.
-                      </div>
-                    ) : (
-                      afterImages.map((image) => (
-                        <button
-                          key={image.id}
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (selectedPairImages.length === 1) {
-                              setSelectedPairImages([selectedPairImages[0], image.id]);
-                            } else if (selectedPairImages.length === 2 && selectedPairImages[1] === image.id) {
-                              setSelectedPairImages([selectedPairImages[0]]);
-                            } else if (selectedPairImages.length === 2) {
-                              setSelectedPairImages([selectedPairImages[0], image.id]);
-                            }
-                          }}
-                          className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
-                            selectedPairImages.includes(image.id)
-                              ? "border-green-500 ring-2 ring-green-200"
-                              : "border-gray-200 hover:border-green-300"
-                          }`}
-                        >
-                          <Image
-                            src={image.url}
-                            alt="After image"
-                            fill
-                            className="object-cover"
-                          />
-                          {selectedPairImages.includes(image.id) && (
-                            <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
-                              <div className="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold">
-                                AFTER
-                              </div>
-                            </div>
-                          )}
-                        </button>
-                      ))
+                {/* After Image Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectingFor('after');
+                    setShowImageSelector(true);
+                  }}
+                  className="flex-1 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-colors"
+                >
+                  <div className="text-center">
+                    <div className="text-2xl mb-2">📸</div>
+                    <div className="text-sm font-medium text-gray-700">
+                      {selectedPairImages[1] ? 'After Selected' : 'Select After Image'}
+                    </div>
+                    {selectedPairImages[1] && (
+                      <div className="mt-2 text-xs text-green-600">✓ Ready</div>
                     )}
                   </div>
-                </div>
+                </button>
               </div>
 
+              {/* Create Pair Button */}
               {selectedPairImages.length === 2 && (
                 <div className="space-y-3">
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -837,6 +791,108 @@ export function ProjectImagesManager({
         onConfirm={confirmDelete}
         onCancel={() => setImageToDelete(null)}
       />
+
+      {/* Image Selector Modal */}
+      {showImageSelector && selectingFor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => {
+              setShowImageSelector(false);
+              setSelectingFor(null);
+            }}
+          />
+          
+          {/* Modal */}
+          <div className="relative z-10 w-full max-w-4xl max-h-[80vh] bg-white rounded-lg shadow-xl overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Select {selectingFor === 'before' ? 'Before' : 'After'} Image
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">
+                  Choose an image tagged as "{selectingFor}" for your pair
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowImageSelector(false);
+                  setSelectingFor(null);
+                }}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Image Grid */}
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {(selectingFor === 'before' ? beforeImages : afterImages).map((image) => (
+                  <button
+                    key={image.id}
+                    type="button"
+                    onClick={() => {
+                      if (selectingFor === 'before') {
+                        setSelectedPairImages([image.id, selectedPairImages[1] || '']);
+                      } else {
+                        setSelectedPairImages([selectedPairImages[0] || '', image.id]);
+                      }
+                      setShowImageSelector(false);
+                      setSelectingFor(null);
+                    }}
+                    className="group relative aspect-square overflow-hidden rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:shadow-lg transition-all"
+                  >
+                    <Image
+                      src={image.url}
+                      alt={`${selectingFor} image`}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform"
+                    />
+                    
+                    {/* Selection indicator */}
+                    <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/10 transition-colors" />
+                    
+                    {/* Tag indicator */}
+                    <div className="absolute top-2 left-2">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        selectingFor === 'before' 
+                          ? 'bg-orange-500 text-white' 
+                          : 'bg-green-500 text-white'
+                      }`}>
+                        {selectingFor}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Empty state */}
+              {(selectingFor === 'before' ? beforeImages : afterImages).length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-4xl mb-4">📷</div>
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">
+                    No {selectingFor} images found
+                  </h4>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Tag some images as "{selectingFor}" in Step 3 first.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep("organize")}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Go to Step 3 →
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
