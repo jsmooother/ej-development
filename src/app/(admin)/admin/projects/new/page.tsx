@@ -206,8 +206,10 @@ export default function NewProjectPage() {
             <ProjectImagesManager
               images={projectImages}
               pairs={imagePairs}
+              heroImageUrl={heroImageUrl}
               onImagesChange={setProjectImages}
               onPairsChange={setImagePairs}
+              onHeroImageChange={setHeroImageUrl}
               label="Upload & Organize Images"
               description="Upload images, tag them as before/after/gallery, and create pairs."
               maxImages={50}

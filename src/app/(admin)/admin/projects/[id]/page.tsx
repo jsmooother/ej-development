@@ -371,6 +371,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
               <ProjectImagesManager
                 images={project.projectImages}
                 pairs={project.imagePairs}
+                heroImageUrl={project.heroImagePath}
                 onImagesChange={(images) => {
                   const updated = { ...project, projectImages: images };
                   setProject(updated);
@@ -378,6 +379,11 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
                 }}
                 onPairsChange={(pairs) => {
                   const updated = { ...project, imagePairs: pairs };
+                  setProject(updated);
+                  if (project?.id) debouncedAutoSave(updated);
+                }}
+                onHeroImageChange={(url) => {
+                  const updated = { ...project, heroImagePath: url };
                   setProject(updated);
                   if (project?.id) debouncedAutoSave(updated);
                 }}

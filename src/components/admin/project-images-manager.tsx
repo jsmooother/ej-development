@@ -30,6 +30,8 @@ interface ProjectImagesManagerProps {
   pairs: ImagePair[];
   onImagesChange: (images: ProjectImage[]) => void;
   onPairsChange: (pairs: ImagePair[]) => void;
+  heroImageUrl?: string;
+  onHeroImageChange?: (url: string) => void;
   label?: string;
   description?: string;
   maxImages?: number;
@@ -41,6 +43,8 @@ export function ProjectImagesManager({
   pairs,
   onImagesChange,
   onPairsChange,
+  heroImageUrl,
+  onHeroImageChange,
   label = "Project Images",
   description,
   maxImages = 50,
@@ -336,46 +340,69 @@ export function ProjectImagesManager({
 
               {/* Hero Image Selection Grid */}
               <div className="space-y-4">
-                <p className="text-sm font-medium text-gray-700">Click an image to select it as your hero image:</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-gray-700">
+                    {heroImageUrl ? 'Selected hero image (click another to change):' : 'Click an image to select it as your hero image:'}
+                  </p>
+                  {heroImageUrl && (
+                    <span className="text-sm text-green-600 font-medium">✓ Hero image selected</span>
+                  )}
+                </div>
                 <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  {images.map((image) => (
-                    <button
-                      key={image.id}
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // This will be handled by the parent component's hero image selector
-                        // For now, we'll just move to the next step
-                        setCurrentStep("organize");
-                      }}
-                      className="relative aspect-square overflow-hidden rounded-lg border-2 border-gray-200 hover:border-gray-300 transition-all"
-                    >
-                      <Image
-                        src={image.url}
-                        alt="Project image"
-                        fill
-                        className="object-cover"
-                      />
-                      
-                      {/* Tags indicator */}
-                      <div className="absolute top-1 right-1 flex gap-1">
-                        {image.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className={`text-xs px-1 py-0.5 rounded ${
-                              tag === "before" 
-                                ? "bg-orange-500 text-white" 
-                                : tag === "after"
-                                ? "bg-green-500 text-white"
-                                : "bg-blue-500 text-white"
-                            }`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </button>
-                  ))}
+                  {images.map((image) => {
+                    const isSelected = image.url === heroImageUrl;
+                    return (
+                      <button
+                        key={image.id}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (onHeroImageChange) {
+                            onHeroImageChange(image.url);
+                          }
+                        }}
+                        className={`relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                          isSelected 
+                            ? 'border-green-500 ring-4 ring-green-100 shadow-lg' 
+                            : 'border-gray-200 hover:border-blue-400 hover:shadow-md'
+                        }`}
+                      >
+                        <Image
+                          src={image.url}
+                          alt="Project image"
+                          fill
+                          className="object-cover"
+                        />
+                        
+                        {/* Hero badge */}
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                            <div className="bg-green-600 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-lg">
+                              ★ HERO
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Tags indicator */}
+                        <div className="absolute top-1 right-1 flex gap-1">
+                          {image.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className={`text-xs px-1 py-0.5 rounded ${
+                                tag === "before" 
+                                  ? "bg-orange-500 text-white" 
+                                  : tag === "after"
+                                  ? "bg-green-500 text-white"
+                                  : "bg-blue-500 text-white"
+                              }`}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
