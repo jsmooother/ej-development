@@ -65,6 +65,48 @@ export async function PUT(
   }
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const body = await request.json();
+
+    if (typeof body.isPublished !== "boolean") {
+      return NextResponse.json(
+        { error: "isPublished must be provided as a boolean" },
+        { status: 400 }
+      );
+    }
+
+    const db = getDb();
+    const updatedListing = await db
+      .update(listings)
+      .set({
+        isPublished: body.isPublished,
+        updatedAt: new Date(),
+        publishedAt: body.isPublished ? new Date() : null,
+      })
+      .where(eq(listings.id, params.id))
+      .returning();
+
+    if (updatedListing.length === 0) {
+      return NextResponse.json(
+        { error: "Listing not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedListing[0]);
+  } catch (error) {
+    console.error("Error patching listing status:", error);
+    return NextResponse.json(
+      { error: "Failed to update listing status" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

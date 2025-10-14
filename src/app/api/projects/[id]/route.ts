@@ -106,6 +106,65 @@ export async function PUT(
   }
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const body = await request.json();
+
+    if (typeof body.isPublished !== 'boolean') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'isPublished must be provided as a boolean value',
+        },
+        { status: 400 }
+      );
+    }
+
+    const db = getDb();
+    const updatedProject = await db
+      .update(projects)
+      .set({
+        isPublished: body.isPublished,
+        publishedAt: body.isPublished ? new Date() : null,
+        updatedAt: new Date(),
+      })
+      .where(eq(projects.id, params.id))
+      .returning();
+
+    if (!updatedProject || updatedProject.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Project not found',
+        },
+        { status: 404 }
+      );
+    }
+
+    console.log('✅ Updated project publish state via PATCH:', {
+      id: updatedProject[0].id,
+      isPublished: updatedProject[0].isPublished,
+    });
+
+    return NextResponse.json({
+      success: true,
+      project: updatedProject[0],
+    });
+  } catch (error) {
+    console.error('❌ Database error while patching project status:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

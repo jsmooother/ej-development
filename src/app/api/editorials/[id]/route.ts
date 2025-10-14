@@ -78,6 +78,48 @@ export async function PUT(
   }
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const body = await request.json();
+
+    if (typeof body.isPublished !== 'boolean') {
+      return NextResponse.json(
+        { error: 'isPublished must be provided as a boolean value' },
+        { status: 400 }
+      );
+    }
+
+    const db = getDb();
+    const updatedEditorial = await db
+      .update(posts)
+      .set({
+        isPublished: body.isPublished,
+        publishedAt: body.isPublished ? new Date() : null,
+        updatedAt: new Date(),
+      })
+      .where(eq(posts.id, params.id))
+      .returning();
+
+    if (!updatedEditorial || updatedEditorial.length === 0) {
+      return NextResponse.json(
+        { error: 'Editorial not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedEditorial[0]);
+  } catch (error) {
+    console.error('Error patching editorial status:', error);
+    return NextResponse.json(
+      { error: 'Failed to update editorial status' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

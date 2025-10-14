@@ -22,6 +22,7 @@ interface Editorial {
 export default function EditorialsListPage() {
   const [posts, setPosts] = useState<Editorial[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [publishState, setPublishState] = useState<Record<string, { nextValue: boolean }>>({});
 
   // Fetch editorials from database on component mount
   useEffect(() => {
@@ -60,34 +61,72 @@ export default function EditorialsListPage() {
   }, []);
 
   const handleTogglePublish = async (postId: string, newStatus: boolean) => {
-    console.log(`Toggling post ${postId} to ${newStatus ? 'published' : 'draft'}`);
-    
+    const post = posts.find((item) => item.id === postId);
+    if (!post) {
+      console.warn(`Editorial ${postId} not found while toggling publish state.`);
+      return;
+    }
+
+    const previousStatus = post.isPublished;
+    setPublishState((prev) => ({
+      ...prev,
+      [postId]: { nextValue: newStatus },
+    }));
+
     try {
-      // Call API to update status using slug
-      const post = posts.find(p => p.id === postId);
-      if (!post) return;
-      
-      const response = await fetch('/api/content/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'editorial',
-          id: post.slug,
-          isPublished: newStatus
-        })
+      const response = await fetch(`/api/editorials/${postId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: newStatus }),
       });
 
-      if (response.ok) {
-        // Update local state
-        setPosts(prev => 
-          prev.map(p => p.id === postId ? { ...p, isPublished: newStatus } : p)
-        );
-        console.log(`Successfully updated editorial ${postId} status`);
-      } else {
-        console.error('Failed to update editorial status');
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => null);
+        const message =
+          (errorPayload && (errorPayload.error || errorPayload.message)) ||
+          `Failed to update editorial status (${response.status})`;
+        throw new Error(message);
       }
+
+      const updatedEditorial = await response.json();
+
+      // Best-effort sync with content status API, without blocking the main update
+      try {
+        await fetch('/api/content/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'editorial',
+            id: post.slug,
+            isPublished: newStatus,
+          }),
+        });
+      } catch (syncError) {
+        console.warn('Failed to sync editorial status to content service:', syncError);
+      }
+
+      setPosts((prev) =>
+        prev.map((item) => (item.id === postId ? { ...item, ...updatedEditorial } : item))
+      );
+      console.log(`Successfully updated editorial ${postId} status`);
     } catch (error) {
       console.error('Error updating editorial status:', error);
+      setPosts((prev) =>
+        prev.map((item) =>
+          item.id === postId ? { ...item, isPublished: previousStatus } : item
+        )
+      );
+      alert(
+        error instanceof Error
+          ? error.message
+          : 'Failed to update editorial status. Please try again.'
+      );
+    } finally {
+      setPublishState((prev) => {
+        const next = { ...prev };
+        delete next[postId];
+        return next;
+      });
     }
   };
 
@@ -164,32 +203,38 @@ export default function EditorialsListPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/admin/editorials/${post.id}`}
-                className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
-              >
-                <div className="flex items-center gap-6 p-6">
-                  {/* Cover Image */}
-                  <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
-                    {post.coverImagePath ? (
-                      <img 
-                        src={post.coverImagePath} 
-                        alt={post.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
+            {posts.map((post) => {
+              const pendingState = publishState[post.id];
+              const effectiveIsPublished = pendingState
+                ? pendingState.nextValue
+                : post.isPublished;
 
-                  {/* Post Info */}
-                  <div className="flex-1">
+              return (
+                <Link
+                  key={post.id}
+                  href={`/admin/editorials/${post.id}`}
+                  className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
+                >
+                  <div className="flex items-center gap-6 p-6">
+                    {/* Cover Image */}
+                    <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                      {post.coverImagePath ? (
+                        <img
+                          src={post.coverImagePath}
+                          alt={post.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Post Info */}
+                    <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
@@ -201,15 +246,18 @@ export default function EditorialsListPage() {
                         <div className="flex items-center gap-2">
                           <InlineToggle
                             id={post.id}
-                            initialChecked={post.isPublished}
+                            checked={effectiveIsPublished}
+                            isLoading={Boolean(pendingState)}
                             onToggle={(checked) => handleTogglePublish(post.id, checked)}
                           />
-                          <span className={`text-[10px] font-medium uppercase tracking-wide ${
-                            post.isPublished 
-                              ? "text-green-700" 
-                              : "text-muted-foreground/60"
-                          }`}>
-                            {post.isPublished ? "Live" : "Draft"}
+                          <span
+                            className={`text-[10px] font-medium uppercase tracking-wide ${
+                              effectiveIsPublished
+                                ? "text-green-700"
+                                : "text-muted-foreground/60"
+                            }`}
+                          >
+                            {effectiveIsPublished ? "Live" : "Draft"}
                           </span>
                         </div>
                         <button
@@ -254,8 +302,9 @@ export default function EditorialsListPage() {
                     </svg>
                   </div>
                 </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

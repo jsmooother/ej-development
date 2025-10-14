@@ -8,6 +8,7 @@ import { InlineToggle } from "@/components/admin/inline-toggle";
 export default function ListingsPage() {
   const [listings, setListings] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [publishState, setPublishState] = useState<Record<string, { nextValue: boolean }>>({});
 
   // Fetch listings on component mount
   useEffect(() => {
@@ -30,26 +31,56 @@ export default function ListingsPage() {
   }, []);
 
   const handleTogglePublish = async (listingId: string, newStatus: boolean) => {
-    console.log(`Toggling listing ${listingId} to ${newStatus ? 'published' : 'draft'}`);
-    
+    const listing = listings.find((item) => item.id === listingId);
+    if (!listing) {
+      console.warn(`Listing ${listingId} not found while toggling publish state.`);
+      return;
+    }
+
+    const previousStatus = listing.isPublished;
+    setPublishState((prev) => ({
+      ...prev,
+      [listingId]: { nextValue: newStatus },
+    }));
+
     try {
       const response = await fetch(`/api/listings/${listingId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isPublished: newStatus })
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: newStatus }),
       });
 
-      if (response.ok) {
-        // Update local state
-        setListings(prev => 
-          prev.map(listing => listing.id === listingId ? { ...listing, isPublished: newStatus } : listing)
-        );
-        console.log(`Successfully updated listing ${listingId} status`);
-      } else {
-        console.error('Failed to update listing status');
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => null);
+        const message =
+          (errorPayload && (errorPayload.error || errorPayload.message)) ||
+          `Failed to update listing status (${response.status})`;
+        throw new Error(message);
       }
+
+      const updatedListing = await response.json();
+      setListings((prev) =>
+        prev.map((item) => (item.id === listingId ? { ...item, ...updatedListing } : item))
+      );
+      console.log(`Successfully updated listing ${listingId} status`);
     } catch (error) {
-      console.error('Error updating listing status:', error);
+      console.error("Error updating listing status:", error);
+      setListings((prev) =>
+        prev.map((item) =>
+          item.id === listingId ? { ...item, isPublished: previousStatus } : item
+        )
+      );
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to update listing status. Please try again."
+      );
+    } finally {
+      setPublishState((prev) => {
+        const next = { ...prev };
+        delete next[listingId];
+        return next;
+      });
     }
   };
 
@@ -112,120 +143,130 @@ export default function ListingsPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {listings.map((listing) => (
-              <Link
-                key={listing.id}
-                href={`/admin/listings/${listing.id}`}
-                className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
-              >
-                <div className="flex items-center gap-6 p-6">
-                  {/* Listing Image */}
-                  <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
-                    {listing.heroImagePath ? (
-                      <img 
-                        src={listing.heroImagePath} 
-                        alt={listing.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
+            {listings.map((listing) => {
+              const pendingState = publishState[listing.id];
+              const effectiveIsPublished = pendingState
+                ? pendingState.nextValue
+                : Boolean(listing.isPublished);
 
-                  {/* Listing Info */}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
-                          {listing.title}
-                        </h3>
-                        {listing.subtitle && (
-                          <p className="mt-1 text-sm text-muted-foreground/60">{listing.subtitle}</p>
-                        )}
+              return (
+                <Link
+                  key={listing.id}
+                  href={`/admin/listings/${listing.id}`}
+                  className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
+                >
+                  <div className="flex items-center gap-6 p-6">
+                    {/* Listing Image */}
+                    <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                      {listing.heroImagePath ? (
+                        <img
+                          src={listing.heroImagePath}
+                          alt={listing.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Listing Info */}
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
+                            {listing.title}
+                          </h3>
+                          {listing.subtitle && (
+                            <p className="mt-1 text-sm text-muted-foreground/60">{listing.subtitle}</p>
+                          )}
+                        </div>
+                        <div className="ml-4 flex items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            <InlineToggle
+                              id={listing.id}
+                              checked={effectiveIsPublished}
+                              isLoading={Boolean(pendingState)}
+                              onToggle={(checked) => handleTogglePublish(listing.id, checked)}
+                            />
+                            <span
+                              className={`text-[10px] font-medium uppercase tracking-wide ${
+                                effectiveIsPublished
+                                  ? "text-green-700"
+                                  : "text-muted-foreground/60"
+                              }`}
+                            >
+                              {effectiveIsPublished ? "Live" : "Draft"}
+                            </span>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDelete(listing.id);
+                            }}
+                            className="text-muted-foreground/40 transition-colors hover:text-red-600"
+                            title="Delete listing"
+                          >
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                      <div className="ml-4 flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                          <InlineToggle
-                            id={listing.id}
-                            initialChecked={listing.isPublished}
-                            onToggle={(checked) => handleTogglePublish(listing.id, checked)}
-                          />
-                          <span className={`text-[10px] font-medium uppercase tracking-wide ${
-                            listing.isPublished 
-                              ? "text-green-700" 
-                              : "text-muted-foreground/60"
+
+                      {/* Listing Meta */}
+                      <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                          <span className={`rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide ${
+                            listing.status === 'for_sale'
+                              ? "bg-green-50 text-green-700"
+                              : listing.status === 'sold'
+                              ? "bg-gray-50 text-gray-700"
+                              : "bg-blue-50 text-blue-700"
                           }`}>
-                            {listing.isPublished ? "Live" : "Draft"}
+                            {listing.status === 'for_sale' ? 'For Sale' : listing.status === 'sold' ? 'Sold' : 'Coming Soon'}
                           </span>
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleDelete(listing.id);
-                          }}
-                          className="text-muted-foreground/40 transition-colors hover:text-red-600"
-                          title="Delete listing"
-                        >
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Listing Meta */}
-                    <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-                      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <span className={`rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide ${
-                          listing.status === 'for_sale' 
-                            ? "bg-green-50 text-green-700" 
-                            : listing.status === 'sold'
-                            ? "bg-gray-50 text-gray-700"
-                            : "bg-blue-50 text-blue-700"
-                        }`}>
-                          {listing.status === 'for_sale' ? 'For Sale' : listing.status === 'sold' ? 'Sold' : 'Coming Soon'}
-                        </span>
-                      </div>
-                      {listing.location?.locality && (
+                        {listing.location?.locality && (
+                          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
+                            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span>{listing.location.locality}{listing.location.country ? `, ${listing.location.country}` : ''}</span>
+                          </div>
+                        )}
+                        {listing.facts && (
+                          <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground/60">
+                            {listing.facts.bedrooms && <span>{listing.facts.bedrooms} bed</span>}
+                            {listing.facts.bedrooms && listing.facts.bathrooms && <span>·</span>}
+                            {listing.facts.bathrooms && <span>{listing.facts.bathrooms} bath</span>}
+                            {(listing.facts.bedrooms || listing.facts.bathrooms) && listing.facts.builtAreaSqm && <span>·</span>}
+                            {listing.facts.builtAreaSqm && <span>{listing.facts.builtAreaSqm}m²</span>}
+                          </div>
+                        )}
                         <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
                           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
-                          <span>{listing.location.locality}{listing.location.country ? `, ${listing.location.country}` : ''}</span>
+                          <span>Created {new Date(listing.createdAt!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         </div>
-                      )}
-                      {listing.facts && (
-                        <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground/60">
-                          {listing.facts.bedrooms && <span>{listing.facts.bedrooms} bed</span>}
-                          {listing.facts.bedrooms && listing.facts.bathrooms && <span>·</span>}
-                          {listing.facts.bathrooms && <span>{listing.facts.bathrooms} bath</span>}
-                          {(listing.facts.bedrooms || listing.facts.bathrooms) && listing.facts.builtAreaSqm && <span>·</span>}
-                          {listing.facts.builtAreaSqm && <span>{listing.facts.builtAreaSqm}m²</span>}
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground/60">
-                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>Created {new Date(listing.createdAt!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Arrow */}
-                  <div className="text-muted-foreground/40 transition-all group-hover:translate-x-1 group-hover:text-foreground">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    {/* Arrow */}
+                    <div className="text-muted-foreground/40 transition-all group-hover:translate-x-1 group-hover:text-foreground">
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

@@ -39,6 +39,7 @@ interface Project {
 export default function ProjectsListPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [publishState, setPublishState] = useState<Record<string, { nextValue: boolean }>>({});
 
   // Fetch projects from database on component mount and when page becomes visible
   useEffect(() => {
@@ -109,46 +110,61 @@ export default function ProjectsListPage() {
   }, []);
 
   const handleTogglePublish = async (projectId: string, newStatus: boolean) => {
-    console.log(`Toggling project ${projectId} to ${newStatus ? 'published' : 'draft'}`);
-    
+    const project = projects.find((p) => p.id === projectId);
+    if (!project) {
+      console.warn(`Project ${projectId} not found while toggling publish state.`);
+      return;
+    }
+
+    const previousStatus = project.isPublished;
+    setPublishState((prev) => ({
+      ...prev,
+      [projectId]: { nextValue: newStatus },
+    }));
+
     try {
-      // Find the project to get all its data
-      const project = projects.find(p => p.id === projectId);
-      if (!project) return;
-      
-      // Update via the same API endpoint as the edit page - MUST include all required fields
       const response = await fetch(`/api/projects/${projectId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: project.title,
-          slug: project.slug,
-          summary: project.summary,
-          content: project.content,
-          year: project.year,
-          facts: project.facts,
-          heroImagePath: project.heroImagePath,
-          projectImages: project.projectImages || [], // CRITICAL: Must include these
-          imagePairs: project.imagePairs || [], // CRITICAL: Must include these
-          isPublished: newStatus
-        })
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: newStatus }),
       });
 
-      if (response.ok) {
-        // Update local state
-        setProjects(prev => {
-          const updated = prev.map(p => p.id === projectId ? { ...p, isPublished: newStatus } : p);
-          console.log(`🔄 Updated local state for ${projectId}: ${newStatus}`);
-          console.log('📊 All projects after update:', updated.map(p => ({ id: p.id, title: p.title, isPublished: p.isPublished })));
-          return updated;
-        });
-        console.log(`✅ Successfully updated project ${projectId} publish status to ${newStatus}`);
-      } else {
-        const errorData = await response.json();
-        console.error('❌ Failed to update project status:', errorData);
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => null);
+        const message =
+          (errorPayload && (errorPayload.error || errorPayload.message)) ||
+          `Failed to update project status (${response.status})`;
+        throw new Error(message);
       }
+
+      const payload = await response.json();
+      const updatedProject = "project" in payload ? payload.project : payload;
+
+      setProjects((prev) =>
+        prev.map((item) => (item.id === projectId ? { ...item, ...updatedProject } : item))
+      );
+      console.log(
+        `✅ Successfully updated project ${projectId} publish status to ${newStatus}`,
+        { updatedProject }
+      );
     } catch (error) {
-      console.error('❌ Error updating project status:', error);
+      console.error("❌ Error updating project status:", error);
+      setProjects((prev) =>
+        prev.map((item) =>
+          item.id === projectId ? { ...item, isPublished: previousStatus } : item
+        )
+      );
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to update project status. Please try again."
+      );
+    } finally {
+      setPublishState((prev) => {
+        const next = { ...prev };
+        delete next[projectId];
+        return next;
+      });
     }
   };
 
@@ -253,32 +269,38 @@ export default function ProjectsListPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {projects.map((project) => (
-              <Link
-                key={project.id}
-                href={`/admin/projects/${project.id}`}
-                className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
-              >
-                <div className="flex items-center gap-6 p-6">
-                  {/* Project Image */}
-                  <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
-                    {project.heroImagePath ? (
-                      <img 
-                        src={project.heroImagePath} 
-                        alt={project.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
+            {projects.map((project) => {
+              const pendingState = publishState[project.id];
+              const effectiveIsPublished = pendingState
+                ? pendingState.nextValue
+                : project.isPublished;
 
-                  {/* Project Info */}
-                  <div className="flex-1">
+              return (
+                <Link
+                  key={project.id}
+                  href={`/admin/projects/${project.id}`}
+                  className="group block overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-border hover:shadow-lg"
+                >
+                  <div className="flex items-center gap-6 p-6">
+                    {/* Project Image */}
+                    <div className="flex h-28 w-28 flex-shrink-0 overflow-hidden rounded-xl bg-muted">
+                      {project.heroImagePath ? (
+                        <img
+                          src={project.heroImagePath}
+                          alt={project.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <svg className="h-10 w-10 text-foreground/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Project Info */}
+                    <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="font-sans text-2xl font-normal tracking-tight text-foreground transition-colors group-hover:text-foreground">
@@ -289,17 +311,19 @@ export default function ProjectsListPage() {
                       <div className="ml-4 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                           <InlineToggle
-                            key={`${project.id}-${project.isPublished}`} // Force re-render when status changes
                             id={project.id}
-                            initialChecked={project.isPublished}
+                            checked={effectiveIsPublished}
+                            isLoading={Boolean(pendingState)}
                             onToggle={(checked) => handleTogglePublish(project.id, checked)}
                           />
-                          <span className={`text-[10px] font-medium uppercase tracking-wide ${
-                            project.isPublished 
-                              ? "text-green-700" 
-                              : "text-muted-foreground/60"
-                          }`}>
-                            {project.isPublished ? "Live" : "Draft"}
+                          <span
+                            className={`text-[10px] font-medium uppercase tracking-wide ${
+                              effectiveIsPublished
+                                ? "text-green-700"
+                                : "text-muted-foreground/60"
+                            }`}
+                          >
+                            {effectiveIsPublished ? "Live" : "Draft"}
                           </span>
                         </div>
                         <button
@@ -351,8 +375,9 @@ export default function ProjectsListPage() {
                     </svg>
                   </div>
                 </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
