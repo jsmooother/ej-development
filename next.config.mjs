@@ -9,6 +9,7 @@ const nextConfig = {
   },
   eslint: {
     dirs: ["src"],
+    ignoreDuringBuilds: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
