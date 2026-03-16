@@ -21,10 +21,10 @@ export const sponsorCommitment = [
 ] as const;
 
 export const preliminaryBudget = [
-  { line: "Construction", amount: "approx. €3,440,000", note: "800 m² × €4,300/m²" },
-  { line: "Admin / project overhead", amount: "approx. €200,000", note: "" },
-  { line: "Permit taxes / fees", amount: "TBC", note: "" },
-  { line: "Additional soft costs / sales", amount: "TBC", note: "" },
+  { line: "Construction", amount: "approx. €3,440,000", note: "800 m² × €4,300/m²", bold: false },
+  { line: "Admin / project overhead", amount: "approx. €200,000", note: "", bold: false },
+  { line: "Permit taxes / fees", amount: "TBC", note: "", bold: false },
+  { line: "Additional soft costs / sales", amount: "TBC", note: "", bold: false },
   { line: "Total funding sought", amount: "approx. €3,900,000+", note: "excl. TBC items", bold: true },
 ] as const;
 

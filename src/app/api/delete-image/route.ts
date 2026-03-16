@@ -33,7 +33,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client
+    if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      return NextResponse.json(
+        { success: false, error: "Supabase is not configured" },
+        { status: 500 }
+      );
+    }
     const supabase = createClient(
       env.NEXT_PUBLIC_SUPABASE_URL,
       env.NEXT_PUBLIC_SUPABASE_ANON_KEY

@@ -5,6 +5,10 @@ import Link from "next/link";
 import { FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const asset = (path: string) =>
+  supabaseUrl ? `${supabaseUrl}/storage/v1/object/public/images/${path}` : `/${path}`;
+
 const verifiedFacts = [
   { label: "Plot size", value: "3,038 m²" },
   { label: "Classification", value: "Urban land" },
@@ -43,7 +47,7 @@ export function InvestorSitePlanning() {
           <div className="order-2 lg:order-1 space-y-6">
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border">
               <Image
-                src="/investor/plot-plan.png"
+                src={asset("investor/plot-plan.png")}
                 alt="Plot plan · Aerial view · El Madroñal Plot 102B"
                 fill
                 className="object-cover"
@@ -52,7 +56,7 @@ export function InvestorSitePlanning() {
             </div>
             <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30">
               <Image
-                src="/investor/altimetria-crop.png"
+                src={asset("investor/altimetria-crop.png")}
                 alt="Topographic survey · Altimetría · Parcela 102(B)"
                 width={800}
                 height={600}
@@ -65,7 +69,7 @@ export function InvestorSitePlanning() {
               Plot plan · Topographic survey · Nov 2025
             </p>
             <Link
-              href="/investor/251106-altimetria.pdf"
+              href={asset("investor/251106-altimetria.pdf")}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
