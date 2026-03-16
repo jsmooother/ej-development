@@ -16,6 +16,6 @@ jobs:
           # Set DEPLOYMENT_URL in repo Settings → Secrets and variables → Variables
           SITE_URL: ${{ vars.DEPLOYMENT_URL }}
         run: |
-          URL="${SITE_URL:-https://www.ejdevelopment.es}/api/keep-alive"
+          URL="${SITE_URL:-https://www.ejproperties.es}/api/keep-alive"
           echo "Pinging $URL"
           curl -sf "$URL" || exit 1

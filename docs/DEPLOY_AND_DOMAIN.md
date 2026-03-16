@@ -1,5 +1,11 @@
 # Deploy & Connect Domain
 
+## Supabase Storage (done)
+
+- **Buckets:** `images`, `project-images` (public)
+- **Assets uploaded:** listing-images (casa-serrana), investor (plot-plan, altimetria, PDF), placeholders
+- **Investor page** now loads assets from Supabase when `NEXT_PUBLIC_SUPABASE_URL` is set
+
 ## 1. Deploy to Vercel
 
 ### Option A: Via GitHub (if project is linked)
@@ -31,16 +37,16 @@ Project → **Settings** → **Environment Variables** (Production + Preview):
 | `SUPABASE_DB_POOL_URL` | ✓ |
 | `SUPABASE_DB_URL` | ✓ |
 | `DIRECT_URL` | ✓ |
-| `NEXT_PUBLIC_SITE_URL` | ✓ (set to `https://www.ejdevelopment.es` for prod) |
+| `NEXT_PUBLIC_SITE_URL` | ✓ (set to `https://www.ejproperties.es` for prod) |
 
 ---
 
-## 2. Connect Custom Domain (ejdevelopment.es)
+## 2. Connect Custom Domain (ejproperties.es)
 
 ### In Vercel
 
 1. Project → **Settings** → **Domains**
-2. Add domain: `www.ejdevelopment.es` (and optionally `ejdevelopment.es` for root)
+2. Add domain: `www.ejproperties.es` (and optionally `ejproperties.es` for root)
 3. Vercel will show the DNS records to add
 
 ### In one.com (or your DNS provider)
@@ -51,7 +57,7 @@ Add these records:
 |------|------|-------|
 | **CNAME** | `www` | `cname.vercel-dns.com` |
 
-For root domain (`ejdevelopment.es`):
+For root domain (`ejproperties.es`):
 
 | Type | Name | Value |
 |------|------|-------|
@@ -72,7 +78,7 @@ Or use Vercel nameservers if your provider supports it (simplest).
 After domain is live, set in Vercel env vars:
 
 ```
-NEXT_PUBLIC_SITE_URL=https://www.ejdevelopment.es
+NEXT_PUBLIC_SITE_URL=https://www.ejproperties.es
 ```
 
 Then redeploy.

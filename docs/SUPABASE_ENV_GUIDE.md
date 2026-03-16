@@ -97,7 +97,7 @@ Restart the dev server after changing env vars.
 | `SUPABASE_DB_POOL_URL` | Pool connection string | Production, Preview, Development |
 | `SUPABASE_DB_URL` | Direct connection string | Production, Preview (optional) |
 | `DIRECT_URL` | Same as SUPABASE_DB_URL | Production, Preview (for migrations) |
-| `NEXT_PUBLIC_SITE_URL` | `https://www.ejdevelopment.es` | Production |
+| `NEXT_PUBLIC_SITE_URL` | `https://www.ejproperties.es` | Production |
 | `INVESTOR_PASSWORD` | Your investor gate password | Production, Preview |
 
 4. **Save** – Vercel will trigger a new deployment.
@@ -134,9 +134,9 @@ Supabase pauses free projects after **7 days of inactivity**. This repo includes
 2. **GitHub Actions** – `.github/workflows/keep-supabase-alive.yml` pings it every 5 days
 
 **Setup:** In GitHub → repo **Settings** → **Secrets and variables** → **Actions** → **Variables**, add:
-- `DEPLOYMENT_URL` = `https://www.ejdevelopment.es` (or your production URL)
+- `DEPLOYMENT_URL` = `https://www.ejproperties.es` (or your production URL)
 
-If unset, it defaults to `https://www.ejdevelopment.es`.
+If unset, it defaults to `https://www.ejproperties.es`.
 
 **Alternative:** Use [cron-job.org](https://cron-job.org) (free) to hit `https://yoursite.com/api/keep-alive` every 5 days.
 
