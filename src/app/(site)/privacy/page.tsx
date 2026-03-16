@@ -169,10 +169,10 @@ export default function PrivacyPolicyPage() {
           </p>
           <div className="bg-gray-50 p-6 rounded-lg">
             <ul className="space-y-2">
-              <li><strong>Email:</strong> <a href="mailto:privacy@ejproperties.com" className="text-blue-600 hover:underline">privacy@ejproperties.com</a></li>
+              <li><strong>Email:</strong> <a href="mailto:info@ejproperties.es" className="text-blue-600 hover:underline">info@ejproperties.es</a></li>
               <li><strong>Phone:</strong> <a href="tel:+34600123456" className="text-blue-600 hover:underline">+34 600 123 456</a></li>
               <li><strong>Address:</strong> EJ Properties, Marbella, Spain</li>
-              <li><strong>Data Protection Officer:</strong> <a href="mailto:dpo@ejproperties.com" className="text-blue-600 hover:underline">dpo@ejproperties.com</a></li>
+              <li><strong>Data Protection Officer:</strong> <a href="mailto:info@ejproperties.es" className="text-blue-600 hover:underline">info@ejproperties.es</a></li>
             </ul>
           </div>
 

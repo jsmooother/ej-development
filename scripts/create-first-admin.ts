@@ -27,7 +27,7 @@ async function createFirstAdmin() {
   console.log("🚀 Creating first admin user...\n");
 
   // Get email from command line or use default
-  const email = process.argv[2] || "admin@ejproperties.com";
+  const email = process.argv[2] || "info@ejproperties.es";
   const password = process.argv[3] || "admin123456"; // Temporary password
 
   console.log(`📧 Email: ${email}`);

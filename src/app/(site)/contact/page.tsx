@@ -238,8 +238,8 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <h3 className="font-serif text-xl font-light text-foreground">Contact</h3>
                 <div className="space-y-2 text-sm">
-                  <a href="mailto:hello@ejproperties.com" className="block text-muted-foreground hover:text-foreground transition">
-                    hello@ejproperties.com
+                  <a href="mailto:info@ejproperties.es" className="block text-muted-foreground hover:text-foreground transition">
+                    info@ejproperties.es
                   </a>
                   <a href="tel:+34600123456" className="block text-muted-foreground hover:text-foreground transition">
                     +34 600 123 456
@@ -250,8 +250,8 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <h3 className="font-serif text-xl font-light text-foreground">Press & Partnerships</h3>
                 <div className="space-y-2 text-sm">
-                  <a href="mailto:press@ejproperties.com" className="block text-muted-foreground hover:text-foreground transition">
-                    press@ejproperties.com
+                  <a href="mailto:info@ejproperties.es" className="block text-muted-foreground hover:text-foreground transition">
+                    info@ejproperties.es
                   </a>
                 </div>
               </div>

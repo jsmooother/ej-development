@@ -17,8 +17,8 @@ export function SiteFooter() {
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Contact</p>
           <div className="space-y-1 text-sm text-muted-foreground">
-            <Link href="mailto:hello@ejproperties.com" className="block hover:text-foreground">
-              hello@ejproperties.com
+            <Link href="mailto:info@ejproperties.es" className="block hover:text-foreground">
+              info@ejproperties.es
             </Link>
             <Link href="tel:+34600123456" className="block hover:text-foreground">
               +34 600 123 456

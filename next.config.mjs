@@ -2,6 +2,9 @@
 const isDev = process.env.NODE_ENV !== "production";
 
 const nextConfig = {
+  async redirects() {
+    return [{ source: "/studio", destination: "/", permanent: false }];
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "8mb",

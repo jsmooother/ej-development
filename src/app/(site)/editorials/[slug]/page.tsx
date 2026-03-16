@@ -228,7 +228,7 @@ export default async function EditorialDetailPage({ params }: { params: { slug: 
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-black">Get In Touch</h3>
               <p className="mt-2 text-sm text-gray-600">Editorial Inquiries</p>
-              <p className="text-sm text-gray-600">editorial@ejproperties.com</p>
+              <p className="text-sm text-gray-600">info@ejproperties.es</p>
               <p className="text-sm text-gray-600">+34 600 123 456</p>
             </div>
           </div>

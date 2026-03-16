@@ -29,7 +29,7 @@ async function createEditorUser() {
   // Database connection
   const sql = postgres(DATABASE_URL, { ssl: "require", max: 1 });
 
-  const email = 'editor@ejproperties.com';
+  const email = 'info@ejproperties.es';
   const password = 'EditorPass123!';
   const role = 'editor';
 

@@ -38,6 +38,7 @@ Project → **Settings** → **Environment Variables** (Production + Preview):
 | `SUPABASE_DB_URL` | ✓ |
 | `DIRECT_URL` | ✓ |
 | `NEXT_PUBLIC_SITE_URL` | ✓ (set to `https://www.ejproperties.es` for prod) |
+| `NEXT_PUBLIC_INVESTOR_PASSWORD` or `INVESTOR_PASSWORD` | ✓ (for /investor password gate) |
 
 ---
 

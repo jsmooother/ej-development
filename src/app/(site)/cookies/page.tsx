@@ -150,7 +150,7 @@ export default function CookiePolicyPage() {
             If you have any questions about our use of cookies or this Cookie Policy, please contact us:
           </p>
           <ul>
-            <li><strong>Email:</strong> <a href="mailto:privacy@ejproperties.com">privacy@ejproperties.com</a></li>
+            <li><strong>Email:</strong> <a href="mailto:info@ejproperties.es">info@ejproperties.es</a></li>
             <li><strong>Phone:</strong> <a href="tel:+34600123456">+34 600 123 456</a></li>
             <li><strong>Address:</strong> EJ Properties, Marbella, Spain</li>
           </ul>

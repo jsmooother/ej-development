@@ -7,13 +7,13 @@ import { cn } from "@/lib/utils";
 
 type NavItem = { href: string; label: string; condition?: boolean };
 
-const BASE_NAV_ITEMS: Array<{ href: string; label: string; requiresListings?: boolean }> = [
+const BASE_NAV_ITEMS: Array<{ href: string; label: string; requiresListings?: boolean; hidden?: boolean }> = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/editorials", label: "Editorials" },
   { href: "/listings", label: "Listings", requiresListings: true },
   { href: "/instagram", label: "Instagram" },
-  { href: "/studio", label: "Studio" },
+  { href: "/studio", label: "Studio", hidden: true },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -53,9 +53,8 @@ export function SiteHeader() {
 
   // Filter nav items based on conditions
   const navItems = BASE_NAV_ITEMS.filter(item => {
-    if (item.requiresListings) {
-      return hasListings;
-    }
+    if (item.hidden) return false;
+    if (item.requiresListings) return hasListings;
     return true;
   });
 

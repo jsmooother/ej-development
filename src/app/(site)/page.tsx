@@ -529,8 +529,8 @@ export default async function HomePage() {
             documentation, floorplans, and schedules.
           </p>
           <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.3em]">
-            <Link href="mailto:hello@ejproperties.com" className="rounded-full border border-border px-5 py-2 hover:border-primary">
-              hello@ejproperties.com
+            <Link href="mailto:info@ejproperties.es" className="rounded-full border border-border px-5 py-2 hover:border-primary">
+              info@ejproperties.es
             </Link>
             <Link href="tel:+34600123456" className="rounded-full border border-border px-5 py-2 hover:border-primary">
               +34 600 123 456
@@ -545,7 +545,7 @@ export default async function HomePage() {
           </div>
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">Press & Partnerships</p>
-            <p className="mt-2">press@ejproperties.com</p>
+            <p className="mt-2">info@ejproperties.es</p>
           </div>
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground/70">Office Hours</p>

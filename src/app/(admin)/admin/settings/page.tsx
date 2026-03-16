@@ -30,7 +30,7 @@ export default function SettingsPage() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings>({
     siteName: "EJ Properties",
     siteDescription: "Luxury property development and design in Marbella",
-    contactEmail: "hello@ejproperties.com",
+    contactEmail: "info@ejproperties.es",
     contactPhone: "+34 123 456 789",
     address: "Marbella, Spain",
     socialMedia: {
@@ -109,7 +109,7 @@ export default function SettingsPage() {
                         type="email"
                         value={siteSettings.contactEmail}
                         onChange={(e) => setSiteSettings({ ...siteSettings, contactEmail: e.target.value })}
-                        placeholder="hello@ejproperties.com"
+                        placeholder="info@ejproperties.es"
                       />
                     </FormField>
 

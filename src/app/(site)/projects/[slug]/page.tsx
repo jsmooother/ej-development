@@ -294,7 +294,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                 Request detailed project information, floor plans, and site visit scheduling.
               </p>
               <a
-                href="mailto:hello@ejproperties.com"
+                href="mailto:info@ejproperties.es"
                 className="inline-block w-full rounded-lg bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90"
               >
                 Contact Us
@@ -692,7 +692,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a
-              href="mailto:hello@ejproperties.com"
+              href="mailto:info@ejproperties.es"
               className="rounded-full bg-white px-8 py-3 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
             >
               Schedule Consultation

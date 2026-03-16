@@ -54,10 +54,10 @@ export function InvestorSourcesDisclaimer() {
           </div>
           <div className="flex flex-wrap items-center gap-6 text-sm">
             <Link
-              href="mailto:hello@ejproperties.com"
+              href="mailto:info@ejproperties.es"
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
-              hello@ejproperties.com
+              info@ejproperties.es
             </Link>
             <Link
               href="/"

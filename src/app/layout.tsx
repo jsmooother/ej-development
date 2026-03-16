@@ -18,7 +18,7 @@ const serif = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.ejproperties.com"),
+  metadataBase: new URL("https://www.ejproperties.es"),
   title: {
     default: "EJ Properties — Precision in Every Square Meter",
     template: "%s | EJ Properties",
