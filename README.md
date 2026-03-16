@@ -48,6 +48,10 @@ INSTAGRAM_APP_SECRET=
 INSTAGRAM_REDIRECT_URI=http://localhost:3000/api/instagram/callback
 NEXT_PUBLIC_INSTAGRAM_APP_ID=
 
+# Investor portal (optional - password gate for /investor)
+# Use INVESTOR_PASSWORD (server-only, preferred) or NEXT_PUBLIC_INVESTOR_PASSWORD
+INVESTOR_PASSWORD=
+
 # Optional email & maps
 RESEND_API_KEY=
 MAPBOX_TOKEN=
