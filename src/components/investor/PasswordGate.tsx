@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { InvestorPresentation } from "./InvestorPresentation";
+import { InvestorHeader } from "./InvestorHeader";
 
 const STORAGE_KEY = "ej_investor_access";
 
@@ -67,15 +68,20 @@ export function PasswordGate() {
 
   if (hasAccess === null) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-pulse rounded-full border-2 border-border border-t-primary" />
-      </div>
+      <>
+        <InvestorHeader showNav={false} />
+        <div className="flex min-h-[60vh] items-center justify-center pt-24">
+          <div className="h-8 w-8 animate-pulse rounded-full border-2 border-border border-t-primary" />
+        </div>
+      </>
     );
   }
 
   if (!hasAccess) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-24">
+      <>
+        <InvestorHeader showNav={false} />
+        <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-24 pt-24">
         <div className="mx-auto w-full max-w-md space-y-8 text-center">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
@@ -111,12 +117,15 @@ export function PasswordGate() {
           </form>
         </div>
       </div>
+      </>
     );
   }
 
   if (contentError) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-24">
+      <>
+        <InvestorHeader showNav={false} />
+        <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-24 pt-24">
         <p className="text-sm text-destructive">{contentError}</p>
         <button
           onClick={handleLogout}
@@ -125,28 +134,25 @@ export function PasswordGate() {
           Exit portal
         </button>
       </div>
+      </>
     );
   }
 
   if (!content) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center pt-16">
-        <div className="h-8 w-8 animate-pulse rounded-full border-2 border-border border-t-primary" />
-      </div>
+      <>
+        <InvestorHeader showNav onLogout={handleLogout} />
+        <div className="flex min-h-[60vh] items-center justify-center pt-24">
+          <div className="h-8 w-8 animate-pulse rounded-full border-2 border-border border-t-primary" />
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="relative pt-16">
-      <div className="absolute right-6 top-6 z-10">
-        <button
-          onClick={handleLogout}
-          className="text-xs uppercase tracking-[0.3em] text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Exit portal
-        </button>
-      </div>
+    <>
+      <InvestorHeader showNav onLogout={handleLogout} />
       <InvestorPresentation content={content} />
-    </div>
+    </>
   );
 }

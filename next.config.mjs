@@ -37,6 +37,11 @@ const nextConfig = {
         hostname: "scontent.cdninstagram.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.prod.website-files.com",
+        pathname: "/**",
+      },
     ],
   },
   async headers() {
