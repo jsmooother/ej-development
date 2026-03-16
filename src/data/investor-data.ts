@@ -25,6 +25,14 @@ export const preliminaryBudget = [
   { line: "Admin / project overhead", amount: "approx. €200,000", note: "" },
   { line: "Permit taxes / fees", amount: "TBC", note: "" },
   { line: "Additional soft costs / sales", amount: "TBC", note: "" },
+  { line: "Total funding sought", amount: "approx. €3,900,000+", note: "excl. TBC items", bold: true },
+] as const;
+
+export const fundingMilestones = [
+  { milestone: "Milestone 1", description: "TBC", amount: "TBC", note: "" },
+  { milestone: "Milestone 2", description: "TBC", amount: "TBC", note: "" },
+  { milestone: "Milestone 3", description: "TBC", amount: "TBC", note: "" },
+  { milestone: "Milestone 4", description: "TBC", amount: "TBC", note: "" },
 ] as const;
 
 export const preliminaryRevenue = [
