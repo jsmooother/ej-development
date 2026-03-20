@@ -37,7 +37,7 @@ export const fundingMilestones = [
 
 export const preliminaryRevenue = [
   { line: "Indicative sales value", amount: "€9,200,000", note: "€11,500/m² × 800 m²", bold: true },
-  { line: "Expected broker", amount: "Homerun Brokers + Solvilla", note: "marketing", bold: false },
+  { line: "Expected broker", amount: "Homerun, Solvilla etc.", note: "marketing", bold: false },
   { line: "Pricing basis", amount: "Comparable AMES-houses", note: "similar €/m² build", bold: false },
   { line: "Project margin (conservative)", amount: "€4,520,000", note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on €3.9m funding", bold: true },
 ] as const;
