@@ -27,8 +27,13 @@ export function InvestorWhyThisProject() {
             Why this project
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Structure with meaningful capital already committed to land and design.
-            Design-led product in a controlled, risk-managed execution framework.
+            Meaningful capital is already committed to land and design, reducing
+            early-stage project risk.
+            <br />
+            <br />
+            The project is underwritten to deliver a strong margin at exit.
+            Construction will be procured on a fixed-cost basis, which limits cost
+            overrun risk and improves downside protection for financing partners.
           </p>
           <ul className="mt-10 space-y-4">
             {thesis.map((item, i) => (
