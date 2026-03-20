@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 const HERO_VIDEO =
   "https://player.vimeo.com/video/1125999153?background=1&autoplay=1&loop=1&muted=1";
@@ -12,13 +12,19 @@ export function InvestorHero() {
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const textY = useTransform(scrollYProgress, [0, 1], [0, -72]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0.2]);
+  const rawTextY = useTransform(scrollYProgress, [0, 0.6, 1], [0, -36, -96]);
+  const rawTextOpacity = useTransform(scrollYProgress, [0, 0.75, 1], [1, 0.82, 0.55]);
+  const rawMediaY = useTransform(scrollYProgress, [0, 1], [0, 38]);
+
+  // Smooth scroll-linked motion to avoid jitter while keeping effect visible.
+  const textY = useSpring(rawTextY, { stiffness: 110, damping: 24, mass: 0.35 });
+  const textOpacity = useSpring(rawTextOpacity, { stiffness: 110, damping: 24, mass: 0.35 });
+  const mediaY = useSpring(rawMediaY, { stiffness: 110, damping: 24, mass: 0.35 });
 
   return (
     <section ref={sectionRef} className="relative min-h-[90vh] overflow-hidden">
       {/* AMES hero video from amesarquitectos.com - same as their homepage */}
-      <div className="absolute inset-0 overflow-hidden">
+      <motion.div className="absolute inset-0 overflow-hidden" style={{ y: mediaY }}>
         <iframe
           src={HERO_VIDEO}
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -32,7 +38,7 @@ export function InvestorHero() {
           allowFullScreen
           title="AMES Arquitectos"
         />
-      </div>
+      </motion.div>
       {/* Dark overlay for text readability */}
       <div
         className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20"

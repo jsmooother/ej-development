@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { ContentLimits, isContentLimits } from "@/lib/types/settings";
+import { buildOgImageUrl } from "@/lib/og";
 
 type ProjectCard = {
   id: string;
@@ -52,9 +53,46 @@ type InstagramCard = {
 };
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "EJ Development - El Madronal",
   description:
-    "Luxury property development in Marbella with a focus on modern Mediterranean architecture and curated living experiences.",
+    "A private luxury villa in Marbella's most exclusive gated community.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "EJ Development - El Madronal",
+    description:
+      "A private luxury villa in Marbella's most exclusive gated community.",
+    url: "https://www.ejproperties.es",
+    type: "website",
+    siteName: "EJ Development",
+    images: [
+      {
+        url: buildOgImageUrl({
+          title: "El Madronal Villa",
+          subtitle: "Marbella · 700-800 sqm",
+          highlight: "Private Estate · Panoramic Views",
+          badge: "New Development",
+        }),
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EJ Development - El Madronal",
+    description:
+      "A private luxury villa in Marbella's most exclusive gated community.",
+    images: [
+      buildOgImageUrl({
+        title: "El Madronal Villa",
+        subtitle: "Marbella · 700-800 sqm",
+        highlight: "Private Estate · Panoramic Views",
+        badge: "New Development",
+      }),
+    ],
+  },
 };
 
 export const dynamic = "force-dynamic";
