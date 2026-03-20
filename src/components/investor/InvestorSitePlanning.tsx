@@ -98,9 +98,11 @@ export function InvestorSitePlanning() {
                 </p>
                 <div className="mt-3 space-y-2">
                   {verifiedFacts.map((s, i) => (
-                    <div key={i} className="flex justify-between border-b border-border/50 py-2">
+                    <div key={i} className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4">
                       <span className="text-sm text-muted-foreground">{s.label}</span>
-                      <span className="text-sm font-medium text-foreground">{s.value}</span>
+                      <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
+                        {s.value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -111,9 +113,11 @@ export function InvestorSitePlanning() {
                 </p>
                 <div className="mt-3 space-y-2">
                   {planningParams.map((s, i) => (
-                    <div key={i} className="flex justify-between border-b border-border/50 py-2">
+                    <div key={i} className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4">
                       <span className="text-sm text-muted-foreground">{s.label}</span>
-                      <span className="text-sm font-medium text-foreground">{s.value}</span>
+                      <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
+                        {s.value}
+                      </span>
                     </div>
                   ))}
                 </div>

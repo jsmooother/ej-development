@@ -29,7 +29,7 @@ export function SiteFooter() {
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Connect</p>
           <div className="space-y-1 text-sm text-muted-foreground">
-            <Link href="https://instagram.com/ejdevelopment" className="block hover:text-foreground">
+            <Link href="https://instagram.com/ejproperties" className="block hover:text-foreground">
               Instagram
             </Link>
             <Link href="#contact" scroll className="block hover:text-foreground">

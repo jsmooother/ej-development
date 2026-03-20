@@ -1,6 +1,6 @@
 # Deployment Guide
 
-Complete guide for deploying EJ Development website to production.
+Complete guide for deploying EJ Properties website to production.
 
 ## Pre-Deployment Checklist
 

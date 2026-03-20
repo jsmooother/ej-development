@@ -1,6 +1,6 @@
 # Admin Dashboard User Guide
 
-Complete guide for managing content on the EJ Development website.
+Complete guide for managing content on the EJ Properties website.
 
 ## Table of Contents
 - [Getting Started](#getting-started)

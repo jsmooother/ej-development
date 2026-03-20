@@ -20,7 +20,7 @@ export function InvestorSponsorCommitment() {
             Capital stack
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Land and design are already funded. EJ Development is not asking
+            Land and design are already funded. EJ Properties is not asking
             partners to fund everything from zero.
           </p>
 

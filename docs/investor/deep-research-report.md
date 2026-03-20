@@ -1,4 +1,4 @@
-# Deep Research Report – EJ Development Marbella Project
+# Deep Research Report – EJ Properties Marbella Project
 
 *Incorporated into investor portal. See investor-page.md for narrative; this document provides market, financial, and risk data.*
 

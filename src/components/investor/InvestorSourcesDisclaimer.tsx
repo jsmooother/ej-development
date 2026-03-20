@@ -44,9 +44,9 @@ export function InvestorSourcesDisclaimer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-8 border-t border-border pt-12 md:flex-row">
-          <div>
+          <div className="text-center">
             <p className="font-serif text-xl uppercase tracking-[0.2em] text-foreground">
-              EJ Development
+              EJ Properties
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
               El Madroñal Villa · Construction funding opportunity · Confidential

@@ -1,31 +1,31 @@
 /**
  * Investor portal data – working assumptions (preliminary, subject to refinement).
- * EJ Development · El Madroñal Villa · Construction funding opportunity.
+ * EJ Properties · El Madroñal Villa · Construction funding opportunity.
  */
 
 export const executiveSummary = [
-  { label: "Project owner", value: "EJ Development" },
+  { label: "Project owner", value: "EJ Properties" },
   { label: "Location", value: "El Madroñal, Benahavís" },
   { label: "Plot", value: "3,038 m²" },
   { label: "Target villa", value: "approx. 800 m² build" },
   { label: "Architect", value: "AMES Arquitectos" },
-  { label: "Funded to date", value: "approx. €1.0m incl. plot + design" },
+  { label: "Funded to date", value: "Plot and design fully funded" },
   { label: "External capital need", value: "Construction funding" },
   { label: "Expected exit", value: "Sale of completed villa" },
 ] as const;
 
 export const sponsorCommitment = [
   { line: "Plot acquisition", amount: "€700,000", note: "+ taxes", bold: false },
-  { line: "AMES architecture / design", amount: "approx. €300,000", note: "", bold: false },
-  { line: "Capital committed", amount: "approx. €1,000,000", note: "before construction", bold: true },
+  { line: "AMES architecture / design", amount: "€300,000", note: "", bold: false },
+  { line: "Capital committed", amount: "€1,000,000", note: "before construction", bold: true },
 ] as const;
 
 export const preliminaryBudget = [
-  { line: "Construction", amount: "approx. €3,440,000", note: "800 m² × €4,300/m²", bold: false },
-  { line: "Admin / project overhead", amount: "approx. €200,000", note: "", bold: false },
+  { line: "Construction", amount: "€3,440,000", note: "800 m² × €4,300/m²", bold: false },
+  { line: "Admin / project overhead", amount: "€200,000", note: "", bold: false },
   { line: "Permit taxes / fees", amount: "TBC", note: "", bold: false },
   { line: "Additional soft costs / sales", amount: "TBC", note: "", bold: false },
-  { line: "Total funding sought", amount: "approx. €3,900,000+", note: "excl. TBC items", bold: true },
+  { line: "Total funding sought", amount: "€3,900,000+", note: "excl. TBC items", bold: true },
 ] as const;
 
 export const fundingMilestones = [
@@ -36,9 +36,10 @@ export const fundingMilestones = [
 ] as const;
 
 export const preliminaryRevenue = [
-  { line: "Indicative sales value", amount: "approx. €9,200,000", note: "€11,500/m² × 800 m²", bold: true },
-  { line: "Expected broker", amount: "Homerun Brokers", note: "marketing", bold: false },
-  { line: "Pricing basis", amount: "Comparable AMES-led house", note: "similar €/m² build", bold: false },
+  { line: "Indicative sales value", amount: "€9,200,000", note: "€11,500/m² × 800 m²", bold: true },
+  { line: "Expected broker", amount: "Homerun Brokers + Solvilla", note: "marketing", bold: false },
+  { line: "Pricing basis", amount: "Comparable AMES-houses", note: "similar €/m² build", bold: false },
+  { line: "Project margin (conservative)", amount: "€4,520,000", note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on €3.9m funding", bold: true },
 ] as const;
 
 export const fundingStructures = [

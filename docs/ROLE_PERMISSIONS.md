@@ -1,6 +1,6 @@
 # Role-Based Permissions
 
-Complete reference for admin and editor access levels in the EJ Development platform.
+Complete reference for admin and editor access levels in the EJ Properties platform.
 
 ## Role Overview
 

@@ -1,6 +1,6 @@
 # API Documentation
 
-Complete reference for all API endpoints in the EJ Development CMS.
+Complete reference for all API endpoints in the EJ Properties CMS.
 
 ## Base URL
 

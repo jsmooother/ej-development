@@ -1,13 +1,22 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const HERO_VIDEO =
   "https://player.vimeo.com/video/1125999153?background=1&autoplay=1&loop=1&muted=1";
 
 export function InvestorHero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -72]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0.2]);
+
   return (
-    <section className="relative min-h-[90vh] overflow-hidden">
+    <section ref={sectionRef} className="relative min-h-[90vh] overflow-hidden">
       {/* AMES hero video from amesarquitectos.com - same as their homepage */}
       <div className="absolute inset-0 overflow-hidden">
         <iframe
@@ -35,10 +44,11 @@ export function InvestorHero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
+          style={{ y: textY, opacity: textOpacity }}
           className="max-w-4xl"
         >
           <p className="text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground">
-            EJ Development · Urbanización El Madroñal · Benahavís
+            EJ Properties · Urbanización El Madroñal · Benahavís
           </p>
           <h1 className="mt-4 font-serif text-4xl font-light leading-[1.1] text-foreground md:text-5xl lg:text-6xl">
             Construction funding

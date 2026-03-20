@@ -68,7 +68,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#f5f2ea]">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-foreground border-t-transparent mx-auto"></div>
           <p className="mt-4 text-sm text-muted-foreground">Loading property...</p>
@@ -129,18 +129,18 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
   };
 
   return (
-    <main className="min-h-screen bg-[#f5f2ea]">
+    <main className="min-h-screen bg-background">
       {/* Minimalist Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-lg border-b border-border">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/listings" className="text-xs font-medium uppercase tracking-[0.3em] text-gray-600 transition hover:text-black">
+            <Link href="/listings" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground">
               ← All Listings
             </Link>
-            <Link href="/" className="font-serif text-lg tracking-wider text-black">
+            <Link href="/" className="font-serif text-lg tracking-wider text-foreground">
               EJ PROPERTIES
             </Link>
-            <button className="text-xs font-medium uppercase tracking-[0.3em] text-gray-600 transition hover:text-black">
+            <button className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground">
               Share
             </button>
           </div>
@@ -164,7 +164,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
         <div className="relative z-10 flex h-full items-end">
           <div className="mx-auto w-full max-w-7xl px-6 pb-16 text-white">
             <div className="max-w-3xl space-y-6">
-              <div className="inline-block bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-medium uppercase tracking-[0.3em]">
+              <div className="inline-block bg-card/20 backdrop-blur-sm px-4 py-1.5 text-xs font-medium uppercase tracking-[0.3em]">
                 {getStatusLabel(listing.status)}
               </div>
               <h1 className="font-serif text-5xl font-light leading-tight md:text-7xl">
@@ -218,7 +218,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
                 About This Property
               </h2>
               <div className="prose prose-lg max-w-none">
-                <p className="text-lg leading-relaxed text-gray-700">
+                <p className="text-lg leading-relaxed text-muted-foreground">
                   {listing.description || listing.subtitle || `Discover this exceptional property in ${listing.location?.locality || 'the Costa del Sol'}.`}
                 </p>
               </div>
@@ -236,7 +236,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
                       <svg className="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      <span className="text-gray-700">{amenity}</span>
+                      <span className="text-muted-foreground">{amenity}</span>
                     </div>
                   ))}
                 </div>
@@ -246,55 +246,55 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
 
           {/* Sidebar - Property Details */}
           <div className="space-y-8">
-            <div className="rounded-2xl bg-white p-8 shadow-sm">
-              <h3 className="mb-6 text-xs font-bold uppercase tracking-[0.3em] text-gray-500">
+            <div className="rounded-2xl border border-border bg-card p-8">
+              <h3 className="mb-6 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
                 Property Details
               </h3>
               <div className="space-y-4 text-sm">
-                <div className="flex justify-between border-b border-gray-100 pb-3">
-                  <span className="text-gray-600">Status</span>
-                  <span className="font-medium text-black">{getStatusLabel(listing.status)}</span>
+                <div className="flex justify-between border-b border-border/40 pb-3">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className="font-medium text-foreground">{getStatusLabel(listing.status)}</span>
                 </div>
                 {listing.facts?.builtAreaSqm && (
-                  <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Built Area</span>
-                    <span className="font-medium text-black">{listing.facts.builtAreaSqm} m²</span>
+                  <div className="flex justify-between border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Built Area</span>
+                    <span className="font-medium text-foreground">{listing.facts.builtAreaSqm} m²</span>
                   </div>
                 )}
                 {listing.facts?.plotSqm && (
-                  <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Plot Size</span>
-                    <span className="font-medium text-black">{listing.facts.plotSqm} m²</span>
+                  <div className="flex justify-between border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Plot Size</span>
+                    <span className="font-medium text-foreground">{listing.facts.plotSqm} m²</span>
                   </div>
                 )}
                 {listing.facts?.bedrooms && (
-                  <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Bedrooms</span>
-                    <span className="font-medium text-black">{listing.facts.bedrooms}</span>
+                  <div className="flex justify-between border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Bedrooms</span>
+                    <span className="font-medium text-foreground">{listing.facts.bedrooms}</span>
                   </div>
                 )}
                 {listing.facts?.bathrooms && (
-                  <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Bathrooms</span>
-                    <span className="font-medium text-black">{listing.facts.bathrooms}</span>
+                  <div className="flex justify-between border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Bathrooms</span>
+                    <span className="font-medium text-foreground">{listing.facts.bathrooms}</span>
                   </div>
                 )}
                 {listing.facts?.parkingSpaces && (
-                  <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Parking</span>
-                    <span className="font-medium text-black">{listing.facts.parkingSpaces} spaces</span>
+                  <div className="flex justify-between border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Parking</span>
+                    <span className="font-medium text-foreground">{listing.facts.parkingSpaces} spaces</span>
                   </div>
                 )}
                 {listing.facts?.orientation && (
-                  <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Orientation</span>
-                    <span className="font-medium text-black">{listing.facts.orientation}</span>
+                  <div className="flex justify-between border-b border-border/40 pb-3">
+                    <span className="text-muted-foreground">Orientation</span>
+                    <span className="font-medium text-foreground">{listing.facts.orientation}</span>
                   </div>
                 )}
                 {listing.location && (
                   <div className="flex justify-between pb-3">
-                    <span className="text-gray-600">Location</span>
-                    <span className="font-medium text-black">
+                    <span className="text-muted-foreground">Location</span>
+                    <span className="font-medium text-foreground">
                       {[listing.location.locality, listing.location.country].filter(Boolean).join(', ') || 'Costa del Sol'}
                     </span>
                   </div>
@@ -312,7 +312,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
               </p>
               <a
                 href="mailto:info@ejproperties.es"
-                className="inline-block w-full rounded-lg bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90"
+                className="inline-block w-full rounded-lg border border-foreground bg-foreground px-6 py-3 text-center text-sm font-medium text-background transition hover:bg-foreground/90"
               >
                 Contact Us
               </a>
@@ -322,13 +322,13 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
       </section>
 
       {/* Property Gallery */}
-      <section className="bg-white py-24">
+      <section className="py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-16 text-center">
-            <h2 className="font-serif text-4xl font-light text-black md:text-5xl">
+            <h2 className="font-serif text-4xl font-light text-foreground md:text-5xl">
               Gallery
             </h2>
-            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-gray-500">
+            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-muted-foreground">
               Interior · Exterior · Views
             </p>
           </div>
@@ -337,7 +337,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
             {galleryImages.map((image, index) => (
               <button
                 key={index}
-                className="group relative h-[400px] overflow-hidden rounded-lg transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="group relative h-[400px] overflow-hidden rounded-lg transition-all hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
                 onClick={() => openLightbox(index)}
                 aria-label={`View full size image ${index + 1} of ${listing.title}`}
               >
@@ -350,7 +350,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/20">
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="rounded-full bg-white/90 p-3 shadow-lg">
+                    <div className="rounded-full border border-border bg-card/90 p-3 shadow-lg">
                       <svg className="h-6 w-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                       </svg>
@@ -374,7 +374,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
           {/* Close button */}
           <button
             onClick={closeLightbox}
-            className="absolute right-6 top-6 z-10 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute right-6 top-6 z-10 rounded-full bg-card/20 p-3 text-white transition hover:bg-card/40"
             aria-label="Close gallery"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -385,7 +385,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
           {/* Navigation arrows */}
           <button
             onClick={prevImage}
-            className="absolute left-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute left-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/20 p-3 text-white transition hover:bg-card/40"
             aria-label="Previous image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -395,7 +395,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
 
           <button
             onClick={nextImage}
-            className="absolute right-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute right-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/20 p-3 text-white transition hover:bg-card/40"
             aria-label="Next image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -417,7 +417,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
           </div>
 
           {/* Image counter */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-white">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-card/20 px-4 py-2 text-white">
             <span className="text-sm">
               {currentImageIndex + 1} of {galleryImages.length}
             </span>
@@ -430,7 +430,7 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
                 className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg transition-all ${
-                  index === currentImageIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-80'
+                  index === currentImageIndex ? 'ring-2 ring-foreground' : 'opacity-60 hover:opacity-80'
                 }`}
                 aria-label={`Go to image ${index + 1}`}
               >
@@ -460,14 +460,14 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
             </div>
             
             {/* Location placeholder - in production, embed Google Maps */}
-            <div className="rounded-2xl bg-white p-8 text-center shadow-sm">
-              <div className="flex h-[400px] items-center justify-center bg-gray-100">
+            <div className="rounded-2xl border border-border bg-card p-8 text-center">
+              <div className="flex h-[400px] items-center justify-center bg-muted">
                 <div>
-                  <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="mx-auto h-16 w-16 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <p className="mt-4 text-sm text-gray-500">Map will be displayed here</p>
+                  <p className="mt-4 text-sm text-muted-foreground">Map will be displayed here</p>
                 </div>
               </div>
             </div>
@@ -487,13 +487,13 @@ export default function ListingDetailPage({ params }: { params: { slug: string }
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <a
               href="mailto:info@ejproperties.es"
-              className="rounded-full border border-white bg-white px-8 py-3 text-sm font-medium text-black transition hover:bg-white/90"
+              className="rounded-full border border-white bg-white px-8 py-3 text-sm font-medium text-foreground transition hover:bg-white/90"
             >
               Email Us
             </a>
             <a
               href="tel:+34600123456"
-              className="rounded-full border border-white/30 px-8 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+              className="rounded-full border border-white/30 px-8 py-3 text-sm font-medium text-white transition hover:bg-card/20"
             >
               Call +34 600 123 456
             </a>

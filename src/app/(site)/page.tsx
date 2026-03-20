@@ -381,12 +381,12 @@ export default async function HomePage() {
                     />
                     {/* SQM and Rooms overlay like lagerlings.se */}
                     <div className="absolute top-4 left-4">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                      <span className="rounded-full border border-border bg-card/90 px-3 py-1 text-sm font-semibold text-card-foreground shadow-sm">
                         {item.sqm} m²
                       </span>
                     </div>
                     <div className="absolute bottom-4 right-4">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                      <span className="rounded-full border border-border bg-card/90 px-3 py-1 text-sm font-semibold text-card-foreground shadow-sm">
                         {item.rooms} Bedrooms
                       </span>
                     </div>
@@ -431,7 +431,7 @@ export default async function HomePage() {
                     </div>
                     {/* Area overlay */}
                     <div className="absolute bottom-4 right-4">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                      <span className="rounded-full border border-border bg-card/90 px-3 py-1 text-sm font-semibold text-card-foreground shadow-sm">
                         {item.builtAreaSqm} m²
                       </span>
                     </div>
@@ -503,7 +503,7 @@ export default async function HomePage() {
         </h2>
         <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
           <p>
-            EJ Development choreographs sites, layouts, and material palettes with a calm confidence. We balance
+            EJ Properties choreographs sites, layouts, and material palettes with a calm confidence. We balance
             editorial minimalism with Andalusian warmth, working shoulder-to-shoulder with artisans from initial
             sketches through final styling.
           </p>
@@ -517,7 +517,7 @@ export default async function HomePage() {
       {/* Contact */}
       <section
         id="contact"
-        className="mx-auto grid max-w-5xl gap-10 rounded-3xl border border-border bg-card px-6 py-14 md:grid-cols-[2fr,1fr]"
+        className="mx-auto grid max-w-4xl gap-10 rounded-3xl border border-border bg-card px-6 py-14 md:grid-cols-[2fr,1fr]"
       >
         <div>
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">Enquiries</p>

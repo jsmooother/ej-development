@@ -1,6 +1,6 @@
 # Scripts Documentation
 
-This directory contains production-ready utility scripts for managing the EJ Development platform.
+This directory contains production-ready utility scripts for managing the EJ Properties platform.
 
 ## 📋 Quick Reference
 

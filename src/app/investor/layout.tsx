@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Investor Portal | EJ Development",
+  title: "Investor Portal | EJ Properties",
   description:
     "El Madroñal Villa Development — Investor project portal. Confidential materials for approved investors.",
   robots: { index: false, follow: false },

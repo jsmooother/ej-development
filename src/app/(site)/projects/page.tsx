@@ -112,14 +112,14 @@ export default async function ProjectsPage() {
                   {/* SQM and Rooms overlay */}
                   {project.facts?.sqm && (
                     <div className="absolute top-4 left-4">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                      <span className="rounded-full border border-border bg-card/90 px-3 py-1 text-sm font-semibold text-card-foreground shadow-sm">
                         {project.facts.sqm} m²
                       </span>
                     </div>
                   )}
                   {project.facts?.bedrooms && (
                     <div className="absolute bottom-4 right-4">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                      <span className="rounded-full border border-border bg-card/90 px-3 py-1 text-sm font-semibold text-card-foreground shadow-sm">
                         {project.facts.bedrooms} Bedrooms
                       </span>
                     </div>

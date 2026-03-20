@@ -21,7 +21,7 @@ export function InvestorFundingOpportunity() {
           </h2>
           <div className="mt-8 space-y-6 text-muted-foreground">
             <p>
-              EJ Development is seeking construction funding from private credit
+              EJ Properties is seeking construction funding from private credit
               and structured investors. Land and design are already fully funded.
               We are structuring external capital for the build phase on attractive
               terms.

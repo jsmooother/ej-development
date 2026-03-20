@@ -125,7 +125,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-gray-100">
-              <p className="text-gray-500">No hero image available</p>
+              <p className="text-muted-foreground">No hero image available</p>
             </div>
           )}
         </div>

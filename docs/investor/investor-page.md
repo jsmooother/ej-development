@@ -1,9 +1,9 @@
-# EJ Development
+# EJ Properties
 ## El Madroñal Villa Development
 ### Investor Project Portal Specification
 
 Version: 1.0  
-Prepared for: EJ Development  
+Prepared for: EJ Properties  
 Location: Urbanización El Madroñal, Benahavís, Málaga, Spain  
 
 ---
@@ -12,7 +12,7 @@ Location: Urbanización El Madroñal, Benahavís, Málaga, Spain
 
 ## Investment Thesis
 
-EJ Development is executing a focused luxury residential development strategy in one of Europe’s most resilient premium real estate markets: the Costa del Sol.
+EJ Properties is executing a focused luxury residential development strategy in one of Europe’s most resilient premium real estate markets: the Costa del Sol.
 
 The strategy is based on three structural trends:
 
@@ -26,7 +26,7 @@ The community offers privacy, security, large plots, and elevated views while re
 
 Plots within this community are scarce and development density is intentionally restricted by planning regulations, creating long-term scarcity.
 
-EJ Development has secured a **3,038 m² residential plot** in this environment with planning parameters that allow for the development of a high-end villa of approximately **600 m² above ground**.
+EJ Properties has secured a **3,038 m² residential plot** in this environment with planning parameters that allow for the development of a high-end villa of approximately **600 m² above ground**.
 
 The project is designed by **AMES Arquitectos**, a Marbella-based architectural firm with significant experience in luxury residential development.
 
@@ -136,7 +136,7 @@ These buyers are typically attracted to:
 
 # 1. Project Overview
 
-EJ Development is developing a luxury villa project located in **Urbanización El Madroñal**, a gated hillside residential community in **Benahavís**, one of the most prestigious municipalities in the Marbella region on the Costa del Sol.
+EJ Properties is developing a luxury villa project located in **Urbanización El Madroñal**, a gated hillside residential community in **Benahavís**, one of the most prestigious municipalities in the Marbella region on the Costa del Sol.
 
 The development strategy focuses on acquiring premium plots in low-density gated communities and developing architecturally distinctive villas targeted toward international high-net-worth buyers.
 
@@ -451,7 +451,7 @@ The development is financed through a combination of:
 - internal capital
 - potential external financing
 
-Existing financing agreements include credit line arrangements between EJ Development and shareholder entities.
+Existing financing agreements include credit line arrangements between EJ Properties and shareholder entities.
 
 ---
 

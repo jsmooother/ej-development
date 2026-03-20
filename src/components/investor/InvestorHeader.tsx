@@ -35,7 +35,7 @@ export function InvestorHeader({ showNav = false, onLogout }: InvestorHeaderProp
             href="/"
             className="font-serif text-sm uppercase tracking-[0.3em] text-muted-foreground transition-colors hover:text-foreground"
           >
-            EJ Development
+            EJ Properties
           </Link>
 
           {showNav ? (

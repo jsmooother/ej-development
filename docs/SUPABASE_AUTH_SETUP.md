@@ -1,6 +1,6 @@
 # Supabase Auth Setup Guide
 
-Complete guide for understanding and managing authentication in your EJ Development platform.
+Complete guide for understanding and managing authentication in your EJ Properties platform.
 
 ## Overview
 

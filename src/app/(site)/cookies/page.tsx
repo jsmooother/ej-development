@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function CookiePolicyPage() {
   return (
-    <main className="mx-auto max-w-4xl px-6 py-16">
+    <main className="mx-auto max-w-4xl px-6 py-24">
       <div className="space-y-8">
         <div className="space-y-4">
           <h1 className="font-serif text-4xl font-light text-foreground">
@@ -20,7 +20,7 @@ export default function CookiePolicyPage() {
           </p>
         </div>
 
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:font-light prose-a:text-foreground prose-a:underline prose-strong:text-foreground">
           <h2>What Are Cookies?</h2>
           <p>
             Cookies are small text files that are placed on your computer or mobile device when you visit our website. 
@@ -155,9 +155,9 @@ export default function CookiePolicyPage() {
             <li><strong>Address:</strong> EJ Properties, Marbella, Spain</li>
           </ul>
 
-          <div className="mt-12 rounded-lg bg-gray-50 p-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Quick Cookie Settings</h3>
-            <p className="text-sm text-gray-600 mb-4">
+          <div className="mt-12 rounded-lg bg-card p-6">
+            <h3 className="font-semibold text-foreground mb-2">Quick Cookie Settings</h3>
+            <p className="text-sm text-muted-foreground mb-4">
               You can update your cookie preferences at any time by clicking the button below.
             </p>
             <button 
@@ -166,7 +166,7 @@ export default function CookiePolicyPage() {
                 localStorage.removeItem('cookie-consent');
                 window.location.reload();
               }}
-              className="rounded-full bg-black px-6 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
+              className="rounded-full border border-foreground bg-foreground px-6 py-2 text-sm font-medium text-background transition hover:bg-foreground/90"
             >
               Update Cookie Preferences
             </button>

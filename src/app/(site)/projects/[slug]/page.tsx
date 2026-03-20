@@ -151,16 +151,16 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
   return (
     <main className="min-h-screen bg-[#f5f2ea]">
       {/* Minimalist Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-lg border-b border-border">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/projects" className="text-xs font-medium uppercase tracking-[0.3em] text-gray-600 transition hover:text-black">
+            <Link href="/projects" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground">
               ← All Projects
             </Link>
-            <Link href="/" className="font-serif text-lg tracking-wider text-black">
+            <Link href="/" className="font-serif text-lg tracking-wider text-foreground">
               EJ PROPERTIES
             </Link>
-            <button className="text-xs font-medium uppercase tracking-[0.3em] text-gray-600 transition hover:text-black">
+            <button className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground transition hover:text-foreground">
               Share
             </button>
           </div>
@@ -184,7 +184,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
         <div className="relative z-10 flex h-full items-end">
           <div className="mx-auto w-full max-w-7xl px-6 pb-16 text-white">
             <div className="max-w-3xl space-y-6">
-              <div className="inline-block bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-medium uppercase tracking-[0.3em]">
+              <div className="inline-block bg-card/20 backdrop-blur-sm px-4 py-1.5 text-xs font-medium uppercase tracking-[0.3em]">
                 Project {project.year || '2024'}
               </div>
               <h1 className="font-serif text-5xl font-light leading-tight md:text-7xl">
@@ -236,7 +236,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                 The Vision
               </h2>
               <div className="prose prose-lg max-w-none">
-                <p className="text-lg leading-relaxed text-gray-700">
+                <p className="text-lg leading-relaxed text-muted-foreground">
                   {project.content || project.summary}
                 </p>
               </div>
@@ -245,42 +245,42 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
 
           {/* Sidebar - Project Details */}
           <div className="space-y-8">
-            <div className="rounded-2xl bg-white p-8 shadow-sm">
-              <h3 className="mb-6 text-xs font-bold uppercase tracking-[0.3em] text-gray-500">
+            <div className="rounded-2xl border border-border bg-card p-8">
+              <h3 className="mb-6 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
                 Project Details
               </h3>
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between border-b border-gray-100 pb-3">
-                  <span className="text-gray-600">Year</span>
-                  <span className="font-medium text-black">{project.year || '2024'}</span>
+                  <span className="text-muted-foreground">Year</span>
+                  <span className="font-medium text-foreground">{project.year || '2024'}</span>
                 </div>
                 {project.facts?.sqm && (
                   <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Built Area</span>
-                    <span className="font-medium text-black">{project.facts.sqm} m²</span>
+                    <span className="text-muted-foreground">Built Area</span>
+                    <span className="font-medium text-foreground">{project.facts.sqm} m²</span>
                   </div>
                 )}
                 {project.facts?.plot && (
                   <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Plot Size</span>
-                    <span className="font-medium text-black">{project.facts.plot} m²</span>
+                    <span className="text-muted-foreground">Plot Size</span>
+                    <span className="font-medium text-foreground">{project.facts.plot} m²</span>
                   </div>
                 )}
                 {project.facts?.bedrooms && (
                   <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Bedrooms</span>
-                    <span className="font-medium text-black">{project.facts.bedrooms}</span>
+                    <span className="text-muted-foreground">Bedrooms</span>
+                    <span className="font-medium text-foreground">{project.facts.bedrooms}</span>
                   </div>
                 )}
                 {project.facts?.bathrooms && (
                   <div className="flex justify-between border-b border-gray-100 pb-3">
-                    <span className="text-gray-600">Bathrooms</span>
-                    <span className="font-medium text-black">{project.facts.bathrooms}</span>
+                    <span className="text-muted-foreground">Bathrooms</span>
+                    <span className="font-medium text-foreground">{project.facts.bathrooms}</span>
                   </div>
                 )}
                 <div className="flex justify-between pb-3">
-                  <span className="text-gray-600">Location</span>
-                  <span className="font-medium text-black">Marbella, Spain</span>
+                  <span className="text-muted-foreground">Location</span>
+                  <span className="font-medium text-foreground">Marbella, Spain</span>
                 </div>
               </div>
             </div>
@@ -295,7 +295,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
               </p>
               <a
                 href="mailto:info@ejproperties.es"
-                className="inline-block w-full rounded-lg bg-white px-6 py-3 text-center text-sm font-medium text-black transition hover:bg-white/90"
+                className="inline-block w-full rounded-lg border border-foreground bg-foreground px-6 py-3 text-center text-sm font-medium text-background transition hover:bg-foreground/90"
               >
                 Contact Us
               </a>
@@ -305,13 +305,13 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
       </section>
 
       {/* Before & After Showcase - Luxury Presentation */}
-      <section className="bg-white py-24">
+      <section className="py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-16 text-center">
-            <h2 className="font-serif text-4xl font-light text-black md:text-5xl">
+            <h2 className="font-serif text-4xl font-light text-foreground md:text-5xl">
               The Transformation
             </h2>
-            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-gray-500">
+            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-muted-foreground">
               Before · After
             </p>
           </div>
@@ -394,7 +394,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           
           <div className="prose prose-lg max-w-none">
             {project.content ? (
-              <p className="text-lg leading-relaxed text-gray-700 first-letter:float-left first-letter:mr-3 first-letter:text-7xl first-letter:font-light first-letter:leading-none first-letter:text-foreground">
+              <p className="text-lg leading-relaxed text-muted-foreground first-letter:float-left first-letter:mr-3 first-letter:text-7xl first-letter:font-light first-letter:leading-none first-letter:text-foreground">
                 {project.content}
               </p>
             ) : null}
@@ -403,13 +403,13 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
       </section>
 
       {/* Full Project Gallery - Masonry Style */}
-      <section className="bg-white py-24">
+      <section className="py-24">
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-16 text-center">
-            <h2 className="font-serif text-4xl font-light text-black md:text-5xl">
+            <h2 className="font-serif text-4xl font-light text-foreground md:text-5xl">
               Project Gallery
             </h2>
-            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-gray-500">
+            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-muted-foreground">
               Selected Photography
             </p>
           </div>
@@ -439,7 +439,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                   />
                   <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20">
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <div className="rounded-full bg-white/90 p-3 shadow-lg">
+                      <div className="rounded-full border border-border bg-card/90 p-3 shadow-lg">
                         <svg className="h-6 w-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                         </svg>
@@ -464,7 +464,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           {/* Close button */}
           <button
             onClick={closeLightbox}
-            className="absolute right-6 top-6 z-10 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute right-6 top-6 z-10 rounded-full bg-card/20 p-3 text-white transition hover:bg-card/40"
             aria-label="Close gallery"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -475,7 +475,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           {/* Navigation arrows */}
           <button
             onClick={prevImage}
-            className="absolute left-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute left-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/20 p-3 text-white transition hover:bg-card/40"
             aria-label="Previous image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -485,7 +485,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
 
           <button
             onClick={nextImage}
-            className="absolute right-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute right-6 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/20 p-3 text-white transition hover:bg-card/40"
             aria-label="Next image"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -507,7 +507,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           </div>
 
           {/* Image counter */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-white">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-card/20 px-4 py-2 text-white">
             <span className="text-sm">
               {currentImageIndex + 1} of {galleryImages.length}
             </span>
@@ -520,7 +520,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
                 className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg transition-all ${
-                  index === currentImageIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-80'
+                  index === currentImageIndex ? 'ring-2 ring-foreground' : 'opacity-60 hover:opacity-80'
                 }`}
                 aria-label={`Go to image ${index + 1}`}
               >
@@ -539,7 +539,7 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
       {/* Project Specifications - Luxury Table Format */}
       <section className="mx-auto max-w-6xl px-6 py-24">
         <div className="rounded-2xl bg-white p-12 shadow-sm">
-          <h2 className="mb-12 text-center font-serif text-3xl font-light text-black">
+          <h2 className="mb-12 text-center font-serif text-3xl font-light text-foreground">
             Technical Specifications
           </h2>
           
@@ -547,41 +547,41 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
             {/* Left Column */}
             <div className="space-y-6">
               <div>
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-gray-500">
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Architecture
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Total Built Area</span>
-                    <span className="font-medium text-black">{project.facts?.sqm || 320} m²</span>
+                    <span className="text-muted-foreground">Total Built Area</span>
+                    <span className="font-medium text-foreground">{project.facts?.sqm || 320} m²</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Plot Size</span>
-                    <span className="font-medium text-black">{project.facts?.plot || 1200} m²</span>
+                    <span className="text-muted-foreground">Plot Size</span>
+                    <span className="font-medium text-foreground">{project.facts?.plot || 1200} m²</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Levels</span>
-                    <span className="font-medium text-black">2 + Basement</span>
+                    <span className="text-muted-foreground">Levels</span>
+                    <span className="font-medium text-foreground">2 + Basement</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-gray-500">
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Interior
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Bedrooms</span>
-                    <span className="font-medium text-black">{project.facts?.bedrooms || 4}</span>
+                    <span className="text-muted-foreground">Bedrooms</span>
+                    <span className="font-medium text-foreground">{project.facts?.bedrooms || 4}</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Bathrooms</span>
-                    <span className="font-medium text-black">{project.facts?.bathrooms || 3}</span>
+                    <span className="text-muted-foreground">Bathrooms</span>
+                    <span className="font-medium text-foreground">{project.facts?.bathrooms || 3}</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Living Spaces</span>
-                    <span className="font-medium text-black">3 Reception Rooms</span>
+                    <span className="text-muted-foreground">Living Spaces</span>
+                    <span className="font-medium text-foreground">3 Reception Rooms</span>
                   </div>
                 </div>
               </div>
@@ -590,41 +590,41 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
             {/* Right Column */}
             <div className="space-y-6">
               <div>
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-gray-500">
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Features
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Pool</span>
-                    <span className="font-medium text-black">Infinity Edge</span>
+                    <span className="text-muted-foreground">Pool</span>
+                    <span className="font-medium text-foreground">Infinity Edge</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Parking</span>
-                    <span className="font-medium text-black">3 Covered Spaces</span>
+                    <span className="text-muted-foreground">Parking</span>
+                    <span className="font-medium text-foreground">3 Covered Spaces</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Garden</span>
-                    <span className="font-medium text-black">Landscaped</span>
+                    <span className="text-muted-foreground">Garden</span>
+                    <span className="font-medium text-foreground">Landscaped</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-gray-500">
+                <h3 className="mb-4 text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
                   Sustainability
                 </h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Energy Rating</span>
-                    <span className="font-medium text-black">A+</span>
+                    <span className="text-muted-foreground">Energy Rating</span>
+                    <span className="font-medium text-foreground">A+</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Solar Panels</span>
-                    <span className="font-medium text-black">6 kW System</span>
+                    <span className="text-muted-foreground">Solar Panels</span>
+                    <span className="font-medium text-foreground">6 kW System</span>
                   </div>
                   <div className="flex justify-between border-b border-gray-100 pb-2">
-                    <span className="text-gray-600">Water</span>
-                    <span className="font-medium text-black">Greywater Recycling</span>
+                    <span className="text-muted-foreground">Water</span>
+                    <span className="font-medium text-foreground">Greywater Recycling</span>
                   </div>
                 </div>
               </div>
@@ -648,8 +648,8 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             </div>
-            <h3 className="font-serif text-xl font-light text-black">Natural Light</h3>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <h3 className="font-serif text-xl font-light text-foreground">Natural Light</h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Floor-to-ceiling windows and strategic orientation maximize natural illumination throughout the day.
             </p>
           </div>
@@ -660,8 +660,8 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
               </svg>
             </div>
-            <h3 className="font-serif text-xl font-light text-black">Artisan Craft</h3>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <h3 className="font-serif text-xl font-light text-foreground">Artisan Craft</h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Custom millwork and locally-sourced materials executed by master craftspeople.
             </p>
           </div>
@@ -672,8 +672,8 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="font-serif text-xl font-light text-black">Sustainability</h3>
-            <p className="text-sm leading-relaxed text-gray-600">
+            <h3 className="font-serif text-xl font-light text-foreground">Sustainability</h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
               A+ energy rating with solar integration and passive climate control systems.
             </p>
           </div>
@@ -693,13 +693,13 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <a
               href="mailto:info@ejproperties.es"
-              className="rounded-full bg-white px-8 py-3 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/90"
+              className="rounded-full border border-foreground bg-foreground px-8 py-3 text-sm font-medium uppercase tracking-[0.2em] text-background transition hover:bg-foreground/90"
             >
               Schedule Consultation
             </a>
             <Link
               href="/projects"
-              className="rounded-full border border-white px-8 py-3 text-sm font-medium uppercase tracking-[0.2em] text-white transition hover:bg-white/10"
+              className="rounded-full border border-white px-8 py-3 text-sm font-medium uppercase tracking-[0.2em] text-white transition hover:bg-card/20"
             >
               View All Projects
             </Link>
@@ -711,11 +711,11 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
       <footer className="border-t border-gray-200 bg-[#f5f2ea] py-8">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em]">
-            <Link href="/projects" className="text-gray-600 transition hover:text-black">
+            <Link href="/projects" className="text-muted-foreground transition hover:text-foreground">
               ← All Projects
             </Link>
             <span className="text-gray-400">© 2025 EJ Properties</span>
-            <Link href="/" className="text-gray-600 transition hover:text-black">
+            <Link href="/" className="text-muted-foreground transition hover:text-foreground">
               Home →
             </Link>
           </div>

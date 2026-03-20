@@ -81,7 +81,14 @@ export function InvestorPreliminaryEconomics() {
                       row.bold ? "font-semibold text-foreground" : ""
                     }`}
                   >
-                    <span className="text-sm text-muted-foreground">{row.line}</span>
+                    <div className="min-w-0">
+                      <span className="text-sm text-muted-foreground">{row.line}</span>
+                      {row.note && row.bold && (
+                        <p className="mt-1 text-xs font-normal text-muted-foreground/80">
+                          {row.note}
+                        </p>
+                      )}
+                    </div>
                     <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">{row.amount}</span>
                   </div>
                 ))}
@@ -95,7 +102,7 @@ export function InvestorPreliminaryEconomics() {
             </p>
             <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
               Capital is drawn down at agreed project milestones rather than
-              upfront, reducing execution and deployment risk. EJ Development
+              upfront, reducing execution and deployment risk. EJ Properties
               provides its project ownership as security to the funding party.
             </p>
             <div className="mt-10">

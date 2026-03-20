@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="mx-auto max-w-4xl px-6 py-16">
+    <main className="mx-auto max-w-4xl px-6 py-24">
       <div className="space-y-8">
         <div className="space-y-4">
           <h1 className="font-serif text-4xl font-light text-foreground">
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </div>
 
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-invert prose-lg max-w-none prose-headings:font-serif prose-headings:font-light prose-a:text-foreground prose-a:underline prose-strong:text-foreground">
           <h2>Introduction</h2>
           <p>
             EJ Properties ("we," "our," or "us") is committed to protecting your privacy and personal data. 
@@ -130,7 +130,7 @@ export default function PrivacyPolicyPage() {
           <h2>Cookies and Tracking Technologies</h2>
           <p>
             We use cookies and similar technologies to enhance your browsing experience and analyze website traffic. 
-            For detailed information about our cookie practices, please see our <a href="/cookies" className="text-blue-600 hover:underline">Cookie Policy</a>.
+            For detailed information about our cookie practices, please see our <a href="/cookies" className="text-foreground hover:underline">Cookie Policy</a>.
           </p>
 
           <h2>Third-Party Services</h2>
@@ -167,12 +167,12 @@ export default function PrivacyPolicyPage() {
           <p>
             If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:
           </p>
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="bg-card p-6 rounded-lg">
             <ul className="space-y-2">
-              <li><strong>Email:</strong> <a href="mailto:info@ejproperties.es" className="text-blue-600 hover:underline">info@ejproperties.es</a></li>
-              <li><strong>Phone:</strong> <a href="tel:+34600123456" className="text-blue-600 hover:underline">+34 600 123 456</a></li>
+              <li><strong>Email:</strong> <a href="mailto:info@ejproperties.es" className="text-foreground hover:underline">info@ejproperties.es</a></li>
+              <li><strong>Phone:</strong> <a href="tel:+34600123456" className="text-foreground hover:underline">+34 600 123 456</a></li>
               <li><strong>Address:</strong> EJ Properties, Marbella, Spain</li>
-              <li><strong>Data Protection Officer:</strong> <a href="mailto:info@ejproperties.es" className="text-blue-600 hover:underline">info@ejproperties.es</a></li>
+              <li><strong>Data Protection Officer:</strong> <a href="mailto:info@ejproperties.es" className="text-foreground hover:underline">info@ejproperties.es</a></li>
             </ul>
           </div>
 

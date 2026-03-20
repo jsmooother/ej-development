@@ -1,6 +1,6 @@
-# EJ Development · Marbella Flagship Villa Platform
+# EJ Properties · Marbella Flagship Villa Platform
 
-This repository is the rebuilt foundation for EJ Development&apos;s luxury real-estate experience: a Next.js 14 + Supabase stack that will power the flagship Marbella villa listing, editorial journal, project case studies, local insights, and a secure admin workspace.
+This repository is the rebuilt foundation for EJ Properties&apos;s luxury real-estate experience: a Next.js 14 + Supabase stack that will power the flagship Marbella villa listing, editorial journal, project case studies, local insights, and a secure admin workspace.
 
 > **Status:** scaffolding in progress. Core tooling, database schema, route structure, and Supabase integration helpers are in place. UI, brochure generation, Instagram automation, and full admin workflows are up next.
 
@@ -157,5 +157,5 @@ Row-level security policies restrict write access to authenticated editors/admin
 4. **SEO Enhancement** – OG image generation, structured data, analytics
 5. **Scheduled Syncs** – Automatic Instagram sync via cron jobs
 
-Contributions, questions, or deployment pairing? Ping the EJ Development team or open an issue.
+Contributions, questions, or deployment pairing? Ping the EJ Properties team or open an issue.
 # Force Vercel deployment update

@@ -85,7 +85,7 @@ export function PasswordGate() {
         <div className="mx-auto w-full max-w-md space-y-8 text-center">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
-              EJ Development
+              EJ Properties
             </p>
             <h1 className="font-serif text-3xl font-light text-foreground md:text-4xl">
               El Madroñal Villa Development

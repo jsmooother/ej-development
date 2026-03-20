@@ -154,7 +154,7 @@ export default async function ListingsPage() {
                   {/* Area overlay */}
                   {listing.facts?.builtAreaSqm && (
                     <div className="absolute bottom-4 right-4">
-                      <span className="rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-foreground shadow-sm">
+                      <span className="rounded-full border border-border bg-card/90 px-3 py-1 text-sm font-semibold text-card-foreground shadow-sm">
                         {listing.facts.builtAreaSqm} m²
                       </span>
                     </div>
