@@ -2,6 +2,11 @@ const DEFAULT_SITE_URL = "https://www.ejproperties.es";
 const DEFAULT_OG_IMAGE = "/placeholder-project.jpg";
 
 function getBaseUrl() {
+  // Force the canonical production domain for social previews.
+  // NEXT_PUBLIC_* values are build-time and can drift across environments.
+  if (process.env.NODE_ENV === "production") {
+    return DEFAULT_SITE_URL;
+  }
   return process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL;
 }
 
