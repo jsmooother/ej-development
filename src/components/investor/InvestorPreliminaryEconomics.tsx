@@ -44,7 +44,7 @@ export function InvestorPreliminaryEconomics() {
                     }`}
                   >
                     <span className="text-sm text-muted-foreground">{row.line}</span>
-                    <span className="font-mono text-sm text-foreground">{row.amount}</span>
+                    <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">{row.amount}</span>
                   </div>
                 ))}
               </div>
@@ -63,7 +63,7 @@ export function InvestorPreliminaryEconomics() {
                     }`}
                   >
                     <span className="text-sm text-muted-foreground">{row.line}</span>
-                    <span className="font-mono text-sm text-foreground">{row.amount}</span>
+                    <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">{row.amount}</span>
                   </div>
                 ))}
               </div>
@@ -82,7 +82,7 @@ export function InvestorPreliminaryEconomics() {
                     }`}
                   >
                     <span className="text-sm text-muted-foreground">{row.line}</span>
-                    <span className="font-mono text-sm text-foreground">{row.amount}</span>
+                    <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">{row.amount}</span>
                   </div>
                 ))}
               </div>

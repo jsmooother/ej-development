@@ -4,6 +4,7 @@ import { InvestorHero } from "./InvestorHero";
 import { InvestorExecutiveSummary } from "./InvestorExecutiveSummary";
 import { InvestorFundingOpportunity } from "./InvestorFundingOpportunity";
 import { InvestorWhyThisProject } from "./InvestorWhyThisProject";
+import { InvestorLocationInvestmentCase } from "./InvestorLocationInvestmentCase";
 import { InvestorSitePlanning } from "./InvestorSitePlanning";
 import { InvestorMarketEvidence } from "./InvestorMarketEvidence";
 import { InvestorDevelopmentConcept } from "./InvestorDevelopmentConcept";
@@ -25,6 +26,7 @@ export function InvestorPresentation({ content: _content }: InvestorPresentation
         <InvestorExecutiveSummary />
         <InvestorFundingOpportunity />
         <InvestorWhyThisProject />
+        <InvestorLocationInvestmentCase />
         <InvestorSitePlanning />
         <InvestorMarketEvidence />
         <InvestorDevelopmentConcept />
