@@ -6,7 +6,6 @@ import { useCallback, useState } from "react";
 import { ChevronLeft, ChevronRight, FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 import {
-  villaElysiaImages,
   sitePlanningHeroCarouselSlides,
   sitePlanningSurveyCarouselSlides,
   villaElysiaFloorBreakdown,
@@ -14,10 +13,6 @@ import {
   villaElysiaExternalElements,
   villaElysiaAreaFootnotes,
 } from "@/data/investor-data";
-
-const plansCarouselSlides = villaElysiaImages.filter((i) =>
-  i.src.startsWith("/investor/elysia/plan-")
-);
 
 const verifiedFacts = [
   { label: "Plot size", value: "3,038 m²" },
@@ -135,7 +130,7 @@ function SiteSurveyCarousel() {
   return (
     <div className="mt-10 w-full space-y-4">
       <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        Plot & survey
+        Topographic survey
       </p>
       <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30 shadow-sm">
         <div
@@ -185,7 +180,7 @@ function SiteSurveyCarousel() {
       <div
         className="flex justify-center gap-1.5"
         role="tablist"
-        aria-label="Plot plan and survey images"
+        aria-label="Topographic survey"
       >
         {sitePlanningSurveyCarouselSlides.map((s: SurveySlide, i) => (
           <button
@@ -194,74 +189,6 @@ function SiteSurveyCarousel() {
             role="tab"
             aria-selected={i === index}
             aria-label={`Show: ${s.caption}`}
-            onClick={() => setIndex(i)}
-            className={`h-1.5 rounded-full transition-all ${
-              i === index ? "w-6 bg-foreground" : "w-1.5 bg-muted-foreground/40 hover:bg-muted-foreground/70"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FloorPlansCarousel() {
-  const [index, setIndex] = useState(0);
-  const n = plansCarouselSlides.length;
-  const go = useCallback(
-    (dir: -1 | 1) => {
-      setIndex((i) => (i + dir + n) % n);
-    },
-    [n]
-  );
-
-  const slide = plansCarouselSlides[index]!;
-
-  return (
-    <div className="space-y-3">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        Floor plans
-      </p>
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/20">
-        <Image
-          src={slide.src}
-          alt={slide.alt}
-          width={1200}
-          height={800}
-          className="w-full object-contain"
-          sizes="(max-width: 768px) 100vw, 520px"
-          priority={index === 0}
-        />
-        <div className="absolute inset-y-0 left-0 flex items-center px-1">
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition hover:bg-background"
-            aria-label="Previous plan"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="absolute inset-y-0 right-0 flex items-center px-1">
-          <button
-            type="button"
-            onClick={() => go(1)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition hover:bg-background"
-            aria-label="Next plan"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-      <p className="text-xs text-muted-foreground">{slide.caption}</p>
-      <div className="flex justify-center gap-1.5" role="tablist" aria-label="Floor plan carousel">
-        {plansCarouselSlides.map((s, i) => (
-          <button
-            key={s.src}
-            type="button"
-            role="tab"
-            aria-selected={i === index}
-            aria-label={`Show plan: ${s.caption}`}
             onClick={() => setIndex(i)}
             className={`h-1.5 rounded-full transition-all ${
               i === index ? "w-6 bg-foreground" : "w-1.5 bg-muted-foreground/40 hover:bg-muted-foreground/70"
@@ -319,7 +246,7 @@ export function InvestorSitePlanning() {
               View full topography survey (PDF)
             </Link>
             <span className="text-xs text-muted-foreground/80">
-              Two renders above; plot plan and topographic survey below
+              Two renders above; topographic survey crop below
             </span>
           </div>
         </motion.div>
@@ -329,49 +256,43 @@ export function InvestorSitePlanning() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, delay: 0.08 }}
-          className="mt-16 grid gap-12 lg:grid-cols-2 lg:gap-16"
+          className="mt-16"
         >
-          <div className="min-w-0">
-            <FloorPlansCarousel />
-          </div>
-
-          <div className="min-w-0">
-            <div className="space-y-8">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Verified site facts
-                </p>
-                <div className="mt-3 space-y-2">
-                  {verifiedFacts.map((s, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4"
-                    >
-                      <span className="text-sm text-muted-foreground">{s.label}</span>
-                      <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
-                        {s.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+          <div className="mx-auto max-w-2xl space-y-8">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Verified site facts
+              </p>
+              <div className="mt-3 space-y-2">
+                {verifiedFacts.map((s, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4"
+                  >
+                    <span className="text-sm text-muted-foreground">{s.label}</span>
+                    <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
+                      {s.value}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Planning parameters
-                </p>
-                <div className="mt-3 space-y-2">
-                  {planningParams.map((s, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4"
-                    >
-                      <span className="text-sm text-muted-foreground">{s.label}</span>
-                      <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
-                        {s.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Planning parameters
+              </p>
+              <div className="mt-3 space-y-2">
+                {planningParams.map((s, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4"
+                  >
+                    <span className="text-sm text-muted-foreground">{s.label}</span>
+                    <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
+                      {s.value}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

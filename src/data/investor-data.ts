@@ -26,23 +26,24 @@ export const sitePlanningHeroCarouselSlides = [
   },
 ] as const;
 
+type SitePlanningSurveySlide = {
+  key: string;
+  src: string;
+  alt: string;
+  caption: string;
+  objectFit: "cover" | "contain";
+};
+
 /** Survey assets below hero renders */
-export const sitePlanningSurveyCarouselSlides = [
-  {
-    key: "plot-plan",
-    src: "/investor/plot-plan.png",
-    alt: "Plot plan · Aerial view · El Madroñal Plot 102B",
-    caption: "Survey · Plot plan · Nov 2025",
-    objectFit: "cover" as const,
-  },
+export const sitePlanningSurveyCarouselSlides: readonly SitePlanningSurveySlide[] = [
   {
     key: "altimetria",
     src: "/investor/altimetria-crop.png",
     alt: "Topographic survey · Altimetría · Parcela 102(B)",
     caption: "Survey · Topographic altimetría · Nov 2025",
-    objectFit: "contain" as const,
+    objectFit: "contain",
   },
-] as const;
+];
 
 /** AMES Mar 2026 — presentation imagery under public/investor/elysia/ */
 export const villaElysiaImages = [
@@ -65,6 +66,11 @@ export const villaElysiaImages = [
     src: "/investor/elysia/plan-entrance.png",
     alt: "Villa Elysia · Entrance level plan and area schedule",
     caption: "Entrance level · Garage, staff, foyer, and arrival court",
+  },
+  {
+    src: "/investor/elysia/plan-ground.png",
+    alt: "Villa Elysia · Ground floor plan and area schedule",
+    caption: "Ground floor · Living, courtyard, gym, pool, and external areas",
   },
   {
     src: "/investor/elysia/plan-first.png",
