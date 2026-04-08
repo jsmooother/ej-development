@@ -136,9 +136,15 @@ export const preliminaryBudget = [
     bold: false,
   },
   { line: "Admin / project overhead", amount: "€300,000", note: "", bold: false },
+  {
+    line: "Kitchens, FF&E & equipment",
+    amount: "€500,000",
+    note: "Main kitchen, staff kitchen, outdoor kitchen, gym appliances, beds, TVs, furniture",
+    bold: false,
+  },
   { line: "Permit taxes / fees", amount: "TBC", note: "", bold: false },
   { line: "Additional soft costs / sales", amount: "TBC", note: "", bold: false },
-  { line: "Total funding sought", amount: "€3,753,000+", note: "excl. TBC items", bold: true },
+  { line: "Total funding sought", amount: "€4,253,000+", note: "excl. TBC items", bold: true },
 ] as const;
 
 export const fundingMilestones = [
@@ -159,8 +165,8 @@ export const preliminaryRevenue = [
   { line: "Pricing basis", amount: "Comparable AMES-houses", note: "similar €/m² build", bold: false },
   {
     line: "Project margin (conservative)",
-    amount: "€4,440,000",
-    note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on ~€3.75m funding",
+    amount: "€3,840,000",
+    note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on ~€4.25m funding (incl. kitchens & FF&E)",
     bold: true,
   },
 ] as const;

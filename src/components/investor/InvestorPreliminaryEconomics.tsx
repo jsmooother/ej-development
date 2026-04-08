@@ -58,12 +58,21 @@ export function InvestorPreliminaryEconomics() {
                 {preliminaryBudget.map((row, i) => (
                   <div
                     key={i}
-                    className={`flex justify-between border-b border-border/50 py-2 ${
+                    className={`flex justify-between gap-4 border-b border-border/50 py-2 ${
                       row.bold ? "font-semibold text-foreground" : ""
                     }`}
                   >
-                    <span className="text-sm text-muted-foreground">{row.line}</span>
-                    <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">{row.amount}</span>
+                    <div className="min-w-0">
+                      <span className="text-sm text-muted-foreground">{row.line}</span>
+                      {row.note ? (
+                        <p className="mt-0.5 text-xs font-normal text-muted-foreground/75">
+                          {row.note}
+                        </p>
+                      ) : null}
+                    </div>
+                    <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">
+                      {row.amount}
+                    </span>
                   </div>
                 ))}
               </div>
