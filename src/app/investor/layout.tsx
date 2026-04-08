@@ -4,7 +4,7 @@ import { buildOgImageUrl } from "@/lib/og";
 export const metadata: Metadata = {
   title: "Investor Portal | EJ Properties",
   description:
-    "El Madroñal Villa Development — Investor project portal. Confidential materials for approved investors.",
+    "Villa Elysia by EJ Properties and AMES Arquitectos — El Madroñal. Confidential investor materials.",
   robots: { index: false, follow: false },
   openGraph: {
     title: "EJ Development - Investment Opportunity",

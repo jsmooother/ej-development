@@ -13,7 +13,7 @@
 
 ## Financial Model (Illustrative)
 
-**Assumptions:** BUA 1,500 m²; plot 3,038 m²; sale at completion.
+**Assumptions (portal headline economics):** AMES closed built ~757 m²; plot 3,037.85 m²; sale at completion. (Illustrative scenario table below still uses legacy GDV scale—reconcile separately if repurposed.)
 
 ### Scenario Outputs
 
@@ -65,12 +65,12 @@
 | Casa de Canto | Benahavís (El Madroñal) | 3,635 m² | 1,300 m² | Closest match; steep plot, privacy |
 | Villa Siena | Marbella (El Madroñal) | 5,010 m² | 1,325 m² | El Madroñal context |
 | The One | Marbella | 9,746 m² | 1,717 m² | Topography + resort program |
-| Care Hotel | Camoján | 2,250 m² | 4,489 m² | Execution capability |
+| Celestia | Sotogrande | 3,809 m² | 1,290 m² | Completed villa; sloped plot, landscape execution |
 
 ## Plot Evidence (from Cadastral + Topo)
 
 - Cadastral: 0644927UF2404S0000GQ
-- Plot area: 3,038 m²
+- Plot area: 3,037.85 m²
 - Location: UR MADROÑAL EL 102[B], Benahavís
 - Survey: Nov 2025; ETRS-89, UTM Zone 30
 - **Note:** Parcel was not cleared on measurement day; vegetation/clearance scope applies

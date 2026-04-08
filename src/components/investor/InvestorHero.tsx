@@ -53,17 +53,20 @@ export function InvestorHero() {
           style={{ y: textY, opacity: textOpacity }}
           className="max-w-4xl"
         >
-          <p className="text-xs font-medium uppercase tracking-[0.4em] text-muted-foreground">
-            EJ Properties · Urbanización El Madroñal · Benahavís
+          <p className="text-sm font-medium text-muted-foreground">
+            Villa Elysia by EJ Properties and AMES Arquitectos
+          </p>
+          <p className="mt-2 text-xs font-medium uppercase tracking-[0.35em] text-muted-foreground/85">
+            Urbanización El Madroñal · Benahavís
           </p>
           <h1 className="mt-4 font-serif text-4xl font-light leading-[1.1] text-foreground md:text-5xl lg:text-6xl">
             Construction funding
             <br />
-            <span className="text-foreground/80">El Madroñal Villa</span>
+            <span className="text-foreground/80">Villa Elysia</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Project development fully funded for land and design. 3,038 m² plot ·
-            800 m² target build. Construction funding sought.
+            Project development fully funded for land and design. 3,038 m² plot · 803 m² schedule
+            enclosed (rounded). Construction funding sought.
           </p>
         </motion.div>
       </div>

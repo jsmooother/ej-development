@@ -1,5 +1,5 @@
 # EJ Properties
-## El Madroñal Villa Development
+## Villa Elysia (El Madroñal)
 ### Investor Project Portal Specification
 
 Version: 1.0  
@@ -26,7 +26,7 @@ The community offers privacy, security, large plots, and elevated views while re
 
 Plots within this community are scarce and development density is intentionally restricted by planning regulations, creating long-term scarcity.
 
-EJ Properties has secured a **3,038 m² residential plot** in this environment with planning parameters that allow for the development of a high-end villa of approximately **600 m² above ground**.
+EJ Properties has secured a **3,037.85 m² residential plot** in this environment. The villa—**Villa Elysia**—is dimensioned at approximately **757 m² AMES closed built** (sales methodology), with detailed schedules totaling **~803 m² enclosed**; see the live investor portal “Site & planning” section for floor breakdowns and reconciliation.
 
 The project is designed by **AMES Arquitectos**, a Marbella-based architectural firm with significant experience in luxury residential development.
 
@@ -226,7 +226,7 @@ Spain
 
 Plot size:
 
-3038 m²
+3,037.85 m²
 
 Classification:
 
@@ -278,7 +278,7 @@ Survey scale: 1:300
 
 The plot has a natural slope that allows:
 
-- basement construction
+- terraced levels (entrance, ground, first)
 - terraced landscaping
 - unobstructed views
 
@@ -302,41 +302,30 @@ Key design objectives:
 
 ## Design Program
 
-Estimated built area:
+Estimated built area (AMES closed): **~757 m²**; schedule-enclosed total **~803 m²** (methodology note on portal).
 
-600 m² above ground
+Entrance level:
 
-Additional basement level:
-
-- garage
-- technical rooms
-- leisure spaces
-
-Estimated program:
+- garage and arrival court  
+- staff apartment and technical core  
 
 Ground floor:
 
-living area  
-kitchen  
-guest suites  
+- open living, kitchen, dining  
+- courtyard and vertical light shaft  
+- gym, office, man’s cave  
 
 First floor:
 
-master suite  
-additional bedrooms  
+- master suite  
+- guest suites with en-suites  
+- terraces and porch  
 
-Basement:
-
-garage  
-gym  
-cinema room  
-technical areas
+Historic narrative referenced a basement leisure level; the current AMES package places the garage and technical program at **entrance level** and the **gym on the ground floor** with a courtyard / light shaft.
 
 Exterior:
 
-infinity pool  
-landscaped garden  
-terraces
+infinity pool, gazebo, porches and terraces, landscaped garden
 
 ---
 

@@ -12,7 +12,7 @@ const locationBenefits = [
 
 const driveTimes = [
   { destination: "San Pedro & Puerto Banús", time: "~10–15 min" },
-  { destination: "Marbella", time: "~25–30 min" },
+  { destination: "Marbella", time: "~20 min" },
   { destination: "Málaga International Airport", time: "<1 hour" },
 ];
 

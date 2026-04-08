@@ -11,10 +11,34 @@ const valueDrivers = [
 ];
 
 const program = [
-  { floor: "Ground floor", items: ["Living area", "Kitchen", "Guest suites"] },
-  { floor: "First floor", items: ["Master suite", "Additional bedrooms"] },
-  { floor: "Basement", items: ["Garage", "Gym", "Cinema room", "Technical areas"] },
-  { floor: "Exterior", items: ["Infinity pool", "Landscaped garden", "Terraces"] },
+  {
+    floor: "Entrance level",
+    items: [
+      "Garage and arrival court",
+      "Staff apartment",
+      "Foyer and service core",
+      "Wine cellar",
+      "Lift and technical",
+    ],
+  },
+  {
+    floor: "Ground floor",
+    items: [
+      "Open living, kitchen, and dining opening to the terrace",
+      "Dedicated staff kitchen (back-of-house)",
+      "Courtyard and vertical light shaft",
+      "Gym, office, and man's cave",
+      "Guest WC",
+    ],
+  },
+  {
+    floor: "First floor",
+    items: ["Master suite with bath and wardrobe", "Guest suites with en-suites", "Continuous porch and terrace"],
+  },
+  {
+    floor: "Exterior",
+    items: ["Infinity pool", "Gazebo and outdoor dining", "Terraces, porches, and landscaped garden"],
+  },
 ];
 
 export function InvestorDevelopmentConcept() {
@@ -36,12 +60,16 @@ export function InvestorDevelopmentConcept() {
               Design supports value
             </h2>
             <p className="mt-6 text-muted-foreground">
-              800 m² build. AMES Arquitectos. AMES tailors every villa to its
-              plot—topography, slope, and vegetation guide the design—creating a
-              unique residence rather than a template. Their approach integrates
-              architecture with the landscape, uses premium materials and
-              bespoke craftsmanship, and aligns with international buyer
-              expectations for turnkey luxury.
+              Villa Elysia by EJ Properties and AMES Arquitectos. The scheme uses a central courtyard
+              and a vertical light shaft to draw daylight deep into the plan; the gym sits on the
+              ground floor with direct connection to main living. AMES tailors every villa to its
+              plot—topography,
+              slope, and vegetation guide the design—integrating architecture with the landscape,
+              premium materials, and international turnkey expectations.
+            </p>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Economics use 803 m² schedule enclosed; Site & planning reconciles floor “In”, closed
+              built, and external lines to the same rounded totals.
             </p>
             <div className="mt-8">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

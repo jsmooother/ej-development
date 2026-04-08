@@ -49,7 +49,7 @@ export function InvestorSourcesDisclaimer() {
               EJ Properties
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              El Madroñal Villa · Construction funding opportunity · Confidential
+              Villa Elysia · Construction funding opportunity · Confidential
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-6 text-sm">

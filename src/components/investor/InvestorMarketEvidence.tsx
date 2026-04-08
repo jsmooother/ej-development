@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { marketSources, marketComps } from "@/data/investor-data";
+import { marketSources, marketComps, marketCompsListedAvgEurPerSqm } from "@/data/investor-data";
 import { SourceNote } from "./SourceNote";
 
 export function InvestorMarketEvidence() {
@@ -22,10 +22,10 @@ export function InvestorMarketEvidence() {
             Comparable villas
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Comparable listings for villas in El Madroñal and neighbouring
-            Benahavís areas. The table reflects where the market stands today;
-            prices are more likely than not to move higher going forward.
-            Broker-led exit pricing remains an underwriting assumption.
+            Comparable listings for villas in El Madroñal and neighbouring Benahavís areas, plus
+            Villa Elysia on an indicative basis. The table reflects where the market stands today;
+            prices are more likely than not to move higher going forward. Broker-led exit pricing
+            remains an underwriting assumption.
           </p>
 
           <div className="mt-10 overflow-x-auto">
@@ -50,27 +50,38 @@ export function InvestorMarketEvidence() {
                 </tr>
               </thead>
               <tbody>
-                {marketComps.map((row) => (
+                {marketComps.map((row) => {
+                  const isSubject = "subject" in row && row.subject;
+                  return (
                   <tr
-                    key={row.url}
+                    key={row.name}
                     className={`border-b border-border/50 ${
-                      row.primeComp ? "bg-foreground/5" : ""
+                      isSubject ? "bg-primary/10" : row.primeComp ? "bg-foreground/5" : ""
                     }`}
                   >
                     <td className="py-4">
-                      <Link
-                        href={row.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-foreground underline decoration-muted-foreground/50 underline-offset-2 transition-colors hover:text-foreground"
-                      >
-                        {row.name}
-                        {row.primeComp && (
+                      {isSubject ? (
+                        <span className="font-medium text-foreground">
+                          {row.name}
                           <span className="ml-2 text-[10px] font-normal uppercase tracking-wider text-muted-foreground">
-                            Prime comp
+                            This project
                           </span>
-                        )}
-                      </Link>
+                        </span>
+                      ) : (
+                        <Link
+                          href={row.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-foreground underline decoration-muted-foreground/50 underline-offset-2 transition-colors hover:text-foreground"
+                        >
+                          {row.name}
+                          {row.primeComp && (
+                            <span className="ml-2 text-[10px] font-normal uppercase tracking-wider text-muted-foreground">
+                              Prime comp
+                            </span>
+                          )}
+                        </Link>
+                      )}
                       {row.note && (
                         <p className="mt-0.5 text-xs text-muted-foreground">{row.note}</p>
                       )}
@@ -86,14 +97,27 @@ export function InvestorMarketEvidence() {
                       {row.price}
                     </td>
                   </tr>
-                ))}
+                );
+                })}
               </tbody>
             </table>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
-            Source: Homerun Brokers (asking prices). EJ target: 800 m² at approx.
-            €11,500/m² ≈ €9.2m, aligned with Villa Mio and comparable El Madroñal
-            / Benahavís pricing.
+            Listed comparables (excl. Villa Elysia): simple average asking ≈{" "}
+            <span className="font-mono text-foreground">
+              €{marketCompsListedAvgEurPerSqm.toLocaleString("en-GB")}/m²
+            </span>
+            . Casa de Canto (AMES, El Madroñal) from{" "}
+            <Link
+              href="https://3saestate.com/listings/casa-de-canto/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-muted-foreground/50 underline-offset-2 hover:text-foreground"
+            >
+              3SA Estate
+            </Link>{" "}
+            at €11.5m / 1,175 m² ≈ €9,787/m². Homerun listings as marked. Villa Elysia indicative
+            €9.23m at €11,500/m² × 803 m² sits above that average on a smaller built footprint.
           </p>
 
           <div className="mt-8 space-y-3">

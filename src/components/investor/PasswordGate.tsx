@@ -85,13 +85,13 @@ export function PasswordGate() {
         <div className="mx-auto w-full max-w-md space-y-8 text-center">
           <div className="space-y-2">
             <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground">
-              EJ Properties
+              Investor portal
             </p>
-            <h1 className="font-serif text-3xl font-light text-foreground md:text-4xl">
-              El Madroñal Villa Development
+            <h1 className="font-serif text-2xl font-light leading-snug text-foreground md:text-3xl">
+              Villa Elysia by EJ Properties and AMES Arquitectos
             </h1>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Enter access code to view investor materials
+            <p className="mt-3 text-sm text-muted-foreground">
+              El Madroñal · Enter access code to view investor materials
             </p>
           </div>
 
