@@ -148,9 +148,24 @@ export const preliminaryBudget = [
     note: "Main kitchen, staff kitchen, outdoor kitchen, gym appliances, beds, TVs, furniture",
     bold: false,
   },
-  { line: "Permit taxes / fees", amount: "TBC", note: "", bold: false },
-  { line: "Additional soft costs / sales", amount: "TBC", note: "", bold: false },
-  { line: "Total funding sought", amount: "€4,253,000+", note: "excl. TBC items", bold: true },
+  {
+    line: "Permit taxes / fees",
+    amount: "€135,000",
+    note: "Indicative: Benahavís ICIO c. 2.4% on declared material execution budget (ordenanza fiscal, 2024+) plus municipal licence / processing fees and related filings—confirm with architect & ayuntamiento",
+    bold: false,
+  },
+  {
+    line: "Additional soft costs / sales",
+    amount: "€185,000",
+    note: "Indicative: construction-phase legal, all-risk site insurance, survey / geotech supplements, photography & sales collateral / launch marketing (excludes broker success fee at exit)",
+    bold: false,
+  },
+  {
+    line: "Total funding sought",
+    amount: "€4,573,000",
+    note: "Indicative subtotal—permits & soft costs subject to verification",
+    bold: true,
+  },
 ] as const;
 
 export const fundingMilestones = [
@@ -171,8 +186,8 @@ export const preliminaryRevenue = [
   { line: "Pricing basis", amount: "Comparable AMES-houses", note: "similar €/m² build", bold: false },
   {
     line: "Project margin (conservative)",
-    amount: "€3,840,000",
-    note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on ~€4.25m funding (incl. kitchens & FF&E)",
+    amount: "€3,460,000",
+    note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on ~€4.57m funding (incl. kitchens, FF&E, indicative permits & soft costs)",
     bold: true,
   },
 ] as const;

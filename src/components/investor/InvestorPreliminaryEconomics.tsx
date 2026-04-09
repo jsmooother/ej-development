@@ -25,9 +25,11 @@ export function InvestorPreliminaryEconomics() {
             Working budget assumptions
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Early-stage numbers. Not a fully diligenced financial model. Subject to
-            refinement. Permit fees, taxes, financing cost, and some soft costs
-            remain to be refined.
+            Early-stage numbers. Not a fully diligenced financial model. Permit / ICIO lines use
+            indicative allowances aligned with Benahavís ordinance bands and typical Costa del Sol
+            development patterns; soft costs assume lean legal, insurance, and pre-sale marketing
+            (broker success fee remains at exit). Financing cost and final ayuntamiento settlements
+            remain subject to verification.
           </p>
 
           <div className="mt-10 grid gap-8 lg:grid-cols-3">

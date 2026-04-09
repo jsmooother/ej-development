@@ -22,8 +22,23 @@ export function InvestorTeamReferences() {
             AMES Arquitectos · Relevant precedents
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Local relevance, topography relevance, quality positioning, execution
-            credibility. Casa de Canto is the closest contextual match.
+            <a
+              href="https://amesarquitectos.com/practice"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+            >
+              AMES Arquitectos
+            </a>{" "}
+            is a Marbella-based studio founded in 2011, co-led by principals Antonio Morillo and
+            Esther Sánchez with a multidisciplinary team of 20+ collaborators. The practice
+            delivers luxury villas, new builds, residential, and hospitality work—pairing technical
+            precision with a refined, timeless design language and strong sensitivity to site and
+            landscape. For this opportunity that profile de-risks execution on difficult topography
+            and supports premium positioning; the precedents below stress local fit, slope handling,
+            and comparable quality.{" "}
+            <span className="text-foreground">Casa de Canto</span> (AMES, El Madroñal) remains the
+            closest contextual match.
           </p>
 
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
