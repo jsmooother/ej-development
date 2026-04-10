@@ -41,13 +41,6 @@ export const sitePlanningHeroCarouselSlides = [
     objectFit: "cover" as const,
   },
   {
-    key: "sketch-courtyard",
-    src: villaElysiaSketchCourtyardSrc,
-    alt: "Villa Elysia · Courtyard sketch · Central outdoor room and light",
-    caption: "Sketch · Courtyard · Central court and vertical daylight",
-    objectFit: "contain" as const,
-  },
-  {
     key: "sketch-plan-01",
     src: villaElysiaSketchPlan01Src,
     alt: "Villa Elysia · Plan sketch 01 · Massing and level stack",

@@ -245,21 +245,9 @@ export function InvestorSitePlanning() {
         >
           <SiteHeroCarousel />
           <SiteSurveyCarousel />
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
-            <Link
-              href="/investor/251106-altimetria.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <FileDown className="h-3.5 w-3.5" />
-              View full topography survey (PDF)
-            </Link>
-            <span className="text-xs text-muted-foreground/80">
-              Renders and plan sketches above; courtyard and gazebo sketches below (full altimetría in
-              PDF)
-            </span>
-          </div>
+          <p className="mt-6 text-xs text-muted-foreground/80">
+            Renders and plan sketches above; courtyard and gazebo sketches below.
+          </p>
         </motion.div>
 
         <motion.div
@@ -269,26 +257,48 @@ export function InvestorSitePlanning() {
           transition={{ duration: 0.5, delay: 0.08 }}
           className="mt-16"
         >
-          <div className="mx-auto max-w-2xl space-y-8">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Verified site facts
-              </p>
-              <div className="mt-3 space-y-2">
-                {verifiedFacts.map((s, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4"
-                  >
-                    <span className="text-sm text-muted-foreground">{s.label}</span>
-                    <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
-                      {s.value}
-                    </span>
-                  </div>
-                ))}
+          <div className="mx-auto max-w-5xl space-y-8">
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_min(300px,38%)] lg:items-start lg:gap-10 xl:gap-12">
+              <div className="min-w-0 max-w-2xl lg:max-w-none">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Verified site facts
+                </p>
+                <div className="mt-3 space-y-2">
+                  {verifiedFacts.map((s, i) => (
+                    <div
+                      key={i}
+                      className="flex flex-col gap-1 border-b border-border/50 py-2 md:flex-row md:items-start md:justify-between md:gap-4"
+                    >
+                      <span className="text-sm text-muted-foreground">{s.label}</span>
+                      <span className="text-sm font-medium text-foreground md:max-w-[60%] md:text-right">
+                        {s.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
+                <div className="relative aspect-[927/1024] w-full overflow-hidden rounded-2xl border border-border bg-muted/30 shadow-sm">
+                  <Image
+                    src="/investor/altimetria-crop.png"
+                    alt="Altimetría (topography) survey excerpt for plot 102B, El Madroñal"
+                    fill
+                    className="object-contain object-center p-2 sm:p-3"
+                    sizes="(max-width: 1024px) min(100vw, 384px), 380px"
+                  />
+                </div>
+                <Link
+                  href="/investor/251106-altimetria.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex w-full items-center justify-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground lg:justify-start"
+                >
+                  <FileDown className="h-3.5 w-3.5 shrink-0" />
+                  View full topography survey (PDF)
+                </Link>
               </div>
             </div>
-            <div>
+            <div className="mx-auto max-w-2xl">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Planning parameters
               </p>
