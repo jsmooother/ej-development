@@ -91,21 +91,28 @@ export function InvestorPreliminaryEconomics() {
               </p>
               <div className="mt-6 space-y-3">
                 {preliminaryRevenue.map((row, i) => (
-                  <div
-                    key={i}
-                    className={`flex justify-between border-b border-border/50 py-2 ${
-                      row.bold ? "font-semibold text-foreground" : ""
-                    }`}
-                  >
-                    <div className="min-w-0">
-                      <span className="text-sm text-muted-foreground">{row.line}</span>
-                      {row.note && row.bold && (
-                        <p className="mt-1 text-xs font-normal text-muted-foreground/80">
-                          {row.note}
-                        </p>
-                      )}
+                  <div key={i} className="space-y-1.5 border-b border-border/50 py-2">
+                    <div
+                      className={`flex items-start justify-between gap-4 ${
+                        row.bold ? "font-semibold text-foreground" : ""
+                      }`}
+                    >
+                      <span
+                        className={`min-w-0 flex-1 text-sm ${
+                          row.bold ? "text-foreground" : "text-muted-foreground"
+                        }`}
+                      >
+                        {row.line}
+                      </span>
+                      <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">
+                        {row.amount}
+                      </span>
                     </div>
-                    <span className="min-w-[145px] shrink-0 font-mono text-sm text-foreground text-right tabular-nums">{row.amount}</span>
+                    {row.note ? (
+                      <p className="text-xs font-normal leading-relaxed text-muted-foreground/80">
+                        {row.note}
+                      </p>
+                    ) : null}
                   </div>
                 ))}
               </div>
