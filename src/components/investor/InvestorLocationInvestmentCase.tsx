@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 
 const locationBenefits = [
-  "Limited supply due to strict planning regulations",
+  "Limited supply of plots with strong views",
   "Adjacency to ultra-prime La Zagaleta",
   "Strong international buyer demand",
   "Clear regulatory framework and buildability",
@@ -66,7 +66,7 @@ export function InvestorLocationInvestmentCase() {
             </p>
           </div>
 
-          <div className="lg:col-span-2">
+          <div className="min-w-0 lg:col-span-2 lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-2xl border border-border bg-muted/20 p-8">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Location benefits

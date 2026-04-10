@@ -77,8 +77,8 @@ function ContextMapLightbox({
         <Image
           src={siteContextImage.src}
           alt={siteContextImage.alt}
-          width={2400}
-          height={1600}
+          width={2666}
+          height={1500}
           className="max-h-[min(92vh,1200px)] max-w-[min(96vw,1600px)] w-auto object-contain"
           sizes="96vw"
         />
@@ -145,7 +145,7 @@ export function InvestorWhyThisProject() {
                   src={siteContextImage.src}
                   alt={siteContextImage.alt}
                   width={1200}
-                  height={800}
+                  height={675}
                   className="w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                   sizes="(max-width: 1024px) 100vw, 480px"
                   priority

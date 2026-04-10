@@ -4,11 +4,27 @@
  */
 
 /** Paths for layout routing (context map only in #why; house renders hero on #site) */
-export const villaElysiaContextMapSrc = "/investor/elysia/context-map.png" as const;
-export const villaElysiaHouseRender1Src = "/investor/elysia/house-render-1.png" as const;
-export const villaElysiaHouseRender2Src = "/investor/elysia/house-render-2.png" as const;
+export const villaElysiaContextMapSrc =
+  "/investor/elysia/Madronal%206%20-%20overview.jpg" as const;
+/** Bump `v` when replacing hero JPEGs so browsers and CDNs fetch the new file (public URLs are not hashed). */
+export const villaElysiaHouseRender1Src =
+  "/investor/elysia/house-render-1.jpg?v=20250410b" as const;
+export const villaElysiaHouseRender2Src =
+  "/investor/elysia/house-render-2.jpg?v=20250410b" as const;
 
-/** Full-width site hero carousel (#site): primary house renders */
+/** Early plan sketches (JPEGs under public/investor/elysia/; bump v when files change). */
+export const villaElysiaSketchPlan01Src =
+  "/investor/elysia/sketch%20-%20plan%2001.jpg?v=20260410" as const;
+export const villaElysiaSketchPlan02Src =
+  "/investor/elysia/sketch%20-%20plan%2002.jpg?v=20260410" as const;
+export const villaElysiaSketchPlan03Src =
+  "/investor/elysia/sketch%20-%20plan%2003.jpg?v=20260410" as const;
+export const villaElysiaSketchCourtyardSrc =
+  "/investor/elysia/sketch%20-%20courtyard.jpg?v=20260410" as const;
+export const villaElysiaSketchGazeboSrc =
+  "/investor/elysia/sketch%20-%20gazebo.jpg?v=20260410" as const;
+
+/** Full-width site hero carousel (#site): house renders + sketches */
 export const sitePlanningHeroCarouselSlides = [
   {
     key: "house-1",
@@ -24,6 +40,34 @@ export const sitePlanningHeroCarouselSlides = [
     caption: "Render · Terrace, infinity pool, and panoramic coastal view",
     objectFit: "cover" as const,
   },
+  {
+    key: "sketch-courtyard",
+    src: villaElysiaSketchCourtyardSrc,
+    alt: "Villa Elysia · Courtyard sketch · Central outdoor room and light",
+    caption: "Sketch · Courtyard · Central court and vertical daylight",
+    objectFit: "contain" as const,
+  },
+  {
+    key: "sketch-plan-01",
+    src: villaElysiaSketchPlan01Src,
+    alt: "Villa Elysia · Plan sketch 01 · Massing and level stack",
+    caption: "Sketch · Plan study 01 · Terraced levels and circulation",
+    objectFit: "contain" as const,
+  },
+  {
+    key: "sketch-plan-02",
+    src: villaElysiaSketchPlan02Src,
+    alt: "Villa Elysia · Plan sketch 02 · Layout development",
+    caption: "Sketch · Plan study 02 · Layout and spatial relationships",
+    objectFit: "contain" as const,
+  },
+  {
+    key: "sketch-plan-03",
+    src: villaElysiaSketchPlan03Src,
+    alt: "Villa Elysia · Plan sketch 03 · Refined plan concept",
+    caption: "Sketch · Plan study 03 · Concept refinement",
+    objectFit: "contain" as const,
+  },
 ] as const;
 
 type SitePlanningSurveySlide = {
@@ -34,13 +78,20 @@ type SitePlanningSurveySlide = {
   objectFit: "cover" | "contain";
 };
 
-/** Survey assets below hero renders */
+/** Courtyard & gazebo sketches below hero carousel (#site); full topography via PDF link in section */
 export const sitePlanningSurveyCarouselSlides: readonly SitePlanningSurveySlide[] = [
   {
-    key: "altimetria",
-    src: "/investor/altimetria-crop.png",
-    alt: "Topographic survey · Altimetría · Parcela 102(B)",
-    caption: "Survey · Topographic altimetría · Nov 2025",
+    key: "sketch-courtyard-survey",
+    src: villaElysiaSketchCourtyardSrc,
+    alt: "Villa Elysia · Courtyard sketch · Central outdoor room and daylight",
+    caption: "Sketch · Courtyard · Central court and connection to the light shaft",
+    objectFit: "contain",
+  },
+  {
+    key: "sketch-gazebo",
+    src: villaElysiaSketchGazeboSrc,
+    alt: "Villa Elysia · Gazebo sketch · Garden room and outdoor living",
+    caption: "Sketch · Gazebo · Garden pavilion and landscape tie-in",
     objectFit: "contain",
   },
 ];
@@ -61,6 +112,11 @@ export const villaElysiaImages = [
     src: villaElysiaHouseRender2Src,
     alt: "Villa Elysia · Terrace, pool, and sea view · Indoor–outdoor living",
     caption: "Render · Terrace, infinity pool, and panoramic coastal view",
+  },
+  {
+    src: villaElysiaSketchCourtyardSrc,
+    alt: "Villa Elysia · Courtyard sketch · Central outdoor room and light",
+    caption: "Sketch · Courtyard · Central court and vertical daylight",
   },
   {
     src: "/investor/elysia/plan-entrance.png",

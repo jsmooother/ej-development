@@ -56,12 +56,13 @@ function SiteHeroCarousel() {
             src={slide.src}
             alt={slide.alt}
             fill
+            quality={90}
             className={
               slide.objectFit === "cover"
                 ? "object-cover"
                 : "object-contain object-center p-2 sm:p-4"
             }
-            sizes="(max-width: 768px) 100vw, 1152px"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) min(92vw, 1152px), 1400px"
             priority={index === 0}
           />
         </div>
@@ -95,7 +96,7 @@ function SiteHeroCarousel() {
       <div
         className="flex justify-center gap-1.5"
         role="tablist"
-        aria-label="Villa renders"
+        aria-label="Renders and plan sketches"
       >
         {sitePlanningHeroCarouselSlides.map((s: HeroSlide, i) => (
           <button
@@ -129,9 +130,18 @@ function SiteSurveyCarousel() {
 
   return (
     <div className="mt-10 w-full space-y-4">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        Topographic survey
-      </p>
+      <div className="space-y-3">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Courtyard & gazebo sketches
+        </p>
+        <p className="max-w-3xl text-sm text-muted-foreground">
+          An innovative light shaft at the rear of the house is designed to draw natural daylight deep
+          into the plan—including the basement—so lower levels feel bright and connected rather than
+          like a typical enclosed basement. Together with the central courtyard, this delivers a
+          quality of light and atmosphere that sets the villa apart from conventional hillside
+          layouts.
+        </p>
+      </div>
       <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30 shadow-sm">
         <div
           className="relative isolate w-full bg-muted/20"
@@ -155,7 +165,7 @@ function SiteSurveyCarousel() {
             type="button"
             onClick={() => go(-1)}
             className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur transition hover:bg-background"
-            aria-label="Previous survey image"
+            aria-label="Previous image"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -165,7 +175,7 @@ function SiteSurveyCarousel() {
             type="button"
             onClick={() => go(1)}
             className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur transition hover:bg-background"
-            aria-label="Next survey image"
+            aria-label="Next image"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -180,7 +190,7 @@ function SiteSurveyCarousel() {
       <div
         className="flex justify-center gap-1.5"
         role="tablist"
-        aria-label="Topographic survey"
+        aria-label="Courtyard and gazebo sketches"
       >
         {sitePlanningSurveyCarouselSlides.map((s: SurveySlide, i) => (
           <button
@@ -246,7 +256,8 @@ export function InvestorSitePlanning() {
               View full topography survey (PDF)
             </Link>
             <span className="text-xs text-muted-foreground/80">
-              Two renders above; topographic survey crop below
+              Renders and plan sketches above; courtyard and gazebo sketches below (full altimetría in
+              PDF)
             </span>
           </div>
         </motion.div>
