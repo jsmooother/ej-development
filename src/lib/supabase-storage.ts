@@ -1,15 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { env } from './env';
+import { getSupabasePublishableKey } from './supabase/keys';
 
 // Create Supabase client for storage operations
 export function getStorageClient() {
-  if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const publishableKey = getSupabasePublishableKey();
+  if (!env.NEXT_PUBLIC_SUPABASE_URL || !publishableKey) {
     throw new Error('Missing Supabase configuration');
   }
 
   return createClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    publishableKey
   );
 }
 

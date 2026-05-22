@@ -1,11 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-
-const hasSupabase = () => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  return url && key && url.startsWith("http");
-};
+import { getSupabasePublishableKey, hasSupabaseClientConfig } from "@/lib/supabase/keys";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -14,13 +9,15 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  if (!hasSupabase()) {
+  if (!hasSupabaseClientConfig()) {
     return response;
   }
 
+  const publishableKey = getSupabasePublishableKey()!;
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    publishableKey,
     {
       cookies: {
         get(name: string) {

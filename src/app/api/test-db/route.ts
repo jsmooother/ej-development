@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/index";
-import { env } from "@/lib/env";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
+import { env } from "@/lib/env";
+import { getSupabasePublishableKey, getSupabaseSecretKey } from "@/lib/supabase/keys";
 
 export const dynamic = 'force-dynamic';
 
@@ -19,8 +20,8 @@ export async function GET() {
       status: "✅ PASS",
       details: JSON.stringify({
         NEXT_PUBLIC_SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL ? "✓ Set" : "✗ Missing",
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "✓ Set" : "✗ Missing",
-        SUPABASE_SERVICE_ROLE_KEY: env.SUPABASE_SERVICE_ROLE_KEY ? "✓ Set" : "✗ Missing",
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: getSupabasePublishableKey() ? "✓ Set" : "✗ Missing",
+        SUPABASE_SECRET_KEY: getSupabaseSecretKey() ? "✓ Set" : "✗ Missing",
         SUPABASE_DB_URL: env.SUPABASE_DB_URL ? "✓ Set" : "✗ Missing",
       }, null, 2),
     });

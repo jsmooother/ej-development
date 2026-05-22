@@ -3,6 +3,11 @@
  * EJ Properties · Villa Elysia (El Madroñal) · Construction funding opportunity.
  */
 
+/** Self-hosted investor hero background (Supabase Storage · media bucket) */
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://nxsjccgwmpypyrzkjilz.supabase.co";
+export const investorHeroVideoSrc = `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/media/investor/elysia/hero.mp4?v=20260522`;
+
 /** Paths for layout routing (context map only in #why; house renders hero on #site) */
 export const villaElysiaContextMapSrc =
   "/investor/elysia/Madronal%206%20-%20overview.jpg" as const;

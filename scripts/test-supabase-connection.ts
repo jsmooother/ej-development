@@ -5,6 +5,7 @@
  */
 import * as dotenv from "dotenv";
 import path from "path";
+import { getDatabaseConnectionString, getSupabasePublishableKey, getSupabaseSecretKey } from "../src/lib/supabase/keys";
 
 // Load .env then .env.local (local overrides, like Next.js)
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
@@ -12,24 +13,24 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.local"), override: true 
 
 async function main() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const dbUrl = process.env.SUPABASE_DB_URL ?? process.env.DIRECT_URL ?? process.env.SUPABASE_DB_POOL_URL;
+  const publishableKey = getSupabasePublishableKey();
+  const secretKey = getSupabaseSecretKey();
+  const dbUrl = getDatabaseConnectionString();
 
   console.log("\n=== Supabase connection test ===\n");
 
   // 1. Env check
   console.log("1. Environment variables:");
   console.log("   NEXT_PUBLIC_SUPABASE_URL:", url ? `✓ Set (${url.replace(/https?:\/\//, "").slice(0, 30)}...)` : "✗ Missing");
-  console.log("   NEXT_PUBLIC_SUPABASE_ANON_KEY:", anonKey ? "✓ Set" : "✗ Missing");
-  console.log("   SUPABASE_SERVICE_ROLE_KEY:", serviceKey ? "✓ Set" : "✗ Missing");
+  console.log("   Publishable key:", publishableKey ? "✓ Set" : "✗ Missing");
+  console.log("   Secret key:", secretKey ? "✓ Set" : "✗ Missing");
   console.log("   DB URL (SUPABASE_DB_URL/DIRECT_URL/POOL):", dbUrl ? "✓ Set" : "✗ Missing");
   if (dbUrl) {
     const host = dbUrl.match(/@([^:]+):/)?.[1] ?? "?";
     console.log("   DB host:", host);
   }
 
-  if (!url || !anonKey || !serviceKey || !dbUrl) {
+  if (!url || !publishableKey || !secretKey || !dbUrl) {
     console.log("\n❌ Missing required env vars. Add them to .env or .env.local");
     process.exit(1);
   }
@@ -38,7 +39,7 @@ async function main() {
   console.log("\n2. Supabase REST client (auth):");
   try {
     const { createClient } = await import("@supabase/supabase-js");
-    const supabase = createClient(url, serviceKey);
+    const supabase = createClient(url, secretKey);
     const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
     if (error) throw error;
     console.log("   ✅ Connected. Users (sample):", data?.users?.length ?? 0);

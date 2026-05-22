@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { env } from "@/lib/env";
+import { getDatabaseConnectionString } from "@/lib/supabase/keys";
 import * as schema from "./schema";
 
 const globalForDb = globalThis as unknown as {
@@ -8,7 +9,7 @@ const globalForDb = globalThis as unknown as {
 };
 
 const getPooledConnectionString = () => {
-  const pooledConnectionString = env.SUPABASE_DB_POOL_URL ?? env.SUPABASE_DB_URL ?? env.DIRECT_URL;
+  const pooledConnectionString = getDatabaseConnectionString();
   if (!pooledConnectionString) {
     throw new Error(
       "Missing database configuration. Provide SUPABASE_DB_POOL_URL (preferred), SUPABASE_DB_URL, or DIRECT_URL.",
@@ -18,13 +19,13 @@ const getPooledConnectionString = () => {
 };
 
 const getDirectConnectionString = () => {
-  const directConnectionString = env.DIRECT_URL ?? env.SUPABASE_DB_URL ?? env.SUPABASE_DB_POOL_URL;
-  if (!directConnectionString) {
-    throw new Error(
-      "Missing database configuration. Provide DIRECT_URL, SUPABASE_DB_URL, or SUPABASE_DB_POOL_URL.",
-    );
+  for (const key of ["DIRECT_URL", "SUPABASE_DB_URL", "SUPABASE_DB_POOL_URL"] as const) {
+    const value = process.env[key]?.trim();
+    if (value) return value;
   }
-  return directConnectionString;
+  throw new Error(
+    "Missing database configuration. Provide DIRECT_URL, SUPABASE_DB_URL, or SUPABASE_DB_POOL_URL.",
+  );
 };
 
 const looksLikePooledUrl = (value?: string | null) =>

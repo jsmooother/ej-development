@@ -2,9 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-
-const HERO_VIDEO =
-  "https://player.vimeo.com/video/1125999153?background=1&autoplay=1&loop=1&muted=1";
+import { investorHeroVideoSrc } from "@/data/investor-data";
 
 export function InvestorHero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -23,20 +21,22 @@ export function InvestorHero() {
 
   return (
     <section ref={sectionRef} className="relative min-h-[90vh] overflow-hidden">
-      {/* AMES hero video from amesarquitectos.com - same as their homepage */}
       <motion.div className="absolute inset-0 overflow-hidden" style={{ y: mediaY }}>
-        <iframe
-          src={HERO_VIDEO}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        <video
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
           style={{
             minHeight: "100vh",
             minWidth: "177.78vh",
             width: "100vw",
             height: "56.25vw",
           }}
-          allow="autoplay; fullscreen"
-          allowFullScreen
-          title="AMES Arquitectos"
+          src={investorHeroVideoSrc}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-label="AMES Arquitectos · Villa Elysia hero film"
         />
       </motion.div>
       {/* Dark overlay for text readability */}

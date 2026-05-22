@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdminOrEditor } from '@/lib/auth';
+import { getSupabaseSecretKey } from '@/lib/supabase/keys';
 
 export const dynamic = 'force-dynamic';
 
-// Initialize Supabase client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  getSupabaseSecretKey()!
 );
 
 export async function GET() {

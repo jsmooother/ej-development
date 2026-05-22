@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { env } from "@/lib/env";
+import { getSupabasePublishableKey } from "@/lib/supabase/keys";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +34,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    const publishableKey = getSupabasePublishableKey();
+    if (!env.NEXT_PUBLIC_SUPABASE_URL || !publishableKey) {
       return NextResponse.json(
         { success: false, error: "Supabase is not configured" },
         { status: 500 }
@@ -41,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
     const supabase = createClient(
       env.NEXT_PUBLIC_SUPABASE_URL,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      publishableKey
     );
 
     // Delete the file from storage

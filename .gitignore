@@ -43,3 +43,6 @@ next-env.d.ts
 
 # project images (local import folder)
 /project-images
+
+# downloaded assets pending upload (not committed)
+/tmp/
