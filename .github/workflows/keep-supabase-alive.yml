@@ -1,21 +1,40 @@
-# Keep Supabase free tier active (pings every 5 days to prevent 7-day pause)
+# Keep Supabase free tier active (pings twice weekly to prevent 7-day pause)
 name: Keep Supabase alive
 
 on:
   schedule:
-    # Every 5 days at 12:00 UTC
-    - cron: "0 12 */5 * *"
-  workflow_dispatch: # Allow manual trigger
+    # Sunday and Wednesday at 09:00 UTC — safe margin before the 7-day inactivity cutoff
+    - cron: "0 9 * * 0,3"
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping keep-alive endpoint
+      - name: Ping Supabase REST API
         env:
-          # Set DEPLOYMENT_URL in repo Settings → Secrets and variables → Variables
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || vars.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY || secrets.SUPABASE_ANON_KEY || vars.SUPABASE_PUBLISHABLE_KEY || vars.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "Missing SUPABASE_URL or publishable key."
+            echo "Add GitHub Actions secrets (or variables):"
+            echo "  SUPABASE_URL = https://YOUR_PROJECT.supabase.co"
+            echo "  SUPABASE_PUBLISHABLE_KEY = your publishable/anon key"
+            exit 1
+          fi
+          URL="${SUPABASE_URL%/}/rest/v1/site_settings?select=id&limit=1"
+          echo "Pinging $URL"
+          curl -sf "$URL" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY"
+          echo "Supabase REST ping OK"
+
+      - name: Ping site keep-alive endpoint
+        continue-on-error: true
+        env:
           SITE_URL: ${{ vars.DEPLOYMENT_URL }}
         run: |
           URL="${SITE_URL:-https://www.ejproperties.es}/api/keep-alive"
           echo "Pinging $URL"
-          curl -sf "$URL" || exit 1
+          curl -sf "$URL" && echo "Site keep-alive OK" || echo "Site keep-alive failed (non-blocking)"

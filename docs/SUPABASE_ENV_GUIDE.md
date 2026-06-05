@@ -130,15 +130,28 @@ After adding variables:
 
 Supabase pauses free projects after **7 days of inactivity**. This repo includes a keep-alive setup:
 
-1. **`/api/keep-alive`** – Lightweight route that runs a DB query
-2. **GitHub Actions** – `.github/workflows/keep-supabase-alive.yml` pings it every 5 days
+1. **GitHub Actions (primary)** – `.github/workflows/keep-supabase-alive.yml` pings the Supabase REST API directly twice weekly (Sunday and Wednesday). This does **not** depend on the Vercel app or direct Postgres connection strings.
+2. **`/api/keep-alive`** – Site endpoint that tries a DB query and a Supabase REST read; used as a secondary health check.
 
-**Setup:** In GitHub → repo **Settings** → **Secrets and variables** → **Actions** → **Variables**, add:
-- `DEPLOYMENT_URL` = `https://www.ejproperties.es` (or your production URL)
+**Setup:** In GitHub → repo **Settings** → **Secrets and variables** → **Actions**, add **Secrets** (required):
 
-If unset, it defaults to `https://www.ejproperties.es`.
+| Secret | Value |
+|--------|--------|
+| `SUPABASE_URL` | `https://YOUR_PROJECT.supabase.co` |
+| `SUPABASE_PUBLISHABLE_KEY` | Publishable (or legacy anon) key from Supabase → Settings → API |
 
-**Alternative:** Use [cron-job.org](https://cron-job.org) (free) to hit `https://yoursite.com/api/keep-alive` every 5 days.
+Optional **Variables**:
+
+| Variable | Value |
+|----------|--------|
+| `DEPLOYMENT_URL` | `https://www.ejproperties.es` (for secondary site ping; defaults to this URL) |
+
+**If the project is paused:** open the [Supabase dashboard](https://supabase.com/dashboard), select the project, and click **Restore**. DNS and database access return within a few minutes. Then verify `/api/test-db` on production returns all green checks.
+
+**Alternative:** Use [cron-job.org](https://cron-job.org) (free) to hit your Supabase REST URL every few days:
+
+`GET https://YOUR_PROJECT.supabase.co/rest/v1/site_settings?select=id&limit=1`  
+Headers: `apikey` and `Authorization: Bearer YOUR_PUBLISHABLE_KEY`
 
 ---
 
