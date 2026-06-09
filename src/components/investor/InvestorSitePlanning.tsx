@@ -137,9 +137,7 @@ export function InvestorSitePlanning() {
           <p className="mt-6 max-w-3xl text-muted-foreground">
             The plot&apos;s steep topography becomes a selling point: a terraced villa that stacks
             entrance, ground, and first levels into a clear sequence of arrival, living, and private
-            zones—each with its own relationship to the land. A central courtyard and vertical light
-            shaft thread daylight through the plan and tie the volume to long views, giving Villa
-            Elysia a distinctive, premium spatial story that stands out in El Madroñal.
+            zones—each with its own relationship to the land and long views across El Madroñal.
           </p>
         </motion.div>
 
@@ -151,12 +149,7 @@ export function InvestorSitePlanning() {
           className="mt-10 w-full"
         >
           <SiteHeroCarousel />
-          <p className="mt-6 max-w-3xl text-sm text-muted-foreground">
-            A central courtyard and vertical light shaft draw daylight deep into the plan—including
-            the entrance level—so lower levels feel bright and connected rather than like a typical
-            enclosed basement.
-          </p>
-          <p className="mt-2 text-xs text-muted-foreground/80">
+          <p className="mt-6 text-xs text-muted-foreground/80">
             House renders above; AMES working floor plans in the architectural areas section below.
           </p>
         </motion.div>

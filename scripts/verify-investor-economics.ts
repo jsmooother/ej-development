@@ -46,6 +46,10 @@ const expected = {
 const stalePatterns = [
   /\b803\s*m²/,
   /\b757\s*m²/,
+  /insideSqm: "280"/,
+  /insideSqm: "307"/,
+  /insideSqm: "216"/,
+  /insideSqm: "803"/,
   /€700,000/,
   /700,000/,
   /€4,573,000/,
@@ -147,6 +151,28 @@ assertEq("floor inside total", insideTotal, expected.builtAreaSqm);
 assertEq("closed built total", closedTotal, expected.builtAreaSqm);
 assertEq("external elements total", externalTotal, 605);
 
+const totalRow = villaElysiaFloorBreakdown.find((r) => r.isTotal)!;
+assertEq(
+  "floor breakdown total row inside",
+  Number.parseInt(totalRow.insideSqm.replace(/,/g, ""), 10),
+  expected.builtAreaSqm
+);
+
+for (const row of villaElysiaFloorBreakdown.filter((r) => !r.isTotal)) {
+  const inside = Number.parseInt(row.insideSqm.replace(/,/g, ""), 10);
+  const outside = Number.parseInt(row.outsideSqm.replace(/,/g, ""), 10);
+  const total = Number.parseInt(row.totalSqm.replace(/,/g, ""), 10);
+  assertEq(`${row.level} in+out`, inside + outside, total);
+}
+
+assertEq(
+  "external vs floor out",
+  externalTotal,
+  villaElysiaFloorBreakdown
+    .filter((r) => !r.isTotal)
+    .reduce((sum, r) => sum + Number.parseInt(r.outsideSqm.replace(/,/g, ""), 10), 0)
+);
+
 for (const comp of marketComps) {
   if ("subject" in comp && comp.subject) {
     assertEq("subject comp eurPerSqm", comp.eurPerSqm, expected.gdv / expected.builtAreaSqm);
@@ -154,12 +180,18 @@ for (const comp of marketComps) {
 }
 
 const investorComponentDir = path.join(process.cwd(), "src/components/investor");
-for (const file of fs.readdirSync(investorComponentDir)) {
-  if (!file.endsWith(".tsx")) continue;
-  const content = fs.readFileSync(path.join(investorComponentDir, file), "utf-8");
+const investorDataPath = path.join(process.cwd(), "src/data/investor-data.ts");
+for (const filePath of [
+  ...fs.readdirSync(investorComponentDir).map((file) =>
+    path.join(investorComponentDir, file)
+  ),
+  investorDataPath,
+]) {
+  if (!filePath.endsWith(".tsx") && !filePath.endsWith(".ts")) continue;
+  const content = fs.readFileSync(filePath, "utf-8");
   for (const pattern of stalePatterns) {
     if (pattern.test(content)) {
-      console.error(`FAIL stale pattern ${pattern} in src/components/investor/${file}`);
+      console.error(`FAIL stale pattern ${pattern} in ${path.relative(process.cwd(), filePath)}`);
       process.exitCode = 1;
     }
   }

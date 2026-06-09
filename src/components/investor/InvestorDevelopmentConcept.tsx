@@ -27,7 +27,7 @@ const program = [
     items: [
       "Open living, kitchen, and dining opening to the terrace",
       "Dedicated staff kitchen (back-of-house)",
-      "Guest suite and courtyard light shaft",
+      "Guest suite",
       "Infinity pool, gazebo, and outdoor dining",
       "Porches, terraces, and landscaped garden",
     ],
@@ -57,9 +57,8 @@ export function InvestorDevelopmentConcept() {
               Design supports value
             </h2>
             <p className="mt-4 text-sm text-muted-foreground">
-              The scheme uses a central courtyard and vertical light shaft to draw daylight deep into
-              the plan; gym, office, and games room sit in the basement zone where retaining walls are
-              not required—reducing cost in the steepest part of the plot. AMES tailors every villa to
+              The basement zone groups gym, office, and games room where retaining walls are not
+              required—reducing cost in the steepest part of the plot. AMES tailors every villa to
               its plot—topography, slope, and vegetation guide the design—integrating architecture with
               the landscape, premium materials, and international turnkey expectations.
             </p>

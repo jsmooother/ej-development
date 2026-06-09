@@ -148,39 +148,98 @@ export const villaElysiaFloorPlans = [
   },
 ] as const;
 
-/** Rounded from AMES Scheme 2 room schedules (June 2026) */
+function formatAreaSqm(n: number): string {
+  return n.toLocaleString("en-GB");
+}
+
+/** Per-level “In” / “Out” from AMES Scheme 2 room schedules (June 2026). */
+const villaElysiaFloorLevels = [
+  { level: "Entrance level", insideSqm: 330, outsideSqm: 134 },
+  { level: "Ground floor", insideSqm: 362, outsideSqm: 349 },
+  { level: "First floor", insideSqm: 255, outsideSqm: 122 },
+] as const;
+
+const villaElysiaFloorInsideTotalSqm = villaElysiaFloorLevels.reduce(
+  (sum, row) => sum + row.insideSqm,
+  0
+);
+const villaElysiaFloorOutsideTotalSqm = villaElysiaFloorLevels.reduce(
+  (sum, row) => sum + row.outsideSqm,
+  0
+);
+
+/** Rounded from AMES Scheme 2 room schedules (June 2026); “In” sums to closed built (947 m²). */
 export const villaElysiaFloorBreakdown = [
-  { level: "Entrance level", insideSqm: "330", outsideSqm: "134", totalSqm: "464", isTotal: false },
-  { level: "Ground floor", insideSqm: "362", outsideSqm: "349", totalSqm: "711", isTotal: false },
-  { level: "First floor", insideSqm: "255", outsideSqm: "122", totalSqm: "377", isTotal: false },
-  { level: "Total", insideSqm: "947", outsideSqm: "605", totalSqm: "1,552", isTotal: true },
+  ...villaElysiaFloorLevels.map((row) => ({
+    level: row.level,
+    insideSqm: formatAreaSqm(row.insideSqm),
+    outsideSqm: formatAreaSqm(row.outsideSqm),
+    totalSqm: formatAreaSqm(row.insideSqm + row.outsideSqm),
+    isTotal: false as const,
+  })),
+  {
+    level: "Total",
+    insideSqm: formatAreaSqm(villaElysiaFloorInsideTotalSqm),
+    outsideSqm: formatAreaSqm(villaElysiaFloorOutsideTotalSqm),
+    totalSqm: formatAreaSqm(villaElysiaFloorInsideTotalSqm + villaElysiaFloorOutsideTotalSqm),
+    isTotal: true as const,
+  },
 ] as const;
 
 /**
  * Built area per AMES cost schedule (Scheme 2): 947 m² closed built.
  */
 export const villaElysiaAmesClosedBuilt = [
-  { line: "Closed built (ground + first)", sqm: "617", bold: false },
-  { line: "Closed built (entrance / basement)", sqm: "330", bold: false },
-  { line: "Total built area", sqm: "947", bold: true },
+  {
+    line: "Closed built (ground + first)",
+    sqm: formatAreaSqm(villaElysiaFloorLevels[1].insideSqm + villaElysiaFloorLevels[2].insideSqm),
+    bold: false,
+  },
+  {
+    line: "Closed built (entrance / basement)",
+    sqm: formatAreaSqm(villaElysiaFloorLevels[0].insideSqm),
+    bold: false,
+  },
+  {
+    line: "Total built area",
+    sqm: formatAreaSqm(villaElysiaFloorInsideTotalSqm),
+    bold: true,
+  },
 ] as const;
+
+const villaElysiaExternalElementRows = [
+  { element: "Porches", sqm: 148 },
+  { element: "Terraces", sqm: 132 },
+  { element: "Road access", sqm: 120 },
+  { element: "Pool", sqm: 86 },
+  { element: "Gazebo", sqm: 79 },
+  { element: "Garden", sqm: 40 },
+] as const;
+
+const villaElysiaExternalElementsTotalSqm = villaElysiaExternalElementRows.reduce(
+  (sum, row) => sum + row.sqm,
+  0
+);
 
 /** Element breakdown sums to floor “Out” total (605 m²) */
 export const villaElysiaExternalElements = [
-  { element: "Porches", sqm: "148", bold: false },
-  { element: "Terraces", sqm: "132", bold: false },
-  { element: "Road access", sqm: "120", bold: false },
-  { element: "Pool", sqm: "86", bold: false },
-  { element: "Gazebo", sqm: "79", bold: false },
-  { element: "Garden", sqm: "40", bold: false },
-  { element: "Total external", sqm: "605", bold: true },
+  ...villaElysiaExternalElementRows.map((row) => ({
+    element: row.element,
+    sqm: formatAreaSqm(row.sqm),
+    bold: false as const,
+  })),
+  {
+    element: "Total external",
+    sqm: formatAreaSqm(villaElysiaExternalElementsTotalSqm),
+    bold: true as const,
+  },
 ] as const;
 
 export const villaElysiaAreaFootnotes = [
   "Floor schedules from AMES Scheme 2 working drawings (June 2026).",
-  "Built area of 947 m² is the denominator used in the architect construction cost estimate (Scheme 2).",
+  `Built area of ${villaElysiaBuiltAreaSqm} m² is the denominator used in the architect construction cost estimate (Scheme 2).`,
   "Construction €/m² is a mid-range working assumption (€5,250/m²) between AMES Option 3 (€5,053) and Option 4 (€4,707), pending geotechnical study.",
-  "External elements are rounded to sum to the floor “Out” total (605 m²).",
+  `External elements are rounded to sum to the floor “Out” total (${formatAreaSqm(villaElysiaFloorOutsideTotalSqm)} m²).`,
 ] as const;
 
 export const executiveSummary = [
@@ -190,7 +249,7 @@ export const executiveSummary = [
   { label: "Plot", value: `${villaElysiaPlotSqm.toLocaleString("en-GB")} m²` },
   {
     label: "Built area",
-    value: `${villaElysiaBuiltAreaSqm} m² (AMES Scheme 2)`,
+    value: `${villaElysiaBuiltAreaSqm} m²`,
   },
   { label: "Architect", value: "AMES Arquitectos" },
   { label: "Funded to date", value: "Plot and design fully funded" },
