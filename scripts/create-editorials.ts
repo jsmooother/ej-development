@@ -3,12 +3,13 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { posts } from '../src/lib/db/schema';
 import { randomUUID } from 'crypto';
+import { getDatabaseConnectionString } from '../src/lib/supabase/keys';
 
 config({ path: '.env.local' });
 
-const dbUrl = process.env.SUPABASE_DB_URL;
+const dbUrl = getDatabaseConnectionString();
 if (!dbUrl) {
-  throw new Error('SUPABASE_DB_URL not found in environment');
+  throw new Error('SUPABASE_DB_POOL_URL, SUPABASE_DB_URL, or DIRECT_URL not found in environment');
 }
 
 const client = postgres(dbUrl);

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { marketSources, marketComps, marketCompsListedAvgEurPerSqm } from "@/data/investor-data";
+import { marketSources, marketComps, marketCompsListedAvgEurPerSqm, villaElysiaBuiltAreaSqm, villaElysiaIndicativeGdv, villaElysiaSaleRatePerSqm } from "@/data/investor-data";
 import { SourceNote } from "./SourceNote";
 
 export function InvestorMarketEvidence() {
@@ -116,8 +116,9 @@ export function InvestorMarketEvidence() {
             >
               3SA Estate
             </Link>{" "}
-            at €11.5m / 1,175 m² ≈ €9,787/m². Homerun listings as marked. Villa Elysia indicative
-            €9.23m at €11,500/m² × 803 m² sits above that average on a smaller built footprint.
+            at €11.5m / 1,175 m² ≈ €9,787/m². Homerun listings as marked. Villa Elysia indicative{" "}
+            {`€${(villaElysiaIndicativeGdv / 1_000_000).toFixed(2)}m at €${villaElysiaSaleRatePerSqm.toLocaleString("en-GB")}/m² × ${villaElysiaBuiltAreaSqm} m²`}{" "}
+            reflects the enlarged Scheme 2 program including basement spa and leisure suite.
           </p>
 
           <div className="mt-8 space-y-3">

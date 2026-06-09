@@ -7,19 +7,21 @@ import { eq } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { randomUUID } from 'crypto';
+import { getDatabaseConnectionString, getSupabaseSecretKey } from '../src/lib/supabase/keys';
 
 config({ path: '.env.local' });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const dbUrl = process.env.SUPABASE_DB_URL!;
+const supabaseKey = getSupabaseSecretKey();
+const dbUrl = getDatabaseConnectionString();
 
 if (!supabaseUrl || !supabaseKey || !dbUrl) {
-  throw new Error('Missing required environment variables');
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY, or database URL');
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
-const client = postgres(dbUrl);
+const usePool = dbUrl.includes('pooler.supabase') || dbUrl.includes('pgbouncer=true');
+const client = postgres(dbUrl, { ssl: 'require', max: 1, ...(usePool ? { prepare: false } : {}) });
 const db = drizzle(client);
 
 // Mapping of folder names to project slugs in database

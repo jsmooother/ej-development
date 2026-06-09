@@ -121,38 +121,15 @@ export function PasswordGate() {
     );
   }
 
-  if (contentError) {
-    return (
-      <>
-        <InvestorHeader showNav={false} />
-        <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-24 pt-24">
-        <p className="text-sm text-destructive">{contentError}</p>
-        <button
-          onClick={handleLogout}
-          className="mt-4 text-xs uppercase tracking-[0.3em] text-muted-foreground hover:text-foreground"
-        >
-          Exit portal
-        </button>
-      </div>
-      </>
-    );
-  }
-
-  if (!content) {
-    return (
-      <>
-        <InvestorHeader showNav onLogout={handleLogout} />
-        <div className="flex min-h-[60vh] items-center justify-center pt-24">
-          <div className="h-8 w-8 animate-pulse rounded-full border-2 border-border border-t-primary" />
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <InvestorHeader showNav onLogout={handleLogout} />
-      <InvestorPresentation content={content} />
+      {contentError && (
+        <p className="sr-only" role="status">
+          {contentError}
+        </p>
+      )}
+      <InvestorPresentation content={content ?? ""} />
     </>
   );
 }

@@ -2,9 +2,24 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/index";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
-import { getSupabasePublishableKey, getSupabaseSecretKey } from "@/lib/supabase/keys";
+import { getDatabaseConnectionString, getSupabasePublishableKey, getSupabaseSecretKey } from "@/lib/supabase/keys";
 
 export const dynamic = 'force-dynamic';
+
+function parseDbTarget(connectionString?: string) {
+  if (!connectionString) return null;
+  try {
+    const url = new URL(connectionString.replace(/^postgres:\/\//, "https://"));
+    return {
+      user: decodeURIComponent(url.username),
+      host: url.hostname,
+      port: url.port || "5432",
+      passwordLength: decodeURIComponent(url.password || "").length,
+    };
+  } catch {
+    return { user: "?", host: "?", port: "?", passwordLength: 0 };
+  }
+}
 
 
 export async function GET() {
@@ -12,6 +27,9 @@ export async function GET() {
     timestamp: new Date().toISOString(),
     checks: [] as Array<{ name: string; status: "✅ PASS" | "❌ FAIL"; details: string }>,
   };
+
+  const activeDbUrl = getDatabaseConnectionString();
+  const dbTarget = parseDbTarget(activeDbUrl);
 
   // 1. Check environment variables
   try {
@@ -22,7 +40,12 @@ export async function GET() {
         NEXT_PUBLIC_SUPABASE_URL: env.NEXT_PUBLIC_SUPABASE_URL ? "✓ Set" : "✗ Missing",
         NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: getSupabasePublishableKey() ? "✓ Set" : "✗ Missing",
         SUPABASE_SECRET_KEY: getSupabaseSecretKey() ? "✓ Set" : "✗ Missing",
+        SUPABASE_DB_POOL_URL: env.SUPABASE_DB_POOL_URL ? "✓ Set" : "✗ Missing",
         SUPABASE_DB_URL: env.SUPABASE_DB_URL ? "✓ Set" : "✗ Missing",
+        DIRECT_URL: env.DIRECT_URL ? "✓ Set" : "✗ Missing",
+        activeConnection: dbTarget
+          ? `${dbTarget.user}@${dbTarget.host}:${dbTarget.port} (password length ${dbTarget.passwordLength})`
+          : "✗ No connection string configured",
       }, null, 2),
     });
   } catch (error) {

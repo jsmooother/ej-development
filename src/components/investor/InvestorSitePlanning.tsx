@@ -12,6 +12,8 @@ import {
   villaElysiaAmesClosedBuilt,
   villaElysiaExternalElements,
   villaElysiaAreaFootnotes,
+  villaElysiaFloorPlans,
+  villaElysiaBuiltAreaSqm,
 } from "@/data/investor-data";
 
 const verifiedFacts = [
@@ -334,10 +336,32 @@ export function InvestorSitePlanning() {
               Villa Elysia · Schedules and closed built
             </h3>
             <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
-              Working drawings (Mar 2026). The floor “In” column, closed-built bands, and external
-              element list are reconciled to the same schedule rounded totals (803 m² enclosed, 605 m²
-              external).
+              AMES Scheme 2 working drawings (June 2026). Built area of {villaElysiaBuiltAreaSqm} m²
+              is the construction cost denominator; floor schedules, closed-built bands, and external
+              element lists are reconciled to the same rounded totals.
             </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {villaElysiaFloorPlans.map((plan) => (
+              <div
+                key={plan.src}
+                className="overflow-hidden rounded-2xl border border-border bg-muted/20 shadow-sm"
+              >
+                <div className="relative aspect-[4/3] w-full bg-background">
+                  <Image
+                    src={plan.src}
+                    alt={plan.alt}
+                    fill
+                    className="object-contain object-center p-2"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                </div>
+                <p className="border-t border-border/50 px-4 py-3 text-xs text-muted-foreground">
+                  {plan.caption}
+                </p>
+              </div>
+            ))}
           </div>
 
           <div className="grid gap-10 lg:grid-cols-3">

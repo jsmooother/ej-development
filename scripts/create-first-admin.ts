@@ -1,25 +1,26 @@
 import { createClient } from "@supabase/supabase-js";
 import postgres from "postgres";
 import * as dotenv from "dotenv";
+import { getDatabaseConnectionString, getSupabaseSecretKey } from "../src/lib/supabase/keys";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
 dotenv.config({ path: ".env" });
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const DB_URL = process.env.DIRECT_URL || process.env.SUPABASE_DB_URL;
+const SUPABASE_SERVICE_ROLE_KEY = getSupabaseSecretKey();
+const DB_URL = getDatabaseConnectionString();
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error("❌ Missing required environment variables:");
   console.error("   - NEXT_PUBLIC_SUPABASE_URL");
-  console.error("   - SUPABASE_SERVICE_ROLE_KEY");
+  console.error("   - SUPABASE_SECRET_KEY (or legacy SUPABASE_SERVICE_ROLE_KEY)");
   process.exit(1);
 }
 
 if (!DB_URL) {
   console.error("❌ Missing database URL:");
-  console.error("   - DIRECT_URL or SUPABASE_DB_URL required");
+  console.error("   - SUPABASE_DB_POOL_URL, SUPABASE_DB_URL, or DIRECT_URL required");
   process.exit(1);
 }
 
@@ -87,7 +88,12 @@ async function createFirstAdmin() {
 
     // Create or update profile in database
     console.log("\n📝 Creating admin profile in database...");
-    const sql = postgres(DB_URL, { ssl: "require", max: 1 });
+    const usePool = DB_URL.includes("pooler.supabase") || DB_URL.includes("pgbouncer=true");
+    const sql = postgres(DB_URL, {
+      ssl: "require",
+      max: 1,
+      ...(usePool ? { prepare: false } : {}),
+    });
 
     try {
       // Check if profile already exists

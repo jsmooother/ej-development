@@ -12,13 +12,13 @@ const valueDrivers = [
 
 const program = [
   {
-    floor: "Entrance level",
+    floor: "Entrance / basement level",
     items: [
       "Garage and arrival court",
       "Staff apartment",
-      "Foyer and service core",
-      "Wine cellar",
-      "Lift and technical",
+      "Spa, hamman, sauna, and massage suite",
+      "Cinema, gym, office, and games room",
+      "Bar, wine storage, and service core",
     ],
   },
   {
@@ -26,18 +26,14 @@ const program = [
     items: [
       "Open living, kitchen, and dining opening to the terrace",
       "Dedicated staff kitchen (back-of-house)",
-      "Courtyard and vertical light shaft",
-      "Gym, office, and man's cave",
-      "Guest WC",
+      "Guest suite and courtyard light shaft",
+      "Infinity pool, gazebo, and outdoor dining",
+      "Porches, terraces, and landscaped garden",
     ],
   },
   {
     floor: "First floor",
-    items: ["Master suite with bath and wardrobe", "Guest suites with en-suites", "Continuous porch and terrace"],
-  },
-  {
-    floor: "Exterior",
-    items: ["Infinity pool", "Gazebo and outdoor dining", "Terraces, porches, and landscaped garden"],
+    items: ["Master suite with bath and wardrobe", "Guest suites with en-suites", "Circulation and lift core"],
   },
 ];
 
@@ -59,17 +55,16 @@ export function InvestorDevelopmentConcept() {
             <h2 className="mt-4 font-serif text-3xl font-light text-foreground md:text-4xl">
               Design supports value
             </h2>
-            <p className="mt-6 text-muted-foreground">
-              Villa Elysia by EJ Properties and AMES Arquitectos. The scheme uses a central courtyard
-              and a vertical light shaft to draw daylight deep into the plan; the gym sits on the
-              ground floor with direct connection to main living. AMES tailors every villa to its
-              plot—topography,
-              slope, and vegetation guide the design—integrating architecture with the landscape,
-              premium materials, and international turnkey expectations.
+            <p className="mt-4 text-sm text-muted-foreground">
+              The scheme uses a central courtyard and vertical light shaft to draw daylight deep into
+              the plan; gym, office, and games room sit in the basement zone where retaining walls are
+              not required—reducing cost in the steepest part of the plot. AMES tailors every villa to
+              its plot—topography, slope, and vegetation guide the design—integrating architecture with
+              the landscape, premium materials, and international turnkey expectations.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              Economics use 803 m² schedule enclosed; Site & planning reconciles floor “In”, closed
-              built, and external lines to the same rounded totals.
+              Economics use 947 m² built area (Scheme 2); Site & planning reconciles floor schedules,
+              closed built, and external lines to the same rounded totals.
             </p>
             <div className="mt-8">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

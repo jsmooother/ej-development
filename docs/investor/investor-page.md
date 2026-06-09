@@ -26,7 +26,7 @@ The community offers privacy, security, large plots, and elevated views while re
 
 Plots within this community are scarce and development density is intentionally restricted by planning regulations, creating long-term scarcity.
 
-EJ Properties has secured a **3,037.85 m² residential plot** in this environment. The villa—**Villa Elysia**—is dimensioned at approximately **757 m² AMES closed built** (sales methodology), with detailed schedules totaling **~803 m² enclosed**; see the live investor portal “Site & planning” section for floor breakdowns and reconciliation.
+EJ Properties has secured a **3,037.85 m² residential plot** in this environment. The villa—**Villa Elysia**—uses **947 m² built area (AMES Scheme 2, June 2026)** as the construction cost denominator; see the live investor portal “Site & planning” section for floor breakdowns and reconciliation.
 
 The project is designed by **AMES Arquitectos**, a Marbella-based architectural firm with significant experience in luxury residential development.
 
@@ -302,7 +302,7 @@ Key design objectives:
 
 ## Design Program
 
-Estimated built area (AMES closed): **~757 m²**; schedule-enclosed total **~803 m²** (methodology note on portal).
+Estimated built area (AMES Scheme 2): **947 m²** closed built (330 m² entrance / basement + 617 m² ground + first); economics on portal use this denominator at **€5,250/m²** mid-range pending geotech.
 
 Entrance level:
 

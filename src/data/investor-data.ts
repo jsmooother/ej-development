@@ -3,10 +3,35 @@
  * EJ Properties · Villa Elysia (El Madroñal) · Construction funding opportunity.
  */
 
+import {
+  buildCostSensitivityRows,
+  buildFinancingSensitivityRows,
+  buildSponsorCommitment,
+  computeConstructionCost,
+  computeBrokerSaleFee,
+  computeIndicativeGdv,
+  computeNetMargin,
+  computeNetSaleProceeds,
+  computePermitAllowance,
+  computeTotalFunding,
+  formatInvestorEur,
+  investorEconomicsModelNotes,
+  villaElysiaEconomicsInputs,
+} from "@/lib/investor-economics";
+
+export {
+  buildCostSensitivityRows,
+  buildFinancingSensitivityRows,
+  investorEconomicsModelNotes,
+  villaElysiaEconomicsInputs,
+};
+
 /** Self-hosted investor hero background (Supabase Storage · media bucket) */
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://nxsjccgwmpypyrzkjilz.supabase.co";
 export const investorHeroVideoSrc = `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/media/investor/elysia/hero.mp4?v=20260522`;
+/** Shown while the hero MP4 buffers; same frame as the film opening. */
+export const investorHeroPosterSrc = "/investor/elysia/Madronal%206%20-%20overview.jpg";
 
 /** Paths for layout routing (context map only in #why; house renders hero on #site) */
 export const villaElysiaContextMapSrc =
@@ -16,6 +41,40 @@ export const villaElysiaHouseRender1Src =
   "/investor/elysia/house-render-1.jpg?v=20250410b" as const;
 export const villaElysiaHouseRender2Src =
   "/investor/elysia/house-render-2.jpg?v=20250410b" as const;
+
+/** Bump `v` when replacing plan PNGs so browsers and CDNs fetch the new file. */
+export const villaElysiaPlanEntranceSrc =
+  "/investor/elysia/plan-entrance.png?v=20260609" as const;
+export const villaElysiaPlanGroundSrc =
+  "/investor/elysia/plan-ground.png?v=20260609" as const;
+export const villaElysiaPlanFirstSrc =
+  "/investor/elysia/plan-first.png?v=20260609" as const;
+
+/** AMES Scheme 2 · June 2026 cost schedule denominator */
+export const villaElysiaBuiltAreaSqm = villaElysiaEconomicsInputs.builtAreaSqm;
+/** Mid-range construction estimate (€5,000–€5,500/m² band) pending geotechnical study */
+export const villaElysiaConstructionRatePerSqm =
+  villaElysiaEconomicsInputs.workingConstructionRatePerSqm;
+export const villaElysiaSaleRatePerSqm = villaElysiaEconomicsInputs.saleRatePerSqm;
+
+export const villaElysiaConstructionCost = computeConstructionCost(
+  villaElysiaConstructionRatePerSqm
+);
+export const villaElysiaPermitAllowance = computePermitAllowance(villaElysiaConstructionCost);
+export const villaElysiaAdminOverhead = villaElysiaEconomicsInputs.adminOverhead;
+export const villaElysiaFfeAllowance = villaElysiaEconomicsInputs.ffeAllowance;
+export const villaElysiaSoftCosts = villaElysiaEconomicsInputs.softCosts;
+export const villaElysiaTotalFundingSought = computeTotalFunding(
+  villaElysiaConstructionRatePerSqm
+);
+export const villaElysiaIndicativeGdv = computeIndicativeGdv();
+export const villaElysiaBrokerSaleFee = computeBrokerSaleFee();
+export const villaElysiaNetSaleProceeds = computeNetSaleProceeds();
+/** Drawdown-based financing at working rate over 24 months */
+export const villaElysiaProjectMargin = computeNetMargin(
+  villaElysiaConstructionRatePerSqm,
+  villaElysiaEconomicsInputs.workingFinancingRate
+);
 
 /** Early plan sketches (JPEGs under public/investor/elysia/; bump v when files change). */
 export const villaElysiaSketchPlan01Src =
@@ -117,37 +176,55 @@ export const villaElysiaImages = [
     caption: "Sketch · Courtyard · Central court and vertical daylight",
   },
   {
-    src: "/investor/elysia/plan-entrance.png",
+    src: villaElysiaPlanEntranceSrc,
     alt: "Villa Elysia · Entrance level plan and area schedule",
-    caption: "Entrance level · Garage, staff, foyer, and arrival court",
+    caption: "Entrance level · Garage, spa, cinema, gym, and arrival court",
   },
   {
-    src: "/investor/elysia/plan-ground.png",
+    src: villaElysiaPlanGroundSrc,
     alt: "Villa Elysia · Ground floor plan and area schedule",
-    caption: "Ground floor · Living, courtyard, gym, pool, and external areas",
+    caption: "Ground floor · Living, pool, gazebo, terrace, and guest suite",
   },
   {
-    src: "/investor/elysia/plan-first.png",
-    alt: "Villa Elysia · First floor plan, section, and area schedule",
-    caption: "First floor · Suites, terraces, and vertical light shaft (section)",
+    src: villaElysiaPlanFirstSrc,
+    alt: "Villa Elysia · First floor plan and area schedule",
+    caption: "First floor · Master suite and guest bedrooms",
   },
 ] as const;
 
-/** Rounded from detailed room schedules by level */
+export const villaElysiaFloorPlans = [
+  {
+    src: villaElysiaPlanEntranceSrc,
+    alt: "Villa Elysia · Entrance level · AMES working drawing June 2026",
+    caption: "Entrance level",
+  },
+  {
+    src: villaElysiaPlanGroundSrc,
+    alt: "Villa Elysia · Ground floor · AMES working drawing June 2026",
+    caption: "Ground floor",
+  },
+  {
+    src: villaElysiaPlanFirstSrc,
+    alt: "Villa Elysia · First floor · AMES working drawing June 2026",
+    caption: "First floor",
+  },
+] as const;
+
+/** Rounded from AMES Scheme 2 room schedules (June 2026) */
 export const villaElysiaFloorBreakdown = [
-  { level: "Entrance level", insideSqm: "280", outsideSqm: "134", totalSqm: "414", isTotal: false },
-  { level: "Ground floor", insideSqm: "307", outsideSqm: "349", totalSqm: "656", isTotal: false },
-  { level: "First floor", insideSqm: "216", outsideSqm: "122", totalSqm: "338", isTotal: false },
-  { level: "Total", insideSqm: "803", outsideSqm: "605", totalSqm: "1,408", isTotal: true },
+  { level: "Entrance level", insideSqm: "330", outsideSqm: "134", totalSqm: "464", isTotal: false },
+  { level: "Ground floor", insideSqm: "362", outsideSqm: "349", totalSqm: "711", isTotal: false },
+  { level: "First floor", insideSqm: "255", outsideSqm: "122", totalSqm: "377", isTotal: false },
+  { level: "Total", insideSqm: "947", outsideSqm: "605", totalSqm: "1,552", isTotal: true },
 ] as const;
 
 /**
- * Schedule enclosed, aligned with floor “In” column: entrance inside + (ground + first) inside = 803 m².
+ * Built area per AMES cost schedule (Scheme 2): 947 m² closed built.
  */
 export const villaElysiaAmesClosedBuilt = [
-  { line: "Closed built (ground + first)", sqm: "523", bold: false },
-  { line: "Closed built (entrance)", sqm: "280", bold: false },
-  { line: "Total closed built", sqm: "803", bold: true },
+  { line: "Closed built (ground + first)", sqm: "617", bold: false },
+  { line: "Closed built (entrance / basement)", sqm: "330", bold: false },
+  { line: "Total built area", sqm: "947", bold: true },
 ] as const;
 
 /** Element breakdown sums to floor “Out” total (605 m²) */
@@ -162,8 +239,9 @@ export const villaElysiaExternalElements = [
 ] as const;
 
 export const villaElysiaAreaFootnotes = [
-  "Floor totals are rounded from detailed room schedules across all levels.",
-  "Closed built aggregates match the floor breakdown “In” column (entrance 280 m² + ground & first 523 m² = 803 m²).",
+  "Floor schedules from AMES Scheme 2 working drawings (June 2026).",
+  "Built area of 947 m² is the denominator used in the architect construction cost estimate (Scheme 2).",
+  "Construction €/m² is a mid-range working assumption (€5,250/m²) between AMES Option 3 (€5,053) and Option 4 (€4,707), pending geotechnical study.",
   "External elements are rounded to sum to the floor “Out” total (605 m²).",
 ] as const;
 
@@ -173,8 +251,8 @@ export const executiveSummary = [
   { label: "Location", value: "El Madroñal, Benahavís" },
   { label: "Plot", value: "3,038 m²" },
   {
-    label: "Enclosed / saleable",
-    value: "803 m² (schedules)",
+    label: "Built area",
+    value: `${villaElysiaBuiltAreaSqm} m² (AMES Scheme 2)`,
   },
   { label: "Architect", value: "AMES Arquitectos" },
   { label: "Funded to date", value: "Plot and design fully funded" },
@@ -182,41 +260,37 @@ export const executiveSummary = [
   { label: "Expected exit", value: "Sale of completed villa" },
 ] as const;
 
-export const sponsorCommitment = [
-  { line: "Plot acquisition", amount: "€700,000", note: "+ taxes", bold: false },
-  { line: "AMES architecture / design", amount: "€300,000", note: "", bold: false },
-  { line: "Capital committed", amount: "€1,000,000", note: "before construction", bold: true },
-] as const;
+export const sponsorCommitment = buildSponsorCommitment();
 
 export const preliminaryBudget = [
   {
     line: "Construction",
-    amount: "€3,453,000",
-    note: "803 m² × €4,300/m²",
+    amount: formatInvestorEur(villaElysiaConstructionCost),
+    note: `${villaElysiaBuiltAreaSqm} m² × €${villaElysiaConstructionRatePerSqm.toLocaleString("en-GB")}/m² · mid-range estimate (AMES Options 3–4 band pending geotech)`,
     bold: false,
   },
-  { line: "Admin / project overhead", amount: "€300,000", note: "", bold: false },
+  { line: "Admin / project overhead", amount: formatInvestorEur(villaElysiaAdminOverhead), note: "", bold: false },
   {
     line: "Kitchens, FF&E & equipment",
-    amount: "€500,000",
+    amount: formatInvestorEur(villaElysiaFfeAllowance),
     note: "Main kitchen, staff kitchen, outdoor kitchen, gym appliances, beds, TVs, furniture",
     bold: false,
   },
   {
     line: "Permit taxes / fees",
-    amount: "€135,000",
+    amount: formatInvestorEur(villaElysiaPermitAllowance),
     note: "Indicative: Benahavís ICIO c. 2.4% on declared material execution budget (ordenanza fiscal, 2024+) plus municipal licence / processing fees and related filings—confirm with architect & ayuntamiento",
     bold: false,
   },
   {
     line: "Additional soft costs / sales",
-    amount: "€185,000",
-    note: "Indicative: construction-phase legal, all-risk site insurance, survey / geotech supplements, photography & sales collateral / launch marketing (excludes broker success fee at exit)",
+    amount: formatInvestorEur(villaElysiaSoftCosts),
+    note: "Indicative: construction-phase legal, all-risk site insurance, survey / geotech supplements, photography & pre-sale marketing (broker success fee at exit modelled separately at 6% of GDV)",
     bold: false,
   },
   {
     line: "Total funding sought",
-    amount: "€4,573,000",
+    amount: formatInvestorEur(villaElysiaTotalFundingSought),
     note: "Indicative subtotal—permits & soft costs subject to verification",
     bold: true,
   },
@@ -231,17 +305,33 @@ export const fundingMilestones = [
 
 export const preliminaryRevenue = [
   {
-    line: "Indicative sales value",
-    amount: "€9,234,500",
-    note: "€11,500/m² × 803 m²",
+    line: "Indicative sales value (GDV)",
+    amount: formatInvestorEur(villaElysiaIndicativeGdv),
+    note: `€${villaElysiaSaleRatePerSqm.toLocaleString("en-GB")}/m² × ${villaElysiaBuiltAreaSqm} m²`,
+    bold: false,
+  },
+  {
+    line: "Broker success fee (at exit)",
+    amount: `−${formatInvestorEur(villaElysiaBrokerSaleFee)}`,
+    note: `${villaElysiaEconomicsInputs.brokerSaleFeeRate * 100}% of GDV · Homerun, Solvilla etc. · negotiable (typical 5–6%)`,
+    bold: false,
+  },
+  {
+    line: "Net sale proceeds",
+    amount: formatInvestorEur(villaElysiaNetSaleProceeds),
+    note: "After broker commission at exit",
     bold: true,
   },
-  { line: "Expected broker", amount: "Homerun, Solvilla etc.", note: "marketing", bold: false },
-  { line: "Pricing basis", amount: "Comparable AMES-houses", note: "similar €/m² build", bold: false },
+  {
+    line: "Pricing basis",
+    amount: "Comparable AMES-houses",
+    note: "premium basement spa program supports €/m² at upper comp range",
+    bold: false,
+  },
   {
     line: "Project margin (conservative)",
-    amount: "€3,460,000",
-    note: "After financing cost at 10% p.a., accruing from day 1 over 24 months on ~€4.57m funding (incl. kitchens, FF&E, indicative permits & soft costs)",
+    amount: formatInvestorEur(Math.round(villaElysiaProjectMargin)),
+    note: `Net proceeds − plot (€1.0m) − total funding − drawdown financing at 10% p.a. over 24 months on ~${formatInvestorEur(villaElysiaTotalFundingSought)} peak (~50% average outstanding)`,
     bold: true,
   },
 ] as const;
@@ -258,8 +348,9 @@ export const fundingStructures = [
   {
     title: "Hybrid structure",
     items: [
-      "Lower fixed return: approx. 5–8%",
-      "Plus agreed upside participation / profit share",
+      "Indicative hurdle: 2% fixed coupon on drawn capital",
+      "Plus 15–20% equity kicker on net profit after all costs (see sensitivity waterfall)",
+      "Alternative mid-coupon structures (3–5%) negotiable with lighter or no kicker",
     ],
   },
 ] as const;
@@ -311,14 +402,14 @@ const marketCompsData = [
   {
     name: "Villa Elysia",
     location: "El Madroñal",
-    price: "€9,234,500",
-    build: "803 m²",
-    pricePerSqm: "€11,500/m²",
+    price: formatInvestorEur(villaElysiaIndicativeGdv),
+    build: `${villaElysiaBuiltAreaSqm} m²`,
+    pricePerSqm: `€${villaElysiaSaleRatePerSqm.toLocaleString("en-GB")}/m²`,
     url: "",
     subject: true as const,
     primeComp: false,
-    note: "This project · indicative GDV · €11,500/m² × 803 m² · not a live listing",
-    eurPerSqm: 11500,
+    note: `This project · indicative GDV · €${villaElysiaSaleRatePerSqm.toLocaleString("en-GB")}/m² × ${villaElysiaBuiltAreaSqm} m² · not a live listing`,
+    eurPerSqm: villaElysiaSaleRatePerSqm,
   },
   {
     name: "Casa de Canto",

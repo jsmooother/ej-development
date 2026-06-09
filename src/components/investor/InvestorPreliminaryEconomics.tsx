@@ -7,6 +7,7 @@ import {
   preliminaryRevenue,
   fundingMilestones,
 } from "@/data/investor-data";
+import { InvestorSensitivityAnalysis } from "./InvestorSensitivityAnalysis";
 
 export function InvestorPreliminaryEconomics() {
   return (
@@ -25,11 +26,11 @@ export function InvestorPreliminaryEconomics() {
             Working budget assumptions
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Early-stage numbers. Not a fully diligenced financial model. Permit / ICIO lines use
-            indicative allowances aligned with Benahavís ordinance bands and typical Costa del Sol
-            development patterns; soft costs assume lean legal, insurance, and pre-sale marketing
-            (broker success fee remains at exit). Financing cost and final ayuntamiento settlements
-            remain subject to verification.
+            Early-stage numbers. Not a fully diligenced financial model. Exit assumes a{" "}
+            <span className="font-mono text-foreground">6%</span> broker success fee on gross sale
+            value (negotiable; typical 5–6%). Permit / ICIO lines use indicative allowances aligned
+            with Benahavís ordinance bands. Soft costs cover pre-sale marketing only — broker
+            commission is deducted at exit in the revenue framework and sensitivity tables.
           </p>
 
           <div className="mt-10 grid gap-8 lg:grid-cols-3">
@@ -119,14 +120,18 @@ export function InvestorPreliminaryEconomics() {
             </div>
           </div>
 
+          <InvestorSensitivityAnalysis />
+
           <div className="mt-12 rounded-2xl border border-border bg-muted/20 p-8">
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Funding drawdown · Milestones
             </p>
             <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
               Capital is drawn down at agreed project milestones rather than
-              upfront, reducing execution and deployment risk. EJ Properties
-              provides its project ownership as security to the funding party.
+              upfront — only what is required at each stage is funded, so interest
+              accrues on drawn balances (not 100% of peak funding from day one).
+              EJ Properties provides its project ownership as security to the
+              funding party.
             </p>
             <div className="mt-10">
               <div className="relative mx-auto max-w-2xl">

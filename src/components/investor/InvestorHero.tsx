@@ -1,11 +1,47 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { investorHeroVideoSrc } from "@/data/investor-data";
+import { investorHeroPosterSrc, investorHeroVideoSrc } from "@/data/investor-data";
+
+function useAutoplayVideo(videoRef: React.RefObject<HTMLVideoElement | null>) {
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const tryPlay = () => {
+      if (video.paused) {
+        void video.play().catch(() => {
+          // Autoplay can be blocked until a user gesture; retry on interaction.
+        });
+      }
+    };
+
+    tryPlay();
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("loadeddata", tryPlay);
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") tryPlay();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    const onUserInteraction = () => tryPlay();
+    document.addEventListener("pointerdown", onUserInteraction, { once: true });
+
+    return () => {
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("loadeddata", tryPlay);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      document.removeEventListener("pointerdown", onUserInteraction);
+    };
+  }, [videoRef]);
+}
 
 export function InvestorHero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useAutoplayVideo(videoRef);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -23,6 +59,7 @@ export function InvestorHero() {
     <section ref={sectionRef} className="relative min-h-[90vh] overflow-hidden">
       <motion.div className="absolute inset-0 overflow-hidden" style={{ y: mediaY }}>
         <video
+          ref={videoRef}
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
           style={{
             minHeight: "100vh",
@@ -31,17 +68,18 @@ export function InvestorHero() {
             height: "56.25vw",
           }}
           src={investorHeroVideoSrc}
+          poster={investorHeroPosterSrc}
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           aria-label="AMES Arquitectos · Villa Elysia hero film"
         />
       </motion.div>
-      {/* Dark overlay for text readability */}
+      {/* Gradient keeps hero text readable without hiding the film */}
       <div
-        className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20"
+        className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/35 to-transparent"
         aria-hidden
       />
 
@@ -65,8 +103,8 @@ export function InvestorHero() {
             <span className="text-foreground/80">Villa Elysia</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Project development fully funded for land and design. 3,038 m² plot · 803 m² schedule
-            enclosed (rounded). Construction funding sought.
+            Project development fully funded for land and design. 3,038 m² plot · 947 m² built area
+            (AMES Scheme 2). Construction funding sought.
           </p>
         </motion.div>
       </div>
