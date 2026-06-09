@@ -153,6 +153,7 @@ function formatAreaSqm(n: number): string {
 }
 
 /** Per-level “In” / “Out” from AMES Scheme 2 room schedules (June 2026). */
+// TODO(AMES reconcile): confirm per-floor In/Out splits and the 947 m² denominator against Scheme 2 sheets (June 2026).
 const villaElysiaFloorLevels = [
   { level: "Entrance level", insideSqm: 330, outsideSqm: 134 },
   { level: "Ground floor", insideSqm: 362, outsideSqm: 349 },
@@ -211,7 +212,9 @@ const villaElysiaExternalElementRows = [
   { element: "Porches", sqm: 148 },
   { element: "Terraces", sqm: 132 },
   { element: "Road access", sqm: 120 },
+  // TODO(AMES reconcile): Scheme 2 plan shows pool 12.5 x 4.5 = ~56 m² water; confirm whether 86 m² is deck/footprint.
   { element: "Pool", sqm: 86 },
+  // TODO(AMES reconcile): Scheme 2 plan shows gazebo ~64 m²; confirm published 79 m².
   { element: "Gazebo", sqm: 79 },
   { element: "Garden", sqm: 40 },
 ] as const;
@@ -251,6 +254,7 @@ export const executiveSummary = [
     label: "Built area",
     value: `${villaElysiaBuiltAreaSqm} m²`,
   },
+  { label: "Configuration", value: "5 bedrooms + staff apartment" },
   { label: "Architect", value: "AMES Arquitectos" },
   { label: "Funded to date", value: "Plot and design fully funded" },
   { label: "External capital need", value: "Construction funding" },
@@ -442,17 +446,6 @@ const marketCompsData = [
     eurPerSqm: 15042,
   },
   {
-    name: "Villa Forest Bay",
-    location: "El Bosque",
-    price: "€9,450,000",
-    build: "999 m²",
-    pricePerSqm: "€9,459/m²",
-    url: "https://www.homerunmarbella.com/properties/el-bosque/villas/HRB-01473P",
-    primeComp: false,
-    note: "",
-    eurPerSqm: 9459,
-  },
-  {
     name: "Villa Pine Crest",
     location: "El Bosque",
     price: "€8,250,000",
@@ -460,19 +453,8 @@ const marketCompsData = [
     pricePerSqm: "€10,235/m²",
     url: "https://www.homerunmarbella.com/properties/el-bosque/villas/HRB-01472P",
     primeComp: false,
-    note: "",
+    note: "Neighbouring Benahavís gated community",
     eurPerSqm: 10235,
-  },
-  {
-    name: "Villa Bond",
-    location: "El Herrojo",
-    price: "€11,900,000",
-    build: "1,296 m²",
-    pricePerSqm: "€9,182/m²",
-    url: "https://www.homerunmarbella.com/properties/el-herrojo/villas/HRB-00628P",
-    primeComp: false,
-    note: "",
-    eurPerSqm: 9182,
   },
   {
     name: "Villa The Retreat",

@@ -15,26 +15,33 @@ const program = [
   {
     floor: "Entrance / basement level",
     items: [
-      "Garage and arrival court",
-      "Staff apartment",
-      "Spa, hamman, sauna, and massage suite",
-      "Cinema, gym, office, and games room",
-      "Bar, wine storage, and service core",
+      "Arrival plaza and grand foyer",
+      "Garage",
+      "Self-contained staff apartment",
+      "Spa suite with hammam, sauna and massage room",
+      "Gym",
+      "Cinema",
+      "Bar",
+      "Laundry, plant room and storage",
     ],
   },
   {
     floor: "Ground floor",
     items: [
-      "Open living, kitchen, and dining opening to the terrace",
-      "Dedicated staff kitchen (back-of-house)",
-      "Guest suite",
-      "Infinity pool, gazebo, and outdoor dining",
-      "Porches, terraces, and landscaped garden",
+      "Main living room and a separate family room",
+      "Kitchen and dining with a dedicated staff kitchen",
+      "Guest bedroom suite with en-suite",
+      "Swimming pool, gazebo and outdoor dining",
+      "Porches, terraces and landscaped garden",
     ],
   },
   {
     floor: "First floor",
-    items: ["Master suite with bath and wardrobe", "Guest suites with en-suites", "Circulation and lift core"],
+    items: [
+      "Master suite with two dressing rooms and en-suite bathroom",
+      "Three further en-suite bedrooms, one a generous junior suite",
+      "Circulation and lift core",
+    ],
   },
 ];
 
@@ -57,10 +64,12 @@ export function InvestorDevelopmentConcept() {
               Design supports value
             </h2>
             <p className="mt-4 text-sm text-muted-foreground">
-              The basement zone groups gym, office, and games room where retaining walls are not
-              required—reducing cost in the steepest part of the plot. AMES tailors every villa to
-              its plot—topography, slope, and vegetation guide the design—integrating architecture with
-              the landscape, premium materials, and international turnkey expectations.
+              The lower level concentrates the high-value amenity program, spa, gym, cinema and bar,
+              below grade. This maximises living quality without consuming buildable area above
+              ground, where the 0.20 m²/m² ratio is the binding planning constraint. AMES tailors
+              every villa to its plot, topography, slope, and vegetation guide the design,
+              integrating architecture with the landscape, premium materials, and international
+              turnkey expectations.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
               Economics use {villaElysiaBuiltAreaSqm} m² built area (Scheme 2); Site & planning

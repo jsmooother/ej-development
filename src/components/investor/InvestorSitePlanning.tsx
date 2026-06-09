@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useId, useState, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -114,6 +115,180 @@ function SiteHeroCarousel() {
         ))}
       </div>
     </div>
+  );
+}
+
+type FloorPlan = (typeof villaElysiaFloorPlans)[number];
+
+function FloorPlanLightbox({
+  open,
+  onClose,
+  plan,
+  titleId,
+}: {
+  open: boolean;
+  onClose: () => void;
+  plan: FloorPlan;
+  titleId: string;
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  const handleBackdropClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  }, [onClose]);
+
+  if (!mounted || !open) return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      onClick={handleBackdropClick}
+    >
+      <div className="relative max-h-[min(92vh,1200px)] max-w-[min(96vw,1600px)]">
+        <h2 id={titleId} className="sr-only">
+          {plan.alt}
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute -right-1 -top-10 rounded-md px-2 py-1 text-sm text-white/90 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 sm:left-full sm:right-auto sm:top-2 sm:ml-3"
+        >
+          Close
+        </button>
+        <Image
+          src={plan.src}
+          alt={plan.alt}
+          width={3200}
+          height={2400}
+          className="max-h-[min(92vh,1200px)] max-w-[min(96vw,1600px)] w-auto object-contain"
+          sizes="96vw"
+          quality={95}
+        />
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function FloorPlansCarousel() {
+  const [index, setIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const lightboxTitleId = useId();
+  const n = villaElysiaFloorPlans.length;
+  const go = useCallback(
+    (dir: -1 | 1) => {
+      setIndex((i) => (i + dir + n) % n);
+    },
+    [n]
+  );
+
+  const plan = villaElysiaFloorPlans[index]!;
+
+  return (
+    <>
+      <div className="w-full space-y-4">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setLightboxOpen(true)}
+            className="group block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-label={`View full size: ${plan.caption}`}
+          >
+            <div
+              className="relative isolate w-full bg-muted/20"
+              style={{ minHeight: "clamp(220px, 36vw, 480px)" }}
+            >
+              <Image
+                src={plan.src}
+                alt={plan.alt}
+                fill
+                quality={90}
+                className="object-contain object-center p-2 transition-opacity group-hover:opacity-95 sm:p-4"
+                sizes="(max-width: 768px) 100vw, 1152px"
+                priority={index === 0}
+              />
+            </div>
+          </button>
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 sm:px-3">
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur transition hover:bg-background"
+              aria-label="Previous floor plan"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 sm:px-3">
+            <button
+              type="button"
+              onClick={() => go(1)}
+              className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur transition hover:bg-background"
+              aria-label="Next floor plan"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-muted-foreground sm:max-w-[70%]">
+            {plan.caption}
+            <span className="text-muted-foreground/70"> · Click image to enlarge</span>
+          </p>
+          <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80">
+            {index + 1} / {n}
+          </p>
+        </div>
+        <div className="flex justify-center gap-1.5" role="tablist" aria-label="Floor plans">
+          {villaElysiaFloorPlans.map((p, i) => (
+            <button
+              key={p.src}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              aria-label={`Show: ${p.caption}`}
+              onClick={() => setIndex(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                i === index
+                  ? "w-6 bg-foreground"
+                  : "w-1.5 bg-muted-foreground/40 hover:bg-muted-foreground/70"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      <FloorPlanLightbox
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        plan={plan}
+        titleId={lightboxTitleId}
+      />
+    </>
   );
 }
 
@@ -238,33 +413,13 @@ export function InvestorSitePlanning() {
               Villa Elysia · Schedules and closed built
             </h3>
             <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
-              AMES Scheme 2 working drawings (June 2026). Built area of {villaElysiaBuiltAreaSqm} m²
-              is the construction cost denominator; floor schedules, closed-built bands, and external
-              element lists are reconciled to the same rounded totals.
+              Built area of {villaElysiaBuiltAreaSqm} m² is the construction cost denominator; floor
+              schedules, closed-built bands, and external element lists are reconciled to the same
+              rounded totals.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {villaElysiaFloorPlans.map((plan) => (
-              <div
-                key={plan.src}
-                className="overflow-hidden rounded-2xl border border-border bg-muted/20 shadow-sm"
-              >
-                <div className="relative aspect-[4/3] w-full bg-background">
-                  <Image
-                    src={plan.src}
-                    alt={plan.alt}
-                    fill
-                    className="object-contain object-center p-2"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
-                <p className="border-t border-border/50 px-4 py-3 text-xs text-muted-foreground">
-                  {plan.caption}
-                </p>
-              </div>
-            ))}
-          </div>
+          <FloorPlansCarousel />
 
           <div className="grid gap-10 lg:grid-cols-3">
             <div className="rounded-2xl border border-border bg-card/30 p-6">

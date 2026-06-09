@@ -118,7 +118,11 @@ export function InvestorMarketEvidence() {
             </Link>{" "}
             at €11.5m / 1,175 m² ≈ €9,787/m². Homerun listings as marked. Villa Elysia indicative{" "}
             {`€${(villaElysiaIndicativeGdv / 1_000_000).toFixed(2)}m at €${villaElysiaSaleRatePerSqm.toLocaleString("en-GB")}/m² × ${villaElysiaBuiltAreaSqm} m²`}{" "}
-            reflects the enlarged Scheme 2 program including basement spa and leisure suite.
+            reflects the enlarged Scheme 2 program including basement spa and leisure suite. The
+            amenity depth, full spa with hammam and sauna, cinema, gym, bar and staff apartment,
+            supports pricing at the upper end of the comp range (listed comps average ≈ €
+            {marketCompsListedAvgEurPerSqm.toLocaleString("en-GB")}/m²; Villa Madroñal 72 at
+            €15,042/m²; The Retreat, La Zagaleta, at €12,747/m²).
           </p>
 
           <div className="mt-8 space-y-3">

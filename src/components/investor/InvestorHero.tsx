@@ -5,7 +5,6 @@ import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   investorHeroPosterSrc,
   investorHeroVideoSrc,
-  villaElysiaBuiltAreaSqm,
   villaElysiaPlotSqm,
 } from "@/data/investor-data";
 
@@ -107,12 +106,18 @@ export function InvestorHero() {
             <br />
             <span className="text-foreground/80">Villa Elysia</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Project development fully funded for land and design.{" "}
-            {villaElysiaPlotSqm.toLocaleString("en-GB")} m² plot · {villaElysiaBuiltAreaSqm} m² built
-            area (AMES Scheme 2). Construction funding sought.
-          </p>
         </motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1], delay: 0.08 }}
+          style={{ y: textY, opacity: textOpacity }}
+          className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground"
+        >
+          A 5-bedroom AMES villa with a full spa, cinema and gym level on a{" "}
+          {villaElysiaPlotSqm.toLocaleString("en-GB")} m² plot in gated El Madroñal. Land and design
+          fully funded.
+        </motion.p>
       </div>
     </section>
   );
