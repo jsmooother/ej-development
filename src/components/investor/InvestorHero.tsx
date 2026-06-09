@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   investorHeroPosterSrc,
@@ -8,22 +9,47 @@ import {
   villaElysiaPlotSqm,
 } from "@/data/investor-data";
 
-function useAutoplayVideo(videoRef: React.RefObject<HTMLVideoElement | null>) {
+const heroMediaClassName =
+  "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover";
+
+const heroMediaStyle = {
+  minHeight: "100vh",
+  minWidth: "177.78vh",
+  width: "100vw",
+  height: "56.25vw",
+} as const;
+
+function useAutoplayVideo(
+  videoRef: React.RefObject<HTMLVideoElement | null>,
+  onPlaying: () => void
+) {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+
+    const markPlaying = () => onPlaying();
+
     const tryPlay = () => {
-      if (video.paused) {
-        void video.play().catch(() => {
-          // Autoplay can be blocked until a user gesture; retry on interaction.
-        });
-      }
+      if (!video.paused) return;
+      void video.play().then(markPlaying).catch(() => {
+        // Autoplay can be blocked until a user gesture; retries continue below.
+      });
     };
 
-    tryPlay();
-    video.addEventListener("canplay", tryPlay);
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      tryPlay();
+    }
+
     video.addEventListener("loadeddata", tryPlay);
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("canplaythrough", tryPlay);
+    video.addEventListener("playing", markPlaying);
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") tryPlay();
@@ -32,47 +58,67 @@ function useAutoplayVideo(videoRef: React.RefObject<HTMLVideoElement | null>) {
 
     const onUserInteraction = () => tryPlay();
     document.addEventListener("pointerdown", onUserInteraction, { once: true });
+    document.addEventListener("keydown", onUserInteraction, { once: true });
+
+    const retryTimer = window.setInterval(tryPlay, 750);
+    const stopRetryTimer = window.setTimeout(() => {
+      window.clearInterval(retryTimer);
+    }, 20_000);
 
     return () => {
-      video.removeEventListener("canplay", tryPlay);
       video.removeEventListener("loadeddata", tryPlay);
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("canplaythrough", tryPlay);
+      video.removeEventListener("playing", markPlaying);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       document.removeEventListener("pointerdown", onUserInteraction);
+      document.removeEventListener("keydown", onUserInteraction);
+      window.clearInterval(retryTimer);
+      window.clearTimeout(stopRetryTimer);
     };
-  }, [videoRef]);
+  }, [videoRef, onPlaying]);
 }
 
 export function InvestorHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  useAutoplayVideo(videoRef);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const handleVideoPlaying = useCallback(() => setVideoPlaying(true), []);
+  useAutoplayVideo(videoRef, handleVideoPlaying);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
   const rawTextY = useTransform(scrollYProgress, [0, 0.6, 1], [0, -36, -96]);
   const rawTextOpacity = useTransform(scrollYProgress, [0, 0.75, 1], [1, 0.82, 0.55]);
-  const rawMediaY = useTransform(scrollYProgress, [0, 1], [0, 38]);
 
   // Smooth scroll-linked motion to avoid jitter while keeping effect visible.
   const textY = useSpring(rawTextY, { stiffness: 110, damping: 24, mass: 0.35 });
   const textOpacity = useSpring(rawTextOpacity, { stiffness: 110, damping: 24, mass: 0.35 });
-  const mediaY = useSpring(rawMediaY, { stiffness: 110, damping: 24, mass: 0.35 });
 
   return (
     <section ref={sectionRef} className="relative min-h-[90vh] overflow-hidden">
-      <motion.div className="absolute inset-0 overflow-hidden" style={{ y: mediaY }}>
+      {/* Keep the video layer untransformed — transforms on parents break Safari playback. */}
+      <div className="absolute inset-0 overflow-hidden bg-black">
+        <Image
+          src={investorHeroPosterSrc}
+          alt=""
+          aria-hidden
+          fill
+          priority
+          className={`object-cover transition-opacity duration-700 ${
+            videoPlaying ? "opacity-0" : "opacity-100"
+          }`}
+          sizes="100vw"
+        />
         <video
           ref={videoRef}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-cover"
-          style={{
-            minHeight: "100vh",
-            minWidth: "177.78vh",
-            width: "100vw",
-            height: "56.25vw",
-          }}
+          className={`${heroMediaClassName} transition-opacity duration-700 ${
+            videoPlaying ? "opacity-100" : "opacity-0"
+          }`}
+          style={heroMediaStyle}
           src={investorHeroVideoSrc}
-          poster={investorHeroPosterSrc}
           autoPlay
           loop
           muted
@@ -80,7 +126,7 @@ export function InvestorHero() {
           preload="auto"
           aria-label="AMES Arquitectos · Villa Elysia hero film"
         />
-      </motion.div>
+      </div>
       {/* Gradient keeps hero text readable without hiding the film */}
       <div
         className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/35 to-transparent"

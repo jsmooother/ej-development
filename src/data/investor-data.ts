@@ -30,8 +30,6 @@ export {
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://nxsjccgwmpypyrzkjilz.supabase.co";
 export const investorHeroVideoSrc = `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/media/investor/elysia/hero.mp4?v=20260522`;
-/** Shown while the hero MP4 buffers; same frame as the film opening. */
-export const investorHeroPosterSrc = "/investor/elysia/Madronal%206%20-%20overview.jpg";
 
 /** Paths for layout routing (context map only in #why; house renders hero on #site) */
 export const villaElysiaContextMapSrc =
@@ -39,6 +37,8 @@ export const villaElysiaContextMapSrc =
 /** Bump `v` when replacing hero JPEGs so browsers and CDNs fetch the new file (public URLs are not hashed). */
 export const villaElysiaHouseRender1Src =
   "/investor/elysia/house-render-1.jpg?v=20250410b" as const;
+/** Shown while the hero MP4 buffers; matches the film (villa render, not the site overview map). */
+export const investorHeroPosterSrc = villaElysiaHouseRender1Src;
 export const villaElysiaHouseRender2Src =
   "/investor/elysia/house-render-2.jpg?v=20250410b" as const;
 
