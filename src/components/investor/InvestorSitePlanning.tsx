@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, FileDown } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   sitePlanningHeroCarouselSlides,
-  sitePlanningSurveyCarouselSlides,
   villaElysiaFloorBreakdown,
   villaElysiaAmesClosedBuilt,
   villaElysiaExternalElements,
@@ -34,7 +33,6 @@ const planningParams = [
 ];
 
 type HeroSlide = (typeof sitePlanningHeroCarouselSlides)[number];
-type SurveySlide = (typeof sitePlanningSurveyCarouselSlides)[number];
 
 function SiteHeroCarousel() {
   const [index, setIndex] = useState(0);
@@ -99,103 +97,9 @@ function SiteHeroCarousel() {
       <div
         className="flex justify-center gap-1.5"
         role="tablist"
-        aria-label="Renders and plan sketches"
+        aria-label="House renders"
       >
         {sitePlanningHeroCarouselSlides.map((s: HeroSlide, i) => (
-          <button
-            key={s.key}
-            type="button"
-            role="tab"
-            aria-selected={i === index}
-            aria-label={`Show: ${s.caption}`}
-            onClick={() => setIndex(i)}
-            className={`h-1.5 rounded-full transition-all ${
-              i === index ? "w-6 bg-foreground" : "w-1.5 bg-muted-foreground/40 hover:bg-muted-foreground/70"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function SiteSurveyCarousel() {
-  const [index, setIndex] = useState(0);
-  const n = sitePlanningSurveyCarouselSlides.length;
-  const go = useCallback(
-    (dir: -1 | 1) => {
-      setIndex((i) => (i + dir + n) % n);
-    },
-    [n]
-  );
-
-  const slide = sitePlanningSurveyCarouselSlides[index]!;
-
-  return (
-    <div className="mt-10 w-full space-y-4">
-      <div className="space-y-3">
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Courtyard & gazebo sketches
-        </p>
-        <p className="max-w-3xl text-sm text-muted-foreground">
-          An innovative light shaft at the rear of the house is designed to draw natural daylight deep
-          into the plan—including the basement—so lower levels feel bright and connected rather than
-          like a typical enclosed basement. Together with the central courtyard, this delivers a
-          quality of light and atmosphere that sets the villa apart from conventional hillside
-          layouts.
-        </p>
-      </div>
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/30 shadow-sm">
-        <div
-          className="relative isolate w-full bg-muted/20"
-          style={{ minHeight: "clamp(200px, 36vw, 480px)" }}
-        >
-          <Image
-            src={slide.src}
-            alt={slide.alt}
-            fill
-            className={
-              slide.objectFit === "cover"
-                ? "object-cover"
-                : "object-contain object-center p-2 sm:p-4"
-            }
-            sizes="(max-width: 768px) 100vw, 1152px"
-            loading={index === 0 ? "eager" : "lazy"}
-          />
-        </div>
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 sm:px-3">
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur transition hover:bg-background"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-        </div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 sm:px-3">
-          <button
-            type="button"
-            onClick={() => go(1)}
-            className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-background/95 text-foreground shadow-md backdrop-blur transition hover:bg-background"
-            aria-label="Next image"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-muted-foreground sm:max-w-[70%]">{slide.caption}</p>
-        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80">
-          {index + 1} / {n}
-        </p>
-      </div>
-      <div
-        className="flex justify-center gap-1.5"
-        role="tablist"
-        aria-label="Courtyard and gazebo sketches"
-      >
-        {sitePlanningSurveyCarouselSlides.map((s: SurveySlide, i) => (
           <button
             key={s.key}
             type="button"
@@ -247,9 +151,13 @@ export function InvestorSitePlanning() {
           className="mt-10 w-full"
         >
           <SiteHeroCarousel />
-          <SiteSurveyCarousel />
-          <p className="mt-6 text-xs text-muted-foreground/80">
-            Renders and plan sketches above; courtyard and gazebo sketches below.
+          <p className="mt-6 max-w-3xl text-sm text-muted-foreground">
+            A central courtyard and vertical light shaft draw daylight deep into the plan—including
+            the entrance level—so lower levels feel bright and connected rather than like a typical
+            enclosed basement.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground/80">
+            House renders above; AMES working floor plans in the architectural areas section below.
           </p>
         </motion.div>
 

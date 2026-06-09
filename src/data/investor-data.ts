@@ -78,19 +78,7 @@ export const villaElysiaProjectMargin = computeNetMargin(
   villaElysiaEconomicsInputs.workingFinancingRate
 );
 
-/** Early plan sketches (JPEGs under public/investor/elysia/; bump v when files change). */
-export const villaElysiaSketchPlan01Src =
-  "/investor/elysia/sketch%20-%20plan%2001.jpg?v=20260410" as const;
-export const villaElysiaSketchPlan02Src =
-  "/investor/elysia/sketch%20-%20plan%2002.jpg?v=20260410" as const;
-export const villaElysiaSketchPlan03Src =
-  "/investor/elysia/sketch%20-%20plan%2003.jpg?v=20260410" as const;
-export const villaElysiaSketchCourtyardSrc =
-  "/investor/elysia/sketch%20-%20courtyard.jpg?v=20260410" as const;
-export const villaElysiaSketchGazeboSrc =
-  "/investor/elysia/sketch%20-%20gazebo.jpg?v=20260410" as const;
-
-/** Full-width site hero carousel (#site): house renders + sketches */
+/** Full-width site hero carousel (#site): house renders */
 export const sitePlanningHeroCarouselSlides = [
   {
     key: "house-1",
@@ -106,54 +94,7 @@ export const sitePlanningHeroCarouselSlides = [
     caption: "Render · Terrace, infinity pool, and panoramic coastal view",
     objectFit: "cover" as const,
   },
-  {
-    key: "sketch-plan-01",
-    src: villaElysiaSketchPlan01Src,
-    alt: "Villa Elysia · Plan sketch 01 · Massing and level stack",
-    caption: "Sketch · Plan study 01 · Terraced levels and circulation",
-    objectFit: "contain" as const,
-  },
-  {
-    key: "sketch-plan-02",
-    src: villaElysiaSketchPlan02Src,
-    alt: "Villa Elysia · Plan sketch 02 · Layout development",
-    caption: "Sketch · Plan study 02 · Layout and spatial relationships",
-    objectFit: "contain" as const,
-  },
-  {
-    key: "sketch-plan-03",
-    src: villaElysiaSketchPlan03Src,
-    alt: "Villa Elysia · Plan sketch 03 · Refined plan concept",
-    caption: "Sketch · Plan study 03 · Concept refinement",
-    objectFit: "contain" as const,
-  },
 ] as const;
-
-type SitePlanningSurveySlide = {
-  key: string;
-  src: string;
-  alt: string;
-  caption: string;
-  objectFit: "cover" | "contain";
-};
-
-/** Courtyard & gazebo sketches below hero carousel (#site); full topography via PDF link in section */
-export const sitePlanningSurveyCarouselSlides: readonly SitePlanningSurveySlide[] = [
-  {
-    key: "sketch-courtyard-survey",
-    src: villaElysiaSketchCourtyardSrc,
-    alt: "Villa Elysia · Courtyard sketch · Central outdoor room and daylight",
-    caption: "Sketch · Courtyard · Central court and connection to the light shaft",
-    objectFit: "contain",
-  },
-  {
-    key: "sketch-gazebo",
-    src: villaElysiaSketchGazeboSrc,
-    alt: "Villa Elysia · Gazebo sketch · Garden room and outdoor living",
-    caption: "Sketch · Gazebo · Garden pavilion and landscape tie-in",
-    objectFit: "contain",
-  },
-];
 
 /** AMES Mar 2026 — presentation imagery under public/investor/elysia/ */
 export const villaElysiaImages = [
@@ -171,11 +112,6 @@ export const villaElysiaImages = [
     src: villaElysiaHouseRender2Src,
     alt: "Villa Elysia · Terrace, pool, and sea view · Indoor–outdoor living",
     caption: "Render · Terrace, infinity pool, and panoramic coastal view",
-  },
-  {
-    src: villaElysiaSketchCourtyardSrc,
-    alt: "Villa Elysia · Courtyard sketch · Central outdoor room and light",
-    caption: "Sketch · Courtyard · Central court and vertical daylight",
   },
   {
     src: villaElysiaPlanEntranceSrc,
