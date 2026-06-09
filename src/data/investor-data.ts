@@ -44,11 +44,11 @@ export const villaElysiaHouseRender2Src =
 
 /** Bump `v` when replacing plan PNGs so browsers and CDNs fetch the new file. */
 export const villaElysiaPlanEntranceSrc =
-  "/investor/elysia/plan-entrance.png?v=20260609" as const;
+  "/investor/elysia/plan-entrance.png?v=20260609b" as const;
 export const villaElysiaPlanGroundSrc =
-  "/investor/elysia/plan-ground.png?v=20260609" as const;
+  "/investor/elysia/plan-ground.png?v=20260609b" as const;
 export const villaElysiaPlanFirstSrc =
-  "/investor/elysia/plan-first.png?v=20260609" as const;
+  "/investor/elysia/plan-first.png?v=20260609b" as const;
 
 /** Cadastral / survey rounded plot area (3,037.85 m²) */
 export const villaElysiaPlotSqm = 3_038;
