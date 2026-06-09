@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { investorHeroPosterSrc, investorHeroVideoSrc } from "@/data/investor-data";
+import {
+  investorHeroPosterSrc,
+  investorHeroVideoSrc,
+  villaElysiaBuiltAreaSqm,
+  villaElysiaPlotSqm,
+} from "@/data/investor-data";
 
 function useAutoplayVideo(videoRef: React.RefObject<HTMLVideoElement | null>) {
   useEffect(() => {
@@ -103,8 +108,9 @@ export function InvestorHero() {
             <span className="text-foreground/80">Villa Elysia</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Project development fully funded for land and design. 3,038 m² plot · 947 m² built area
-            (AMES Scheme 2). Construction funding sought.
+            Project development fully funded for land and design.{" "}
+            {villaElysiaPlotSqm.toLocaleString("en-GB")} m² plot · {villaElysiaBuiltAreaSqm} m² built
+            area (AMES Scheme 2). Construction funding sought.
           </p>
         </motion.div>
       </div>

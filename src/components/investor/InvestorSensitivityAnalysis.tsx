@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { villaElysiaBuiltAreaSqm } from "@/data/investor-data";
 import {
   buildCostSensitivityRows,
   buildFinancingSensitivityRows,
   computeMarginDeltaPer100SqmEuro,
   computeProjectProfitWaterfall,
   formatInvestorEur,
+  hybridEquityKickerOptions,
   hybridHurdleRatePct,
   investorEconomicsModelNotes,
   villaElysiaEconomicsInputs,
@@ -28,9 +30,12 @@ export function InvestorSensitivityAnalysis() {
           D. Construction cost sensitivity
         </p>
         <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
-          Impact on net project margin across the €5,000–€5,500/m² construction band (947 m² built
-          area). GDV at €11,500/m²; net proceeds after 6% broker fee at exit; financing at 10% p.a.
-          with milestone drawdowns. Each €100/m² increase moves net margin by about{" "}
+          Impact on net project margin across the €5,000–€5,500/m² construction band (
+          {villaElysiaBuiltAreaSqm} m² built area). GDV at €
+          {villaElysiaEconomicsInputs.saleRatePerSqm.toLocaleString("en-GB")}/m²; net proceeds after{" "}
+          {villaElysiaEconomicsInputs.brokerSaleFeeRate * 100}% broker fee at exit; financing at{" "}
+          {villaElysiaEconomicsInputs.workingFinancingRate * 100}% p.a. with milestone drawdowns.
+          Each €100/m² increase moves net margin by about{" "}
           <span className="font-mono text-foreground">
             {formatInvestorEur(marginDeltaPer100)}
           </span>
@@ -44,7 +49,9 @@ export function InvestorSensitivityAnalysis() {
                 <th className="py-3 pr-4 text-left font-medium">Construction €/m²</th>
                 <th className="py-3 pr-4 text-right font-medium">Construction</th>
                 <th className="py-3 pr-4 text-right font-medium">Total funding</th>
-                <th className="py-3 pr-4 text-right font-medium">Broker (6%)</th>
+                <th className="py-3 pr-4 text-right font-medium">
+                  Broker ({villaElysiaEconomicsInputs.brokerSaleFeeRate * 100}%)
+                </th>
                 <th className="py-3 pr-4 text-right font-medium">Spread pre-finance</th>
                 <th className="py-3 pr-4 text-right font-medium">Est. interest</th>
                 <th className="py-3 text-right font-medium">Net margin</th>
@@ -98,12 +105,15 @@ export function InvestorSensitivityAnalysis() {
         <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
           Net margin at the working construction case (€
           {villaElysiaEconomicsInputs.workingConstructionRatePerSqm.toLocaleString("en-GB")}/m²) under
-          different fixed-return scenarios. Net sale proceeds after 6% broker fee; interest
-          reflects milestone drawdowns over {villaElysiaEconomicsInputs.constructionMonths} months (~
+          different fixed-return scenarios. Net sale proceeds after{" "}
+          {villaElysiaEconomicsInputs.brokerSaleFeeRate * 100}% broker fee; interest reflects
+          milestone drawdowns over {villaElysiaEconomicsInputs.constructionMonths} months (~
           {villaElysiaEconomicsInputs.avgDrawdownFactor * 100}% average outstanding). At a{" "}
-          <span className="font-mono text-foreground">2%</span> hurdle, two hybrid options model a{" "}
-          <span className="font-mono text-foreground">15%</span> or{" "}
-          <span className="font-mono text-foreground">20%</span> equity kicker on{" "}
+          <span className="font-mono text-foreground">{hybridHurdleRatePct}%</span> hurdle, two hybrid
+          options model a{" "}
+          <span className="font-mono text-foreground">{hybridEquityKickerOptions[0]}%</span> or{" "}
+          <span className="font-mono text-foreground">{hybridEquityKickerOptions[1]}%</span> equity
+          kicker on{" "}
           <span className="font-semibold text-foreground">net profit after all costs</span> (see
           waterfall below — not on gross sale value).
         </p>
@@ -116,7 +126,11 @@ export function InvestorSensitivityAnalysis() {
             {(
               [
                 ["Indicative GDV", hybridProfitWaterfall.indicativeGdv, "plain"],
-                ["Less broker success fee (6%)", hybridProfitWaterfall.brokerSaleFee, "less"],
+                [
+                  `Less broker success fee (${villaElysiaEconomicsInputs.brokerSaleFeeRate * 100}%)`,
+                  hybridProfitWaterfall.brokerSaleFee,
+                  "less",
+                ],
                 ["= Net sale proceeds", hybridProfitWaterfall.netSaleProceeds, "subtotal"],
                 ["Less plot acquisition", hybridProfitWaterfall.plotAcquisitionCost, "less"],
                 ["Less construction", hybridProfitWaterfall.constructionCost, "less"],
@@ -124,7 +138,11 @@ export function InvestorSensitivityAnalysis() {
                 ["Less FF&E", hybridProfitWaterfall.ffeAllowance, "less"],
                 ["Less permits / ICIO", hybridProfitWaterfall.permitAllowance, "less"],
                 ["Less soft costs", hybridProfitWaterfall.softCosts, "less"],
-                ["Less financing coupon (2%)", hybridProfitWaterfall.financingCoupon, "less"],
+                [
+                  `Less financing coupon (${hybridHurdleRatePct}%)`,
+                  hybridProfitWaterfall.financingCoupon,
+                  "less",
+                ],
                 [
                   "= Net profit before equity kicker",
                   hybridProfitWaterfall.netProfitBeforeEquityKicker,
@@ -147,7 +165,8 @@ export function InvestorSensitivityAnalysis() {
             ))}
           </dl>
           <p className="mt-3 text-xs text-muted-foreground">
-            15% or 20% kicker = that percentage of the net profit line only (e.g. 15% ×{" "}
+            {hybridEquityKickerOptions[0]}% or {hybridEquityKickerOptions[1]}% kicker = that percentage
+            of the net profit line only (e.g. {hybridEquityKickerOptions[0]}% ×{" "}
             {formatInvestorEur(hybridProfitWaterfall.netProfitBeforeEquityKicker)}).
           </p>
         </div>

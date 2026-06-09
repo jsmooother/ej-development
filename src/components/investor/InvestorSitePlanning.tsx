@@ -14,10 +14,11 @@ import {
   villaElysiaAreaFootnotes,
   villaElysiaFloorPlans,
   villaElysiaBuiltAreaSqm,
+  villaElysiaPlotSqm,
 } from "@/data/investor-data";
 
 const verifiedFacts = [
-  { label: "Plot size", value: "3,038 m²" },
+  { label: "Plot size", value: `${villaElysiaPlotSqm.toLocaleString("en-GB")} m²` },
   { label: "Classification", value: "Urban land" },
   { label: "Cadastral", value: "0644927UF2404S0000GQ" },
   { label: "Address", value: "Plot 102B, UR Madroñal EL 102[B], 29679 Benahavís, Málaga" },

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { villaElysiaBuiltAreaSqm } from "@/data/investor-data";
 
 const valueDrivers = [
   "Tailored to the plot—each villa is uniquely designed for its site",
@@ -63,7 +64,8 @@ export function InvestorDevelopmentConcept() {
               the landscape, premium materials, and international turnkey expectations.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              Economics use 947 m² built area (Scheme 2); Site & planning reconciles floor schedules,
+              Economics use {villaElysiaBuiltAreaSqm} m² built area (Scheme 2); Site & planning
+              reconciles floor schedules,
               closed built, and external lines to the same rounded totals.
             </p>
             <div className="mt-8">

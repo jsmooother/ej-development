@@ -50,6 +50,8 @@ export const villaElysiaPlanGroundSrc =
 export const villaElysiaPlanFirstSrc =
   "/investor/elysia/plan-first.png?v=20260609" as const;
 
+/** Cadastral / survey rounded plot area (3,037.85 m²) */
+export const villaElysiaPlotSqm = 3_038;
 /** AMES Scheme 2 · June 2026 cost schedule denominator */
 export const villaElysiaBuiltAreaSqm = villaElysiaEconomicsInputs.builtAreaSqm;
 /** Mid-range construction estimate (€5,000–€5,500/m² band) pending geotechnical study */
@@ -249,7 +251,7 @@ export const executiveSummary = [
   { label: "Project owner", value: "EJ Properties" },
   { label: "Project", value: "Villa Elysia" },
   { label: "Location", value: "El Madroñal, Benahavís" },
-  { label: "Plot", value: "3,038 m²" },
+  { label: "Plot", value: `${villaElysiaPlotSqm.toLocaleString("en-GB")} m²` },
   {
     label: "Built area",
     value: `${villaElysiaBuiltAreaSqm} m² (AMES Scheme 2)`,
