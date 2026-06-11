@@ -390,12 +390,12 @@ export const keyRisks = [
 ] as const;
 
 export const executionPhases = [
-  { phase: "Design development", status: "In progress", estimatedDelivery: "TBC" },
-  { phase: "Permit / licensing", status: "Pending", estimatedDelivery: "TBC" },
-  { phase: "Funding close", status: "Pending", estimatedDelivery: "TBC" },
-  { phase: "Construction", status: "Pending", estimatedDelivery: "TBC" },
-  { phase: "Sales launch / broker marketing", status: "Pending", estimatedDelivery: "TBC" },
-  { phase: "Exit", status: "Pending", estimatedDelivery: "TBC" },
+  { phase: "Design development", status: "Complete", estimatedDelivery: "Jun 2026" },
+  { phase: "Funding close", status: "In progress", estimatedDelivery: "Q4 2026" },
+  { phase: "Permit / licensing", status: "Pending", estimatedDelivery: "Q3 2027" },
+  { phase: "Construction", status: "Pending", estimatedDelivery: "Q3 2029" },
+  { phase: "Sales launch / broker marketing", status: "Pending", estimatedDelivery: "Q2 2029" },
+  { phase: "Exit", status: "Pending", estimatedDelivery: "Q3 2029" },
 ] as const;
 
 /** Numeric €/m² for averages; `subject` rows excluded from `marketCompsListedAvgEurPerSqm` */

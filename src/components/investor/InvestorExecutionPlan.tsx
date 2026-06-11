@@ -20,8 +20,10 @@ export function InvestorExecutionPlan() {
             Timeline & sequencing
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Project control and sequencing. Design development underway; permit,
-            funding close, construction, and exit to follow.
+            Scheme 2 design complete (June 2026). Construction funding, municipal licensing,
+            build, and exit follow on the indicative sequence below — aligned with a 24-month
+            construction programme once permits are in place. Exit is targeted at practical
+            completion, no later than the construction end date.
           </p>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -30,20 +32,23 @@ export function InvestorExecutionPlan() {
                 key={i}
                 className="flex flex-col gap-2 rounded-xl border border-border bg-card/30 p-5"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-3">
                   <span className="font-medium text-foreground">{phase.phase}</span>
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${
-                      phase.status === "In progress"
-                        ? "bg-foreground/10 text-foreground"
-                        : "bg-muted/50 text-muted-foreground"
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
+                      phase.status === "Complete"
+                        ? "bg-primary/15 text-primary"
+                        : phase.status === "In progress"
+                          ? "bg-foreground/10 text-foreground"
+                          : "bg-muted/50 text-muted-foreground"
                     }`}
                   >
                     {phase.status}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Est. delivery: {phase.estimatedDelivery}
+                  Est. {phase.status === "Complete" ? "completed" : "delivery"}:{" "}
+                  {phase.estimatedDelivery}
                 </p>
               </div>
             ))}

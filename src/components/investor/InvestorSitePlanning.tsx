@@ -22,8 +22,6 @@ const verifiedFacts = [
   { label: "Classification", value: "Urban land" },
   { label: "Cadastral", value: "0644927UF2404S0000GQ" },
   { label: "Address", value: "Plot 102B, UR Madroñal EL 102[B], 29679 Benahavís, Málaga" },
-  { label: "Survey note", value: "Parcel not cleared on measurement day" },
-  { label: "Survey", value: "Nov 2025 · ETRS-89, UTM Zone 30" },
 ];
 
 const planningParams = [
