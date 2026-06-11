@@ -216,6 +216,8 @@ export function computeMarginDeltaPer100SqmEuro(
 export const hybridHurdleRatePct = 2;
 /** Modelled equity kicker options: % of net profit after all costs, paid to financier */
 export const hybridEquityKickerOptions = [15, 20] as const;
+/** Equity kicker on mid-coupon hybrid rows (3% & 4% fixed return) */
+export const hybridNegotiableEquityKickerPct = 15;
 
 /** Full profit waterfall — equity kicker % applies to netProfitBeforeEquityKicker only */
 export type ProjectProfitWaterfall = {
@@ -355,16 +357,25 @@ export function buildFinancingSensitivityRows(
 
   const hybridNegotiableRows: FinancingSensitivityRow[] = hybridNegotiableRates.map((pct) => {
     const rate = pct / 100;
+    const netProfitBeforeEquityKicker = computeNetProfitBeforeEquityKicker(
+      constructionRatePerSqm,
+      pct,
+      inputs
+    );
+    const { equityKickerAmount, sponsorNetMargin } = computeSponsorNetMarginWithKicker(
+      netProfitBeforeEquityKicker,
+      hybridNegotiableEquityKickerPct
+    );
     return {
       key: `hybrid-${pct}`,
       label: "Hybrid",
       annualRatePct: pct,
-      equityKickerPct: null,
-      structure: `${pct}% fixed return + equity kicker (terms negotiable)`,
+      equityKickerPct: hybridNegotiableEquityKickerPct,
+      structure: `${pct}% coupon + ${hybridNegotiableEquityKickerPct}% of net profit after all costs to financier`,
       financingCost: computeDrawdownFinancingCost(funding, rate, inputs),
-      netProfitBeforeEquityKicker: null,
-      equityKickerAmount: null,
-      netMargin: computeNetMargin(constructionRatePerSqm, rate, inputs),
+      netProfitBeforeEquityKicker,
+      equityKickerAmount,
+      netMargin: sponsorNetMargin,
       isWorkingCase: false,
     };
   });
@@ -397,5 +408,5 @@ export const investorEconomicsModelNotes = [
   `Plot acquisition (${formatInvestorEur(villaElysiaEconomicsInputs.plotAcquisitionCost)}) funded by sponsor pre-construction — included in net profit / margin calculations.`,
   "Total external funding sought scales with construction €/m²; admin, FF&E (€500k), and soft costs held flat.",
   `Financing interest assumes milestone drawdowns over ${villaElysiaEconomicsInputs.constructionMonths} months (~${villaElysiaEconomicsInputs.avgDrawdownFactor * 100}% average outstanding vs peak — not 100% drawn from day one).`,
-  `Hybrid at ${hybridHurdleRatePct}%: equity kicker (${hybridEquityKickerOptions.join("% or ")}%) applies to net profit after all costs — i.e. GDV minus broker (6%), plot purchase, construction, admin, FF&E, permits, soft costs, and the ${hybridHurdleRatePct}% financing coupon.`,
+  `Hybrid at ${hybridHurdleRatePct}%: equity kicker (${hybridEquityKickerOptions.join("% or ")}%) applies to net profit after all costs — i.e. GDV minus broker (6%), plot purchase, construction, admin, FF&E, permits, soft costs, and the ${hybridHurdleRatePct}% financing coupon. Mid-coupon hybrid (3% & 4%) modelled with ${hybridNegotiableEquityKickerPct}% equity kicker on the same basis.`,
 ] as const;

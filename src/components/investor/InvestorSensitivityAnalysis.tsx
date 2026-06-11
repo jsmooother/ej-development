@@ -10,6 +10,7 @@ import {
   formatInvestorEur,
   hybridEquityKickerOptions,
   hybridHurdleRatePct,
+  hybridNegotiableEquityKickerPct,
   investorEconomicsModelNotes,
   villaElysiaEconomicsInputs,
 } from "@/lib/investor-economics";
@@ -109,11 +110,15 @@ export function InvestorSensitivityAnalysis() {
           {villaElysiaEconomicsInputs.brokerSaleFeeRate * 100}% broker fee; interest reflects
           milestone drawdowns over {villaElysiaEconomicsInputs.constructionMonths} months (~
           {villaElysiaEconomicsInputs.avgDrawdownFactor * 100}% average outstanding). At a{" "}
-          <span className="font-mono text-foreground">{hybridHurdleRatePct}%</span> hurdle, two hybrid
+          <span className="font-mono text-foreground">{hybridHurdleRatePct}%</span> hurdle, hybrid
           options model a{" "}
           <span className="font-mono text-foreground">{hybridEquityKickerOptions[0]}%</span> or{" "}
           <span className="font-mono text-foreground">{hybridEquityKickerOptions[1]}%</span> equity
-          kicker on{" "}
+          kicker at that coupon; mid-coupon structures at{" "}
+          <span className="font-mono text-foreground">3%</span> and{" "}
+          <span className="font-mono text-foreground">4%</span> use a{" "}
+          <span className="font-mono text-foreground">{hybridNegotiableEquityKickerPct}%</span> kicker
+          on{" "}
           <span className="font-semibold text-foreground">net profit after all costs</span> (see
           waterfall below — not on gross sale value).
         </p>

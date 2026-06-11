@@ -284,9 +284,9 @@ export const preliminaryBudget = [
     bold: false,
   },
   {
-    line: "Additional soft costs / sales",
+    line: "Additional soft costs",
     amount: formatInvestorEur(villaElysiaSoftCosts),
-    note: "Indicative: construction-phase legal, all-risk site insurance, survey / geotech supplements, photography & pre-sale marketing (broker success fee at exit modelled separately at 6% of GDV)",
+    note: `Flat allowance: construction-phase legal, all-risk site insurance, survey / geotech supplements, and pre-sale photography & marketing. Not sales commission — broker success fee (6% of GDV, ${formatInvestorEur(computeBrokerSaleFee())}) is deducted at exit in section C below.`,
     bold: false,
   },
   {
@@ -351,7 +351,7 @@ export const fundingStructures = [
     items: [
       "Indicative hurdle: 2% fixed coupon on drawn capital",
       "Plus 15–20% equity kicker on net profit after all costs (see sensitivity waterfall)",
-      "Alternative mid-coupon structures (3–5%) negotiable with lighter or no kicker",
+      "Mid-coupon alternative: 3–4% fixed return + 15% equity kicker (modelled in section E)",
     ],
   },
 ] as const;

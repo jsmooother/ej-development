@@ -1,11 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { formatInvestorEur } from "@/lib/investor-economics";
 import {
   sponsorCommitment,
   preliminaryBudget,
   preliminaryRevenue,
   fundingMilestones,
+  villaElysiaBrokerSaleFee,
+  villaElysiaSoftCosts,
 } from "@/data/investor-data";
 import { InvestorSensitivityAnalysis } from "./InvestorSensitivityAnalysis";
 
@@ -26,11 +29,12 @@ export function InvestorPreliminaryEconomics() {
             Working budget assumptions
           </h2>
           <p className="mt-6 max-w-2xl text-muted-foreground">
-            Early-stage numbers. Not a fully diligenced financial model. Exit assumes a{" "}
-            <span className="font-mono text-foreground">6%</span> broker success fee on gross sale
-            value (negotiable; typical 5–6%). Permit / ICIO lines use indicative allowances aligned
-            with Benahavís ordinance bands. Soft costs cover pre-sale marketing only — broker
-            commission is deducted at exit in the revenue framework and sensitivity tables.
+            Early-stage numbers. Not a fully diligenced financial model. The{" "}
+            <span className="font-mono text-foreground">6%</span> broker success fee (
+            {formatInvestorEur(villaElysiaBrokerSaleFee)} on indicative GDV) is deducted at exit in
+            the revenue framework (section C) and sensitivity tables — not in the construction
+            budget. The {formatInvestorEur(villaElysiaSoftCosts)} soft-cost line covers legal,
+            insurance, geotech, and pre-sale marketing during the build.
           </p>
 
           <div className="mt-10 grid gap-8 lg:grid-cols-3">
